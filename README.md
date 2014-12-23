@@ -13,7 +13,7 @@ This program comes with ABSOLUTELY NO WARRANTY. This is free software, and you a
 2. Supports linear programming (LP), quadratic programming (QP) and quadratic constraint quadratic programming (QCQP) by using existing mathematical programming solvers.
 3. Solvers currently available:
   * Open-source [LPsolve](http://sourceforge.net/projects/lpsolve/) can be used for LP
-  * Open-source [oJalgo](http://ojalgo.org/) can be used for LP and QP
+  * Open-source [ojAlgo](http://ojalgo.org/) can be used for LP and QP
   * Commercial solver [Gurobi](http://www.gurobi.com/) can be used for more efficiency to solve LP, QP and QCQP
 
 #### Future work
