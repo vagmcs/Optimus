@@ -57,14 +57,14 @@ scala> val x = MPFloatVar("x", 100, 200)
 val y = MPFloatVar("y", 80, 170)
 ```
 
-Then we can define our maximization problem subject to a simple constraint using our known maths
+Then we can define our optimization problem subject to a simple constraint using our known maths:
 
 ```scala
 scala> maximize(-2 * x + 5 * y)
 add(y >= -x + 200)
 ```
 
-At last, we can solve the problem by starting the solver and display the results
+At last, we can solve the problem by starting the solver and display the results:
 
 ```scala
 scala> start()
@@ -72,7 +72,7 @@ println("objective: " + objectiveValue)
 println("x = " + x.value + "y = " + y.value)
 ```
 
-Finally, release the memory used by the internal solver
+Finally, don't forget to release the memory used by the internal solver:
 
 ```scala
 scala> release()
