@@ -1,0 +1,24 @@
+# Created by .ignore support plugin (hsz.mobi)
+
+# idea
+.idea
+*.iml
+*.ipr
+*.iws
+
+#
+.lib
+*.jar
+
+# sbt specific
+.cache/
+.history/
+.lib/
+dist/*
+target/
+lib_managed/
+src_managed/
+project/boot/
+project/plugins/project/
+project/project/
+project/target/
