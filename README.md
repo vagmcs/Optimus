@@ -17,7 +17,7 @@ This program comes with ABSOLUTELY NO WARRANTY. This is free software, and you a
   * Commercial solver [Gurobi](http://www.gurobi.com/) can be used for more efficiency to solve LP, QP and QCQP
 
 #### Future work
-1. Support division operation and non-linear functions (logarithm, sine, cosine, etc)
+1. More operations for mathematical expressions like division and non-linear functions (logarithm, sine, cosine, etc)
 2. Mosek commercial solver interface
 
 ## Instrunctions to build Optimus from source
