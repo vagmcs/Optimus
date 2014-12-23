@@ -11,20 +11,20 @@ package optimus.lqprog
  *        \///\\\\\/     \/\\\           \//\\\\\   \/\\\ \/\\\  \/\\\  \/\\\ \//\\\\\\\\\  /\\\\\\\\\\
  *           \/////       \///             \/////    \///  \///   \///   \///  \/////////   \//////////
  *
- * Copyright (C) 2014 Evangelos Michelioudakis
+ * Copyright (C) 2014 Evangelos Michelioudakis, Anastasios Skarlatidis
  *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
+ * Optimus is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as published
+ * by the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful,
+ * Optimus is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Lesser General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/lgpl-3.0.en.html>.
  */
 
 import mosek._
@@ -43,7 +43,6 @@ final class Mosek extends AbstractMPSolver {
   var solution = Array[Double]()
   var objectiveValue = 0.0
   var status = ProblemStatus.NOT_SOLVED
-  var configFile = new java.io.File("mosek.config")
 
   var env = new Env()
   val task = new Task(env, 0, 0)
@@ -62,8 +61,6 @@ final class Mosek extends AbstractMPSolver {
 
     task.appendvars(nbCols)
     task.appendcons(nbRows)
-
-    //task.getsolutionslice(Env.soltype.bas, Env.solitem.xx, 0, nbCols, solution)
   }
 
   /**
@@ -105,17 +102,6 @@ final class Mosek extends AbstractMPSolver {
   }
 
   /**
-   * Set variable symbol in the solver
-   *
-   * @param colId position of the variable
-   * @param symbol symbol to be updated
-   */
-  def setVarSymbol(colId: Int, symbol: String) = {
-    task.putvarname(colId, symbol)
-  }
-
-
-  /**
    * Add objective expression to be optimized by the solver.
    *
    * @param objective the expression to be optimized
@@ -128,11 +114,7 @@ final class Mosek extends AbstractMPSolver {
    *
    * @param mpConstraint the mathematical programming constraint
    */
-  def addConstraint(mpConstraint: MPConstraint) = {
-    val converted = convert(mpConstraint)
-
-  }
-
+  def addConstraint(mpConstraint: MPConstraint) = ???
 
   /**
    * Solve the problem.
@@ -153,11 +135,11 @@ final class Mosek extends AbstractMPSolver {
    * Set a time limit for solver optimization. After the limit
    * is reached the solver stops running.
    *
-   * @param t the time limit
+   * @param limit the time limit
    */
-  def setTimeout(t: Int) = {
-    require(0 <= t)
-    task.putdouparam(Env.dparam.optimizer_max_time, t)
+  def setTimeout(limit: Int) = {
+    require(0 <= limit)
+    task.putdouparam(Env.dparam.optimizer_max_time, limit)
   }
 
   def convert(mpConstraint: MPConstraint): IntegerRepresentation = {

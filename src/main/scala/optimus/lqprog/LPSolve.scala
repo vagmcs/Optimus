@@ -1,6 +1,6 @@
 package optimus.lqprog
 
-import lpsolve.{LpSolveException, LpSolve}
+import lpsolve.LpSolve
 import optimus.algebra._
 import optimus.lqprog.ProblemStatus.ProblemStatus
 

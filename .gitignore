@@ -6,7 +6,7 @@
 *.ipr
 *.iws
 
-#
+# external jar libraries
 .lib
 *.jar
 
