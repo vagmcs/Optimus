@@ -7,7 +7,6 @@
 *.iws
 
 # external jar libraries
-.lib
 *.jar
 
 # sbt specific
