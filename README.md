@@ -1,6 +1,6 @@
 ## Optimus
 
-Optimus is an experimental library for linear and quadratic mathematical optimization written in [Scala programming language](http://scala-lang.org).
+Optimus is an experimental library for Linear and Quadratic mathematical optimization written in [Scala programming language](http://scala-lang.org).
 
 ## Licence 
 
