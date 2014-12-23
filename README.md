@@ -9,11 +9,11 @@ This program comes with ABSOLUTELY NO WARRANTY. This is free software, and you a
 #### Features overview:
 1. High level mathematical modeling in Scala using algebraic expressions
   * Linear and quadratic objective and constraint expressions
-  * Higher order expressions are also supported, but they cannot be solved by the existing solvers
+  * Higher order expressions are also supported, but they cannot be handled by the solvers
   * Addition, subtraction and multiplication operations can be performed on expressions
 2. Support for linear programming (LP), quadratic programming (QP) and quadratic constraint quadratic programming (QCQP) by using existing mathematical programming solvers.
 3. Available solvers:
-  * Open source [LPsolve](http://sourceforge.net/projects/lpsolve/) can be used for LP
+  * Open source [lp_solve](http://sourceforge.net/projects/lpsolve/) can be used for LP
   * Open source [ojAlgo](http://ojalgo.org/) can be used for LP and QP
   * Commercial solver [Gurobi](http://www.gurobi.com/) can be used for more efficiency to solve LP, QP and QCQP
 
@@ -33,6 +33,8 @@ $ sbt dist
 ```
 
 After a successful compilation, distribution is located inside the `./target/universal/optimus-<version>.zip` file. The distribution contains all library dependencies and requires only Java 7 (or higher). Sources, documentation and the compiled library (without dependencies) are archived as jar files into the `./target/scala-2.10/` directory.
+
+In order to use gurobi, lp_solve or ojAlgo you should also add the corresponding jar libraries yourself and modify the environment variables to make use of the solver executable files.
 
 ## Example:
 
@@ -65,7 +67,13 @@ add(y >= -x + 200)
 At last, we can solve the problem by starting the solver and display the results
 
 ```scala
-start()
+scala> start()
 println("objective: " + objectiveValue)
 println("x = " + x.value + "y = " + y.value)
+```
+
+Finally, release the memory used by the internal solver
+
+```scala
+scala> release()
 ```
