@@ -54,6 +54,10 @@ package object lqprog {
     constraints.foreach(add)
   }
 
+  def subjectTo(constraints: Constraint*)(implicit lQProblem: LQProblem): Unit = {
+    constraints.foreach(add)
+  }
+
   def start()(implicit lqProblem: LQProblem) = lqProblem.start()
 
   def minimize(expression: Expression)(implicit lqProblem: LQProblem) = lqProblem.minimize(expression)
