@@ -31,6 +31,8 @@ import optimus.algebra._
 import optimus.lqprog.ProblemStatus.ProblemStatus
 import gurobi._
 
+import scala.collection.mutable.ArrayBuffer
+
 /**
  * Gurobi solver.
  *
@@ -93,9 +95,9 @@ final class Gurobi extends AbstractMPSolver {
    * @param upper domain upper bound
    */
   def setBounds(colId: Int, lower: Double, upper: Double) {
-    val GRBVariable = model.getVar(colId)
-    GRBVariable.set(GRB.DoubleAttr.LB, lower)
-    GRBVariable.set(GRB.DoubleAttr.UB, upper)
+    val GRBVar = model.getVar(colId)
+    GRBVar.set(GRB.DoubleAttr.LB, lower)
+    GRBVar.set(GRB.DoubleAttr.UB, upper)
   }
 
   /**
@@ -123,8 +125,25 @@ final class Gurobi extends AbstractMPSolver {
    * @param minimize flag for minimization instead of maximization
    */
   def addObjective(objective: Expression, minimize: Boolean) = {
-    val GRBExpression = toGRBExpr(objective)
-    model.setObjective(GRBExpression, if (minimize) 1 else -1)
+
+    objective.getOrder match {
+      case ExpressionOrder.HIGHER => throw new IllegalArgumentException("Higher than quadratic: " + objective)
+
+      case ExpressionOrder.QUADRATIC =>
+        val QExpression = new GRBQuadExpr
+        for(term <- objective.terms) {
+          if(term._1.length == 1) QExpression.addTerm(term._2, model.getVar(term._1(0).index))
+          else QExpression.addTerm(term._2, model.getVar(term._1(0).index), model.getVar(term._1(1).index))
+        }
+        model.setObjective(QExpression, if (minimize) 1 else -1)
+
+      case ExpressionOrder.LINEAR =>
+        val LExpression = new GRBLinExpr
+        val terms = objective.terms.toArray
+        LExpression.addTerms(terms.map(pair => pair._2), terms.map(pair => model.getVar(pair._1(0).index)))
+        model.setObjective(LExpression, if (minimize) 1 else -1)
+    }
+
     model.update()
   }
 
@@ -135,8 +154,10 @@ final class Gurobi extends AbstractMPSolver {
    */
   def addConstraint(mpConstraint: MPConstraint) = {
 
-    val lhs = toGRBExpr(mpConstraint.constraint.lhs)
-    val rhs = toGRBExpr(mpConstraint.constraint.rhs)
+    nbRows += 1
+
+    val lhs = mpConstraint.constraint.lhs - mpConstraint.constraint.rhs
+    val rhs = -lhs.constant
     val operator = mpConstraint.constraint.operator
 
     val GRBOperator = operator match {
@@ -145,18 +166,22 @@ final class Gurobi extends AbstractMPSolver {
       case ConstraintRelation.EQ => GRB.EQUAL
     }
 
-    (lhs, rhs) match {
-      case (lhs: GRBQuadExpr, rhs: GRBQuadExpr) =>
-        model.addQConstr(lhs, GRBOperator, rhs, "")
+    lhs.getOrder match {
+      case ExpressionOrder.HIGHER => throw new IllegalArgumentException("Higher than quadratic: " + lhs)
 
-      case (lhs: GRBQuadExpr, rhs: GRBLinExpr) =>
-        model.addQConstr(lhs, GRBOperator, rhs, "")
+      case ExpressionOrder.QUADRATIC =>
+        val QExpression = new GRBQuadExpr
+        for(term <- lhs.terms) {
+          if(term._1.length == 1) QExpression.addTerm(term._2, model.getVar(term._1(0).index))
+          else QExpression.addTerm(term._2, model.getVar(term._1(0).index), model.getVar(term._1(1).index))
+        }
+        model.addQConstr(QExpression, GRBOperator, rhs, "")
 
-      case (lhs: GRBLinExpr, rhs: GRBQuadExpr) =>
-        model.addQConstr(lhs, GRBOperator, rhs, "")
-
-      case (lhs: GRBLinExpr, rhs: GRBLinExpr) =>
-        model.addConstr(lhs, GRBOperator, rhs, "")
+      case ExpressionOrder.LINEAR =>
+        val LExpression = new GRBLinExpr
+        val terms = lhs.terms.toArray
+        LExpression.addTerms(terms.map(pair => pair._2), terms.map(pair => model.getVar(pair._1(0).index)))
+        model.addConstr(LExpression, GRBOperator, rhs, "")
     }
   }
 
@@ -171,6 +196,7 @@ final class Gurobi extends AbstractMPSolver {
     model.optimize()
 
     var optimizationStatus = model.get(GRB.IntAttr.Status)
+
     if (optimizationStatus == GRB.INF_OR_UNBD) {
       model.getEnv.set(GRB.IntParam.Presolve, 0)
       model.optimize()
@@ -217,42 +243,5 @@ final class Gurobi extends AbstractMPSolver {
   def setTimeout(limit: Int) {
     require(0 <= limit)
     model.getEnv.set(GRB.DoubleParam.TimeLimit, limit.toDouble)
-  }
-
-  /**
-   * Convert a ComplexExpression to an equivalent Gurobi specific expression (GRBExpr)
-   * which is either linear or quadratic.
-   *
-   * @param expression the complex expression to convert
-   *
-   * @return the converted Gurobi expression
-   */
-  private def toGRBExpr(expression: Expression): GRBExpr = {
-
-    val expressionType = expression.getOrder
-
-    val GRBExpression = expressionType match {
-      case ExpressionOrder.HIGHER =>
-        throw new IllegalArgumentException("Higher than quadratic: " + expression)
-      case ExpressionOrder.QUADRATIC => new GRBQuadExpr
-      case _ => new GRBLinExpr
-    }
-
-    val isQuadratic = expressionType == ExpressionOrder.QUADRATIC
-
-    if(expression.terms.nonEmpty) {
-      for (term <- expression.terms) {
-        term._1.length match {
-          case 1 =>
-            if (isQuadratic) GRBExpression.asInstanceOf[GRBQuadExpr].addTerm(term._2, model.getVar(term._1(0).index))
-            else GRBExpression.asInstanceOf[GRBLinExpr].addTerm(term._2, model.getVar(term._1(0).index))
-          case 2 => GRBExpression.asInstanceOf[GRBQuadExpr].addTerm(term._2, model.getVar(term._1(0).index),
-            model.getVar(term._1(1).index))
-        }
-      }
-    }
-    else GRBExpression.asInstanceOf[GRBLinExpr].addConstant(expression.constant)
-
-    GRBExpression
   }
 }

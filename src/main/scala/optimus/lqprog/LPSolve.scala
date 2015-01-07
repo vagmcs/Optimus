@@ -122,7 +122,7 @@ final class LPSolve extends AbstractMPSolver {
    */
   def addObjective(objective: Expression, minimize: Boolean) = {
 
-    if(objective.getOrder == ExpressionOrder.QUADRATIC ||  objective.getOrder == ExpressionOrder.HIGHER )
+    if(objective.getOrder == ExpressionOrder.QUADRATIC || objective.getOrder == ExpressionOrder.HIGHER )
         throw new IllegalArgumentException("LPSolve can handle only linear expressions and " + objective + " is higher order!")
 
     val list = objective.terms.toList

@@ -132,15 +132,16 @@ abstract class AbstractMPSolver {
   /**
    * Add all given mathematical programming constraints to the solver.
    *
-   * @param constraints hash map containing the constraints
+   * @param constraints array buffer containing the constraints
    */
   def addAllConstraints(constraints: ArrayBuffer[MPConstraint]) {
-    var nbC = 0
-    for (i <- 0 until constraints.length) {
-      if (nbC > 0 && nbC % 1000 == 0) println("Added " + nbC + " constraints. Currently at constraint index " + i)
-      addConstraint(constraints(i))
-      nbC += 1
+    var idx = 0
+    val len = constraints.length
+    while(idx < len) {
+      addConstraint(constraints(idx))
+      idx += 1
     }
+    println("Added " + len + " constraints.")
   }
 
   /**

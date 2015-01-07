@@ -59,7 +59,7 @@ final class OJalgo extends AbstractMPSolver {
     println {
       """        _________      ______               """ + "\n" +
       """  ____________  /_____ ___  /______ ______  """ + "\n" +
-      """  _  __ \__ _  /_  __ `/_  /__  __ `/  __ \ """ + "\n" +
+      """  _  __ \__ _  /_  __  /_  /__  __  /  __ \ """ + "\n" +
       """  / /_/ / /_/ / / /_/ /_  / _  /_/ // /_/ / """ + "\n" +
       """  \____/\____/  \__,_/ /_/  _\__, / \____/  """ + "\n" +
       """                            /____/          """ + "\n"
@@ -126,10 +126,8 @@ final class OJalgo extends AbstractMPSolver {
     objectiveFunction.weight(BigMath.ONE)
 
     for(term <- objective.terms) {
-      term._1.length match {
-        case 1 => objectiveFunction.setLinearFactor(model.getVariable(term._1(0).index), term._2)
-        case 2 => objectiveFunction.setQuadraticFactor(model.getVariable(term._1(0).index), model.getVariable(term._1(1).index), term._2)
-      }
+      if(term._1.length == 1) objectiveFunction.setLinearFactor(model.getVariable(term._1(0).index), term._2)
+      else objectiveFunction.setQuadraticFactor(model.getVariable(term._1(0).index), model.getVariable(term._1(1).index), term._2)
     }
     model.setMinimisation(minimize)
   }
@@ -146,10 +144,8 @@ final class OJalgo extends AbstractMPSolver {
 
     val constraint = model.addExpression(mpConstraint.index.toString)
     for(term <- lhs.terms) {
-      term._1.length match {
-        case 1 => constraint.setLinearFactor(model.getVariable(term._1(0).index), term._2)
-        case 2 => constraint.setQuadraticFactor(model.getVariable(term._1(0).index), model.getVariable(term._1(1).index), term._2)
-      }
+      if(term._1.length == 1)constraint.setLinearFactor(model.getVariable(term._1(0).index), term._2)
+      else constraint.setQuadraticFactor(model.getVariable(term._1(0).index), model.getVariable(term._1(1).index), term._2)
     }
 
     operator match {
