@@ -24,17 +24,29 @@ This program comes with ABSOLUTELY NO WARRANTY. This is free software, and you a
 
 ## Instructions to build Optimus from source
 
-In order to build Optimus from source, you need to have Java 7 and [sbt](http://www.scala-sbt.org/) installed in your system.
+In order to build Optimus from source, you need to have Java 7 and [sbt](http://www.scala-sbt.org/) installed in your system. Furthermore, Optimus build depends on the [lp_solve](http://lpsolve.sourceforge.net), [Gurobi](http://www.gurobi.com/) and [ojAlgo](http://ojalgo.org/).
 
-##### To build the Optimus distribution type the following command:
+Step 1. Include lp_solve, Gurobi and ojAlgo library dependencies to `./lib`, as it is illustrated in the tree below:
+
+```
+.
+|-- gurobi.jar
+|-- lpsolve55j.jar
+|-- ojalgo-37.0.jar
+|-- ojalgo-biz-37.0.jar
+|-- ojalgo-ext-37.0.jar
+
+```
+
+Step 2. For using Gurobi and lp_solve you should also set the environment variables of your system to make use of the solver native executable files.
+
+Step 3. To build the Optimus distribution type the following command:
 
 ```
 $ sbt dist
 ```
 
 After a successful compilation, distribution is located inside the `./target/universal/optimus-<version>.zip` file. The distribution contains all library dependencies and requires only Java 7 (or higher). Sources, documentation and the compiled library (without dependencies) are archived as jar files into the `./target/scala-2.10/` directory.
-
-In order to use gurobi, lp_solve or ojAlgo you should also add the corresponding jar libraries yourself and modify the environment variables to make use of the solver executable files.
 
 ## Example:
 
@@ -44,13 +56,13 @@ Import the lqprog package:
 scala> import optimus.lqprog._
 ```
 
-Next, create a linear-quadratic problem and select a solver for it:
+Create a linear-quadratic problem and select a solver for it:
 
 ```scala
 scala> implicit val problem = new LQProblem(SolverLib.OJalgo)
 ```
 
-OK, let's create a couple of variables:
+Ok! Let's create a couple of variables:
 
 ```scala
 scala> val x = MPFloatVar("x", 100, 200)
