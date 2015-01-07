@@ -6,6 +6,7 @@ import org.scalatest.{FunSpec, Matchers}
  * Specification for LPSolve.
  *
  * @author Vagelis Michelioudakis
+ * @author Christos Vlassopoulos
  */
 final class LPSolveSpecTest extends FunSpec with Matchers {
 
@@ -45,6 +46,7 @@ final class LPSolveSpecTest extends FunSpec with Matchers {
       objectiveValue should equal(0)
       checkConstraints() should be(true)
       status should equal(ProblemStatus.OPTIMAL)
+
       release()
     }
 
@@ -67,7 +69,7 @@ final class LPSolveSpecTest extends FunSpec with Matchers {
     describe("Test IV") {
       implicit val lp = new LQProblem(SolverLib.lp_solve)
 
-      val x = MPFloatVar( "x", 100, 200)
+      val x = MPFloatVar("x", 100, 200)
       val y = MPFloatVar("y", 80, 170)
 
       minimize(-2 * x + 5 * y)
@@ -90,24 +92,6 @@ final class LPSolveSpecTest extends FunSpec with Matchers {
     describe("Test V") {
       implicit val lp = new LQProblem(SolverLib.lp_solve)
 
-      val x = MPFloatVar("x", 100, 200)
-      val y = MPFloatVar("y", 80, 170)
-
-      minimize(-2 * x + 5 * y)
-      add(y >= -x + 200)
-      start()
-
-      x.value should equal(Some(200))
-      y.value should equal(Some(80))
-      objectiveValue should equal(0)
-      status should equal(ProblemStatus.OPTIMAL)
-
-      release()
-    }
-
-    describe("Test VI") {
-      implicit val lp = new LQProblem(SolverLib.lp_solve)
-
       val x = MPFloatVar("x", 0, 10)
       val y = MPFloatVar("y", 0, 10)
 
@@ -123,7 +107,7 @@ final class LPSolveSpecTest extends FunSpec with Matchers {
       release()
     }
 
-    describe("Test VII") {
+    describe("Test VI") {
       implicit val lp = new LQProblem(SolverLib.lp_solve)
 
       val x = MPFloatVar("x", 0, 10)
@@ -163,7 +147,54 @@ final class LPSolveSpecTest extends FunSpec with Matchers {
 
       release()
     }
+
+    describe("Test VII") {
+      implicit val lp = new LQProblem(SolverLib.lp_solve)
+
+      val x = MPFloatVar("x", 0, Double.PositiveInfinity)
+      val y = MPFloatVar("y", 0, Double.PositiveInfinity)
+      val z = MPFloatVar("z", 0, Double.PositiveInfinity)
+
+      var cons: Vector[MPConstraint] = Vector()
+
+      maximize(2*x + 4*y + 3*z)
+
+      cons = cons :+ add(3*x + 4*y + 2*z <= 60)
+      cons = cons :+ add(2*x + y + 2*z <= 40)
+      cons = cons :+ add(x + 3*y + 2*z <= 80)
+      cons = cons :+ add(x >= -80)
+      cons = cons :+ add(y >= -50)
+      cons = cons :+ add(z >= -0.005)
+
+      start()
+
+      x.value.get should be(0.0 +- 1e-6)
+      y.value.get should be(6.666666666666667 +- 1e-6)
+      z.value.get should be(16.666666666666667 +- 1e-6)
+
+      cons(0).isTight() should be(true)
+      cons(1).isTight() should be(true)
+      cons(2).isTight() should be(false)
+      cons(3).isTight() should be(false)
+      cons(4).isTight() should be(false)
+      cons(5).isTight() should be(false)
+
+      cons(0).slack should be(0.0 +- 1e-6)
+      cons(1).slack should be(0.0 +- 1e-6)
+      cons(2).slack should be(26.666666666666667 +- 1e-6)
+      cons(3).slack should be(80.0 +- 1e-6)
+      cons(4).slack should be(56.666666666666667 +- 1e-6)
+      cons(5).slack should be(16.671666666666667 +- 1e-6)
+
+      cons.foreach(c => c.check() should be(true))
+
+      objectiveValue should be(76.666666666666667 +- 1e-6)
+      status should equal(ProblemStatus.OPTIMAL)
+
+      release()
+    }
   }
 
   println()
+
 }

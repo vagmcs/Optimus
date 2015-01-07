@@ -6,6 +6,7 @@ import org.scalatest.{FunSpec, Matchers}
  * Specification for oJalgo.
  *
  * @author Vagelis Michelioudakis
+ * @author Christos Vlassopoulos
  */
 final class OJalgoSpecTest extends FunSpec with Matchers {
 
@@ -45,6 +46,7 @@ final class OJalgoSpecTest extends FunSpec with Matchers {
       objectiveValue should equal(0)
       checkConstraints() should be(true)
       status should equal(ProblemStatus.OPTIMAL)
+
       release()
     }
 
@@ -67,7 +69,7 @@ final class OJalgoSpecTest extends FunSpec with Matchers {
     describe("Test IV") {
       implicit val lp = new LQProblem(SolverLib.OJalgo)
 
-      val x = MPFloatVar( "x", 100, 200)
+      val x = MPFloatVar("x", 100, 200)
       val y = MPFloatVar("y", 80, 170)
 
       minimize(-2 * x + 5 * y)
@@ -90,24 +92,6 @@ final class OJalgoSpecTest extends FunSpec with Matchers {
     describe("Test V") {
       implicit val lp = new LQProblem(SolverLib.OJalgo)
 
-      val x = MPFloatVar("x", 100, 200)
-      val y = MPFloatVar("y", 80, 170)
-
-      minimize(-2 * x + 5 * y)
-      add(y >= -x + 200)
-      start()
-
-      x.value should equal(Some(200))
-      y.value should equal(Some(80))
-      objectiveValue should equal(0)
-      status should equal(ProblemStatus.OPTIMAL)
-
-      release()
-    }
-
-    describe("Test VI") {
-      implicit val lp = new LQProblem(SolverLib.OJalgo)
-
       val x = MPFloatVar("x", 0, 10)
       val y = MPFloatVar("y", 0, 10)
 
@@ -123,7 +107,7 @@ final class OJalgoSpecTest extends FunSpec with Matchers {
       release()
     }
 
-    describe("Test VII") {
+    describe("Test VI") {
       implicit val lp = new LQProblem(SolverLib.OJalgo)
 
       val x = MPFloatVar("x", 0, 10)
@@ -163,11 +147,193 @@ final class OJalgoSpecTest extends FunSpec with Matchers {
 
       release()
     }
+
+    describe("Test VII") {
+      implicit val lp = new LQProblem(SolverLib.OJalgo)
+
+      val x = MPFloatVar("x", 0, Double.PositiveInfinity)
+      val y = MPFloatVar("y", 0, Double.PositiveInfinity)
+      val z = MPFloatVar("z", 0, Double.PositiveInfinity)
+
+      var cons: Vector[MPConstraint] = Vector()
+
+      maximize(2*x + 4*y + 3*z)
+
+      cons = cons :+ add(3*x + 4*y + 2*z <= 60)
+      cons = cons :+ add(2*x + y + 2*z <= 40)
+      cons = cons :+ add(x + 3*y + 2*z <= 80)
+      cons = cons :+ add(x >= -80)
+      cons = cons :+ add(y >= -50)
+      cons = cons :+ add(z >= -0.005)
+
+      start()
+
+      x.value.get should be(0.0 +- 1e-6)
+      y.value.get should be(6.666666666666667 +- 1e-6)
+      z.value.get should be(16.666666666666667 +- 1e-6)
+
+      cons(0).isTight() should be(true)
+      cons(1).isTight() should be(true)
+      cons(2).isTight() should be(false)
+      cons(3).isTight() should be(false)
+      cons(4).isTight() should be(false)
+      cons(5).isTight() should be(false)
+
+      cons(0).slack should be(0.0 +- 1e-6)
+      cons(1).slack should be(0.0 +- 1e-6)
+      cons(2).slack should be(26.666666666666667 +- 1e-6)
+      cons(3).slack should be(80.0 +- 1e-6)
+      cons(4).slack should be(56.666666666666667 +- 1e-6)
+      cons(5).slack should be(16.671666666666667 +- 1e-6)
+
+      cons.foreach(c => c.check() should be(true))
+
+      objectiveValue should be(76.666666666666667 +- 1e-6)
+      status should equal(ProblemStatus.OPTIMAL)
+
+      release()
+    }
   }
 
   describe("Quadratic programming") {
 
-    describe("Test I") {
+    /*describe("Test I") {
+      implicit val lp = new LQProblem(SolverLib.OJalgo)
+
+      val x = MPFloatVar("x", Double.NegativeInfinity, Double.PositiveInfinity)
+      val y = MPFloatVar("y", -0.5, 0.5)
+
+      maximize(x)
+      add(x*x + y*y <= 1)
+      start()
+
+      x.value should equal (Some(1.0))
+      y.value should equal (Some(0.0))
+      objectiveValue should be(1.0 +- 0.0001)
+      status should equal(ProblemStatus.OPTIMAL)
+    }*/
+
+    /*describe("Test II") {
+      implicit val lp = new LQProblem(SolverLib.OJalgo)
+
+      val x = MPFloatVar("x", 0, Double.PositiveInfinity)
+      val y = MPFloatVar("y", 0, Double.PositiveInfinity)
+      val z = MPFloatVar("z", 0, Double.PositiveInfinity)
+
+      minimize(x*x + 0.1*y*y + z*z - x*z + y)
+      add(x + y + z - x*x - y*y - 0.1*z*z + 0.2*x*z >= 1)
+      start()
+
+      x.value.get should equal (0.4682428458167764 +- 0.0001)
+      y.value.get should equal (0.012630817746014237 +- 0.0001)
+      objectiveValue should be(0.4161924543450218 +- 0.0001)
+      status should equal(ProblemStatus.OPTIMAL)
+
+      release()
+    }*/
+
+    describe("Test IIΙ") {
+      implicit val lp = new LQProblem(SolverLib.OJalgo)
+
+      var cons: Vector[MPConstraint] = Vector()
+
+      val x = MPFloatVar("x", 0, Double.PositiveInfinity)
+      val y = MPFloatVar("y", 0, Double.PositiveInfinity)
+
+      minimize(-8*x - 16*y + x*x + 4*y*y)
+
+      cons = cons :+ add(x + y <= 5)
+      cons = cons :+ add(x <= 3)
+      start()
+
+      x.value.get should equal (3.0 +- 1.0e-6)
+      y.value.get should equal (2.0 +- 1.0e-6)  // Here gurobi requires +- 1.0e-4
+
+      cons(0).isTight() should be(true)  // Here gurobi fails
+      cons(0).isTight(10e-4) should be(true)
+      cons(1).isTight() should be(true)
+
+      cons(0).slack should be(0.0 +- 1.0e-6)
+      cons(1).slack should be(0.0 +- 1.0e-6)
+
+      cons.foreach(c => c.check() should be(true))
+
+      objectiveValue should be(-31.0 +- 1.0e-6)
+      status should equal(ProblemStatus.OPTIMAL)
+
+      release()
+    }
+
+    describe("Test IV") {
+      implicit val lp = new LQProblem(SolverLib.OJalgo)
+
+      var cons: Vector[MPConstraint] = Vector()
+
+      val x = MPFloatVar("x", 0, Double.PositiveInfinity)
+      val y = MPFloatVar("y", 0, Double.PositiveInfinity)
+
+      minimize(2*x*x + y*y + x*y + x + y)
+      cons = cons :+ add(x + y := 1)
+      cons = cons :+ add(x >= -3)
+      cons = cons :+ add(y >= -1.0e-4)
+      start()
+
+      x.value.get should equal (2.5e-1 +- 1.0e-6)
+      y.value.get should equal (7.5e-1 +- 1.0e-6)
+
+      cons(0).isTight() should be(true)
+      cons(1).isTight() should be(false)
+      cons(2).isTight() should be(false)
+
+      cons(0).slack should be(0.0 +- 1.0e-6)
+      cons(1).slack should be(3.25 +- 1.0e-6)
+      cons(2).slack should be(7.501e-1 +- 1.0e-6)
+
+      cons.foreach(c => c.check() should be(true))
+
+      objectiveValue should be(1.875 +- 1.0e-6)
+      status should equal(ProblemStatus.OPTIMAL)
+
+      release()
+    }
+
+    describe("Test V") {
+      implicit val lp = new LQProblem(SolverLib.OJalgo)
+
+      var cons: Vector[MPConstraint] = Vector()
+
+      val x = MPFloatVar("x", 0, Double.PositiveInfinity)
+      val y = MPFloatVar("y", 0, Double.PositiveInfinity)
+
+      minimize(x*x + x*x + y*y - y*y + y*y + 7*x*y - 6*y*x + x*x - x*x + x - 99.9e-9*y + 1.0000000999*y)
+      cons = cons :+ add(x + y := 1)
+      cons = cons :+ add(x >= -3)
+      cons = cons :+ add(y >= -1.0e-4)
+      start()
+
+      x.value.get should equal (2.5e-1 +- 1.0e-6)
+      y.value.get should equal (7.5e-1 +- 1.0e-6)
+
+      cons(0).isTight() should be(true)
+      cons(1).isTight() should be(false)
+      cons(2).isTight() should be(false)
+
+      cons(0).slack should be(0.0 +- 1.0e-6)
+      cons(1).slack should be(3.25 +- 1.0e-6)
+      cons(2).slack should be(7.501e-1 +- 1.0e-6)
+
+      cons.foreach(c => c.check() should be(true))
+
+      objectiveValue should be(1.875 +- 1.0e-6)
+      status should equal(ProblemStatus.OPTIMAL)
+
+      release()
+    }
+
+    /**
+     * Almost identical to III
+     */
+    describe("Test VI") {
       implicit val lp = new LQProblem(SolverLib.OJalgo)
 
       val x = MPFloatVar("x", 0, Double.PositiveInfinity)
@@ -190,4 +356,5 @@ final class OJalgoSpecTest extends FunSpec with Matchers {
   }
 
   println()
+
 }
