@@ -6,7 +6,7 @@ version := "1.0"
 
 organization := "com.github.vagm"
 
-scalaVersion := "2.10.4"
+crossScalaVersions := Seq("2.10.4", "2.11.4")
 
 autoScalaLibrary := true
 
@@ -41,14 +41,8 @@ resolvers ++= Seq(
   "sonatype-oss-public" at "https://oss.sonatype.org/content/groups/public/"
 )
 
-// Unit testing
-libraryDependencies ++= Seq(
-  "junit" % "junit" % "4.11" % "test",
-  "org.scalatest" %% "scalatest" % "2.2.1" % "test"
-)
+// Dependencies for unit testing (only for compile and test, exclude from publishing)
+libraryDependencies += "org.scalatest" %% "scalatest" % "2.2.1" % "compile-internal, test-internal"
 
-// Scala language
-libraryDependencies ++= Seq(
-  "org.scala-lang" % "scala-library" % scalaVersion.value,
-  "org.scala-lang" % "scala-reflect" % scalaVersion.value
-)
+
+publishTo := Some(Resolver.file("file",  new File(Path.userHome.absolutePath+"/.m2/repository")))
