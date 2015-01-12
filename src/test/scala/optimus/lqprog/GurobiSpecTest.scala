@@ -354,6 +354,42 @@ final class GurobiSpecTest extends FunSpec with Matchers {
 
       release()
     }
+
+    describe("Test VII") {
+      implicit val lp = new LQProblem(SolverLib.gurobi)
+
+      val w0 = MPFloatVar("w0", Double.NegativeInfinity, Double.PositiveInfinity)
+      val w1 = MPFloatVar("w1", Double.NegativeInfinity, Double.PositiveInfinity)
+      val w2 = MPFloatVar("w2", Double.NegativeInfinity, Double.PositiveInfinity)
+      val slack = MPFloatVar("slack", 0, Double.PositiveInfinity)
+
+      minimize(0.5*(w0*w0 + w1*w1 + w2*w2) + 1000*slack)
+
+      add(-2.0*w2 + 0.0 >= -1.0*slack + 16.0)
+      start()
+
+      w0.value.get should equal (0.0 +- 0.0001)
+      w1.value.get should equal (0.0 +- 0.0001)
+      w2.value.get should equal (-8.0 +- 0.0001)
+      slack.value.get should equal (4.642039067684605E-16 +- 0.0001)
+      objectiveValue should be(3.20000000e+01 +- 0.0001)
+      status should equal(ProblemStatus.OPTIMAL)
+      checkConstraints() should be (true)
+
+      add(-2.0*w1 + -2.0*w0 + 6.0*w2 + 0.0 >= -1.0*slack + 6.0)
+      start()
+
+      w0.value.get should equal (-13.5 +- 0.0001)
+      w1.value.get should equal (-13.5 +- 0.0001)
+      w2.value.get should equal (-8.0 +- 0.0001)
+      slack.value.get should equal (8.241638881309338E-15 +- 0.0001)
+      objectiveValue should be(2.14250000e+02 +- 0.0001)
+      status should equal(ProblemStatus.OPTIMAL)
+      checkConstraints() should be (true)
+
+      release()
+    }
+
   }
 
   println()

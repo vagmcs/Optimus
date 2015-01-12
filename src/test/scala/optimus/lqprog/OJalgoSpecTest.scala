@@ -197,42 +197,7 @@ final class OJalgoSpecTest extends FunSpec with Matchers {
 
   describe("Quadratic programming") {
 
-    /*describe("Test I") {
-      implicit val lp = new LQProblem(SolverLib.OJalgo)
-
-      val x = MPFloatVar("x", Double.NegativeInfinity, Double.PositiveInfinity)
-      val y = MPFloatVar("y", -0.5, 0.5)
-
-      maximize(x)
-      add(x*x + y*y <= 1)
-      start()
-
-      x.value should equal (Some(1.0))
-      y.value should equal (Some(0.0))
-      objectiveValue should be(1.0 +- 0.0001)
-      status should equal(ProblemStatus.OPTIMAL)
-    }*/
-
-    /*describe("Test II") {
-      implicit val lp = new LQProblem(SolverLib.OJalgo)
-
-      val x = MPFloatVar("x", 0, Double.PositiveInfinity)
-      val y = MPFloatVar("y", 0, Double.PositiveInfinity)
-      val z = MPFloatVar("z", 0, Double.PositiveInfinity)
-
-      minimize(x*x + 0.1*y*y + z*z - x*z + y)
-      add(x + y + z - x*x - y*y - 0.1*z*z + 0.2*x*z >= 1)
-      start()
-
-      x.value.get should equal (0.4682428458167764 +- 0.0001)
-      y.value.get should equal (0.012630817746014237 +- 0.0001)
-      objectiveValue should be(0.4161924543450218 +- 0.0001)
-      status should equal(ProblemStatus.OPTIMAL)
-
-      release()
-    }*/
-
-    describe("Test IIΙ") {
+    describe("Test I") {
       implicit val lp = new LQProblem(SolverLib.OJalgo)
 
       var cons: Vector[MPConstraint] = Vector()
@@ -264,7 +229,7 @@ final class OJalgoSpecTest extends FunSpec with Matchers {
       release()
     }
 
-    describe("Test IV") {
+    describe("Test II") {
       implicit val lp = new LQProblem(SolverLib.OJalgo)
 
       var cons: Vector[MPConstraint] = Vector()
@@ -297,7 +262,7 @@ final class OJalgoSpecTest extends FunSpec with Matchers {
       release()
     }
 
-    describe("Test V") {
+    describe("Test III") {
       implicit val lp = new LQProblem(SolverLib.OJalgo)
 
       var cons: Vector[MPConstraint] = Vector()
@@ -333,7 +298,7 @@ final class OJalgoSpecTest extends FunSpec with Matchers {
     /**
      * Almost identical to III
      */
-    describe("Test VI") {
+    describe("Test IV") {
       implicit val lp = new LQProblem(SolverLib.OJalgo)
 
       val x = MPFloatVar("x", 0, Double.PositiveInfinity)

@@ -31,8 +31,6 @@ import optimus.algebra._
 import optimus.lqprog.ProblemStatus.ProblemStatus
 import gurobi._
 
-import scala.collection.mutable.ArrayBuffer
-
 /**
  * Gurobi solver.
  *

@@ -54,7 +54,7 @@ package object lqprog {
     constraints.foreach(add)
   }
 
-  def subjectTo(constraints: Constraint*)(implicit lQProblem: LQProblem): Unit = {
+  def subjectTo(constraints: Constraint*)(implicit lQProblem: LQProblem) {
     constraints.foreach(add)
   }
 

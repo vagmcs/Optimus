@@ -30,6 +30,7 @@ package optimus.lqprog
 import optimus.algebra._
 import optimus.lqprog.ProblemStatus.ProblemStatus
 import scala.collection.mutable.ArrayBuffer
+import scala.collection.mutable.HashMap
 
 /**
  * Abstract mathematical programming model.
@@ -172,9 +173,10 @@ abstract class AbstractMPProblem {
 
   protected val variables = ArrayBuffer[MPVariable]()
   protected val constraints = ArrayBuffer[MPConstraint]()
-  protected val solution = ArrayBuffer[Double]()
+  protected var solution = HashMap.empty[Int, Double]
   protected var objective: Expression = null
   protected var minimize = false
+  protected var reOptimize = false
 
   protected val solver: AbstractMPSolver
 
@@ -187,7 +189,7 @@ abstract class AbstractMPProblem {
 
   def variable(i: Int) = variables(i)
 
-  def setVarBounds(variable: MPVariable) = {
+  protected def setVarBounds(variable: MPVariable) = {
     if (variable.isUnbounded) {
       solver.setUnboundUpperBound(variable.index)
       solver.setUnboundLowerBound(variable.index)
@@ -195,17 +197,18 @@ abstract class AbstractMPProblem {
     else solver.setBounds(variable.index, variable.lowerBound, variable.upperBound)
   }
 
-  def setVariableProperties() = {
+  protected def setVariableProperties() = {
     variables.foreach(v => setVarBounds(v))
   }
 
   def add(constraint: Constraint): MPConstraint = {
     val constraintToAdd = new MPConstraint(this, constraint, constraints.size)
     constraints += constraintToAdd
+    if(reOptimize) solver.addConstraint(constraintToAdd)
     constraintToAdd
   }
 
-  def addAllConstraints() = {
+  protected def addAllConstraints() = {
     solver.addAllConstraints(constraints)
   }
 
@@ -213,7 +216,8 @@ abstract class AbstractMPProblem {
 
   def getValue(varIndex: Int): Option[Double] = Some(solution(varIndex))
 
-  def optimize(expression: Expression, minimize: Boolean): AbstractMPProblem = {
+  protected def optimize(expression: Expression, minimize: Boolean): AbstractMPProblem = {
+    reOptimize = false
     objective = expression
     this.minimize = minimize
     this
@@ -225,18 +229,23 @@ abstract class AbstractMPProblem {
 
   def start(timeLimit: Int = Int.MaxValue): Boolean = {
 
-    solver.buildProblem(constraints.size, variables.size)
+    if(!reOptimize) {
+      solver.buildProblem(constraints.size, variables.size)
 
-    println("Configuring variable bounds...")
-    setVariableProperties()
+      println("Configuring variable bounds...")
+      setVariableProperties()
 
-    println("Adding objective function...")
-    solver.addObjective(objective, minimize)
+      println("Adding objective function...")
+      solver.addObjective(objective, minimize)
 
-    println("Creating constraints...")
-    val start = System.currentTimeMillis()
-    addAllConstraints()
-    println("Time to add constraints:" + (System.currentTimeMillis() - start) + "ms")
+      println("Creating constraints...")
+      val start = System.currentTimeMillis()
+      addAllConstraints()
+      println("Time to add constraints:" + (System.currentTimeMillis() - start) + "ms")
+
+      reOptimize = true
+    }
+    else println("Re-optimize")
 
     if (timeLimit < Int.MaxValue)
       solver.setTimeout(timeLimit)
@@ -249,7 +258,7 @@ abstract class AbstractMPProblem {
     println("Solving ...")
     status = solver.solveProblem()
     if ( (status == ProblemStatus.OPTIMAL) || (status == ProblemStatus.SUBOPTIMAL) )
-      (0 until variables.length) foreach { i => solution += solver.getValue(i) }
+      (0 until variables.length) foreach { i => solution(i) = solver.getValue(i) }
   }
 
   def checkConstraints(tol: Double = 10e-6): Boolean = constraints.forall(_.check(tol))
