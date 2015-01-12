@@ -24,18 +24,18 @@ This program comes with ABSOLUTELY NO WARRANTY. This is free software, and you a
 
 ## Instructions to build Optimus from source
 
-In order to build Optimus from source, you need to have Java 7 and [sbt](http://www.scala-sbt.org/) installed in your system. Furthermore, Optimus build depends on the [lp_solve](http://lpsolve.sourceforge.net), [Gurobi](http://www.gurobi.com/) and [ojAlgo](http://ojalgo.org/).
+In order to build Optimus from source, you need to have Java 7 and [sbt](http://www.scala-sbt.org/) installed in your system. Furthermore, Optimus build depends on the [lp_solve](http://lpsolve.sourceforge.net), [Gurobi](http://www.gurobi.com/), [Mosek](https://mosek.com) and [ojAlgo](http://ojalgo.org/).
 
 Step 1. Include lp_solve, Gurobi and ojAlgo library dependencies to `./lib`, as it is illustrated in the tree below:
 
 ```
-.
+lib/
 |-- gurobi.jar
 |-- lpsolve55j.jar
+|-- mosek.jar
 |-- ojalgo-37.0.jar
 |-- ojalgo-biz-37.0.jar
 |-- ojalgo-ext-37.0.jar
-
 ```
 
 Step 2. For using Gurobi and lp_solve you should also set the environment variables of your system to make use of the solver native executable files.
@@ -47,6 +47,42 @@ $ sbt dist
 ```
 
 After a successful compilation, distribution is located inside the `./target/universal/optimus-<version>.zip` file. The distribution contains all library dependencies and requires only Java 7 (or higher). Sources, documentation and the compiled library (without dependencies) are archived as jar files into the `./target/scala-2.10/` directory.
+	
+
+## Local publish	
+To publish to your local Apache Ivy directory (e.g., inside ~/.ivy2/local/), type the following command:
+
+```
+$ sbt publishLocal
+```
+
+## Cross-building
+
+By default compile and publish produce jars for Scala 2.10.4. This project supports cross-building for both Scala 2.10.4 and 2.11.4 (for details see [sbt documentation](http://www.scala-sbt.org/0.13.5/docs/Detailed-Topics/Cross-Build.html)). In sbt you can use ++ <version> to temporarily switch the Scala version currently being used to build.
+	
+##### To start building all sub-libraries only for Scala 2.11.4, type the following command:
+
+```
+$ sbt ++2.11.4 compile
+```
+
+##### To start building all sub-libraries for both Scala 2.10.4 and 2.11.4, type the following command:
+
+```
+$ sbt +compile
+```
+
+##### To publish all sub-libraries for both Scala 2.10.4 and 2.11.4 to your local Apache Ivy directory, type the following command:
+
+```
+$ sbt ++2.11.4 publishLocal
+```
+
+##### To publish all sub-libraries for both Scala 2.10.4 and 2.11.4 to your local Apache Ivy directory, type the following command:
+
+```
+$ sbt +publishLocal
+```	
 
 ## Example:
 
