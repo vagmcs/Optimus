@@ -193,6 +193,78 @@ final class LPSolveSpecTest extends FunSpec with Matchers {
 
       release()
     }
+
+    describe("Test VIII") {
+      implicit val lp = new LQProblem(SolverLib.lp_solve)
+
+      val w = MPFloatVar("w", 0, Double.PositiveInfinity)
+      val x = MPFloatVar("x", 0, Double.PositiveInfinity)
+      val y = MPFloatVar("y", 0, Double.PositiveInfinity)
+      val z = MPFloatVar("z", 0, Double.PositiveInfinity)
+
+      var cons: Vector[MPConstraint] = Vector()
+
+      // Max 5w + x + 3y + 4z
+      maximize(3*w - 8*w + 10*w + 0.001*x - (-0.999*x) - 0.3*10*(-y) - 4*0.0006*0*(w-x-z) + 2*z - 2*z + 4*z)
+      //      subjectTo( w + x + y + z <= 40,
+      //        2*w + x - y - z >= 10 )
+
+      cons = cons :+ add(w + x + y + z <= 40)
+      cons = cons :+ add(2*w + x - y - z >= 10)
+
+      start()
+
+      w.value.get should equal (4.0e+1 +- 1.0e-6)
+      x.value.get should equal (0.0 +- 1.0e-6)
+      y.value.get should equal (0.0 +- 1.0e-6)
+      z.value.get should equal (0.0 +- 1.0e-6)
+      objectiveValue should be(2.0e+2 +- 1.0e-6)
+
+      cons(0).isTight() should be(true)
+      cons(1).isTight() should be(false)
+
+      status should equal(ProblemStatus.OPTIMAL)
+      checkConstraints() should be (true)
+
+      //TODO: Constraint of the form y >= w doesn't work. Seen as boolean.
+      cons = cons :+ add(y - w >= 0)
+      cons = cons :+ add(x >= 15)
+      start()
+
+      w.value.get should equal (12.5 +- 1.0e-6)   //  6.66666667
+      x.value.get should equal (1.5e+1 +- 1.0e-6)
+      y.value.get should equal (12.5 +- 1.0e-6)   //  6.66666667
+      z.value.get should equal (0.0 +- 1.0e-6)    // 11.66666667
+      objectiveValue should be(1.15e+2 +- 1.0e-6)
+
+      cons(0).isTight() should be(true)
+      cons(1).isTight() should be(false)
+      cons(2).isTight() should be(true)
+      cons(3).isTight() should be(true)
+
+      status should equal(ProblemStatus.OPTIMAL)
+      checkConstraints() should be (true)
+
+      // Constraint: w - 2x + 4y + 3z >= 40
+      cons = cons :+ add(-(-w) - 2*x + 4*y + 3*0.5*2*z >= 40 - 3 + 2.7 + 0.3)
+      start()
+
+      w.value.get should equal (6.66666667 +- 1.0e-6)
+      x.value.get should equal (1.5e+1 +- 1.0e-6)
+      y.value.get should equal (8.33333333 +- 1.0e-6)
+      z.value.get should equal (1.0e+1 +- 1.0e-6)
+      objectiveValue should be(1.1333333333e+2 +- 1.0e-6)
+      status should equal(ProblemStatus.OPTIMAL)
+      checkConstraints() should be (true)
+
+      cons(0).isTight() should be(true)
+      cons(1).isTight() should be(true)
+      cons(2).isTight() should be(false)
+      cons(3).isTight() should be(true)
+      cons(4).isTight() should be(true)
+
+      release()
+    }
   }
 
   println()
