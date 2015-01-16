@@ -413,20 +413,24 @@ final class GurobiSpecTest extends FunSpec with Matchers {
       val y = MPFloatVar("y", 0, Double.PositiveInfinity)
 
       minimize(-8*x - 16*y + x*x + 4*y*y)
-      add(x + y <= 5)
-      add(x <= 3)
-      add(x >= 0)
-      add(y >= 0)
+      subjectTo( x + y <= 5,
+        x <= 3,
+        x >= 0,
+        y >= 0 )
       start()
 
       x.value.get should equal (2.9999999998374056 +- 0.0001)
       y.value.get should equal (1.999958833749785 +- 0.0001)
       objectiveValue should be(-3.10000000e+01 +- 0.0001)
       status should equal(ProblemStatus.OPTIMAL)
+      checkConstraints() should be(true)
 
       release()
     }
 
+    /**
+     * Fails on OJalgo!
+     */
     describe("Test VII") {
       implicit val lp = new LQProblem(SolverLib.gurobi)
 
@@ -461,7 +465,6 @@ final class GurobiSpecTest extends FunSpec with Matchers {
 
       release()
     }
-
   }
 
   println()

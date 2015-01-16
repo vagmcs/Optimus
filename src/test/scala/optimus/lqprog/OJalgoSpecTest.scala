@@ -269,7 +269,7 @@ final class OJalgoSpecTest extends FunSpec with Matchers {
 
   describe("Quadratic programming") {
 
-    describe("Test I") {
+    describe("Test III") {
       implicit val lp = new LQProblem(SolverLib.OJalgo)
 
       var cons: Vector[MPConstraint] = Vector()
@@ -301,7 +301,7 @@ final class OJalgoSpecTest extends FunSpec with Matchers {
       release()
     }
 
-    describe("Test II") {
+    describe("Test IV") {
       implicit val lp = new LQProblem(SolverLib.OJalgo)
 
       var cons: Vector[MPConstraint] = Vector()
@@ -334,7 +334,7 @@ final class OJalgoSpecTest extends FunSpec with Matchers {
       release()
     }
 
-    describe("Test III") {
+    describe("Test V") {
       implicit val lp = new LQProblem(SolverLib.OJalgo)
 
       var cons: Vector[MPConstraint] = Vector()
@@ -370,23 +370,24 @@ final class OJalgoSpecTest extends FunSpec with Matchers {
     /**
      * Almost identical to III
      */
-    describe("Test IV") {
+    describe("Test VI") {
       implicit val lp = new LQProblem(SolverLib.OJalgo)
 
       val x = MPFloatVar("x", 0, Double.PositiveInfinity)
       val y = MPFloatVar("y", 0, Double.PositiveInfinity)
 
       minimize(-8*x - 16*y + x*x + 4*y*y)
-      add(x + y <= 5)
-      add(x <= 3)
-      add(x >= 0)
-      add(y >= 0)
+      subjectTo( x + y <= 5,
+        x <= 3,
+        x >= 0,
+        y >= 0 )
       start()
 
       x.value.get should equal (2.9999999998374056 +- 0.0001)
       y.value.get should equal (1.999958833749785 +- 0.0001)
       objectiveValue should be(-3.10000000e+01 +- 0.0001)
       status should equal(ProblemStatus.OPTIMAL)
+      checkConstraints() should be(true)
 
       release()
     }
