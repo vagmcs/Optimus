@@ -72,7 +72,16 @@ final class AlgebraSpecTest extends FunSpec with Matchers {
 
     info(x * (-7.7) * y * z + " should be equal to " + y * z * x * (-7.7))
     x * (-7.7) * y * z should equal (y * z * x * (-7.7))
+    
+    info((x^2) + " should be equal to " + x * x)
+    x^2 should equal (x * x)
 
+    info((x^4) + " should be equal to " + x * x * x * x)
+    x^4 should equal (x * x * x * x)
+
+    info((x^0) + " should be equal to " + One)
+    x^0 should equal (One)
+    
     /**
      * Checking complex expression properties
      */

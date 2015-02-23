@@ -124,6 +124,14 @@ abstract class Variable(val symbol: String) extends Expression with Ordered[Vari
 
   override def unary_-(): Expression = Term(Const(-1.0), Vector(this))
 
+  def ^(power: Int): Expression = {
+    require(power >= 0, "Power should be positive!")
+    power match {
+      case 0 => One
+      case _ => Term(One, Vector.fill(power)(this))
+    }
+  }
+  
   def compare(that: Variable) = index - that.index
 
   override def toString = symbol
