@@ -1,4 +1,4 @@
-package optimus.lqprog
+package optimus.optimization
 
 /*
  *    /\\\\\
@@ -28,9 +28,10 @@ package optimus.lqprog
  */
 
 import optimus.algebra._
-import optimus.lqprog.ProblemStatus.ProblemStatus
+import optimus.optimization.PreSolve.PreSolve
+import optimus.optimization.ProblemStatus.ProblemStatus
+import scala.collection.mutable
 import scala.collection.mutable.ArrayBuffer
-import scala.collection.mutable.HashMap
 
 /**
  * Abstract mathematical programming model.
@@ -114,7 +115,28 @@ abstract class AbstractMPSolver {
    * @param colId position of the variable
    */
   def setUnboundLowerBound(colId: Int)
-  
+
+  /**
+   * Set the column/variable as an integer variable
+   *
+   * @param colId position of the variable
+   */
+  def setInteger(colId: Int)
+
+  /**
+   * Set the column / variable as an binary integer variable
+   *
+   * @param colId position of the variable
+   */
+  def setBinary(colId: Int)
+
+  /**
+   * Set the column/variable as a float variable
+   *
+   * @param colId position of the variable
+   */
+  def setFloat(colId: Int)
+
   /**
    * Add objective expression to be optimized by the solver.
    *
@@ -142,15 +164,16 @@ abstract class AbstractMPSolver {
       addConstraint(constraints(idx))
       idx += 1
     }
-    println("Added " + len + " constraints.")
+    print("Added " + len + " constraints")
   }
 
   /**
    * Solve the problem.
    *
+   * @param preSolve pre-solving mode
    * @return status code indicating the nature of the solution
    */
-  def solveProblem(): ProblemStatus
+  def solveProblem(preSolve: PreSolve = PreSolve.DISABLE): ProblemStatus
 
   /**
    * Release the memory of this solver
@@ -173,7 +196,7 @@ abstract class AbstractMPProblem {
 
   protected val variables = ArrayBuffer[MPVariable]()
   protected val constraints = ArrayBuffer[MPConstraint]()
-  protected var solution = HashMap.empty[Int, Double]
+  protected var solution = mutable.HashMap.empty[Int, Double]
   protected var objective: Expression = null
   protected var minimize = false
   protected var reOptimize = false
@@ -182,6 +205,7 @@ abstract class AbstractMPProblem {
 
   protected var status = ProblemStatus.NOT_SOLVED
 
+  // Register a variables to this problem and return a index for it
   def register(variable: MPVariable) = {
     variables += variable
     variables.length - 1
@@ -189,6 +213,7 @@ abstract class AbstractMPProblem {
 
   def variable(i: Int) = variables(i)
 
+  // Set given variable bounds
   protected def setVarBounds(variable: MPVariable) = {
     if (variable.isUnbounded) {
       solver.setUnboundUpperBound(variable.index)
@@ -198,7 +223,7 @@ abstract class AbstractMPProblem {
   }
 
   protected def setVariableProperties() = {
-    variables.foreach(v => setVarBounds(v))
+    variables.foreach(setVarBounds)
   }
 
   def add(constraint: Constraint): MPConstraint = {
@@ -227,7 +252,7 @@ abstract class AbstractMPProblem {
 
   def maximize(expression: Expression): AbstractMPProblem = optimize(expression, minimize = false)
 
-  def start(timeLimit: Int = Int.MaxValue): Boolean = {
+  def start(timeLimit: Int = Int.MaxValue, preSolve: PreSolve = PreSolve.DISABLE): Boolean = {
 
     if(!reOptimize) {
       solver.buildProblem(constraints.size, variables.size)
@@ -238,10 +263,10 @@ abstract class AbstractMPProblem {
       println("Adding objective function...")
       solver.addObjective(objective, minimize)
 
-      println("Creating constraints...")
+      print("Creating constraints: ")
       val start = System.currentTimeMillis()
       addAllConstraints()
-      println("Time to add constraints:" + (System.currentTimeMillis() - start) + "ms")
+      println(" in " + (System.currentTimeMillis() - start) + "ms")
 
       reOptimize = true
     }
@@ -250,15 +275,17 @@ abstract class AbstractMPProblem {
     if (timeLimit < Int.MaxValue)
       solver.setTimeout(timeLimit)
 
-    solveProblem()
+    solveProblem(preSolve)
     (status == ProblemStatus.OPTIMAL) || (status == ProblemStatus.SUBOPTIMAL)
   }
 
-  def solveProblem() {
-    println("Solving ...")
-    status = solver.solveProblem()
+  def solveProblem(preSolve: PreSolve) {
+    println("Solving...")
+    status = solver.solveProblem(preSolve)
     if ( (status == ProblemStatus.OPTIMAL) || (status == ProblemStatus.SUBOPTIMAL) )
       (0 until variables.length) foreach { i => solution(i) = solver.getValue(i) }
+
+    println("Solution status is " + status)
   }
 
   def checkConstraints(tol: Double = 10e-6): Boolean = constraints.forall(_.check(tol))
@@ -309,7 +336,6 @@ class MPVariable(val problem: AbstractMPProblem, val lowerBound: Double, val upp
    * Return true if the variable is unbounded, false otherwise
    */
   def isUnbounded = unbounded
-
 }
 
 /**
@@ -331,10 +357,10 @@ class MPConstraint(val problem: AbstractMPProblem, val constraint: Constraint, v
     var res = 0.0
 
     for ( (variables, c) <- constraint.lhs.terms)
-      res += c * variables.map(v => v.asInstanceOf[MPVariable].value.get).reduce(_ * _)
+      res += c * variables.map(v => v.asInstanceOf[MPVariable].value.get).product
 
     for ( (variables, c) <- constraint.rhs.terms)
-      res -= c * variables.map(v => v.asInstanceOf[MPVariable].value.get).reduce(_ * _)
+      res -= c * variables.map(v => v.asInstanceOf[MPVariable].value.get).product
 
     val c = constraint.rhs.constant - constraint.lhs.constant
     constraint.operator match {

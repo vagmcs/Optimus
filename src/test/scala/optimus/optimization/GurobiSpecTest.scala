@@ -1,4 +1,4 @@
-package optimus.lqprog
+package optimus.optimization
 
 import org.scalatest.{FunSpec, Matchers}
 
@@ -14,7 +14,7 @@ final class GurobiSpecTest extends FunSpec with Matchers {
   describe("Linear programming") {
 
     describe("Test I") {
-      implicit val problem = new LQProblem(SolverLib.gurobi)
+      implicit val problem = LQProblem(SolverLib.gurobi)
 
       val x = MPFloatVar("x", 100, 200)
       val y = MPFloatVar("y", 80, 170)
@@ -26,14 +26,14 @@ final class GurobiSpecTest extends FunSpec with Matchers {
       x.value should equal(Some(100))
       y.value should equal(Some(170))
       objectiveValue should equal(650)
-      checkConstraints() should be(true)
+      checkConstraints() shouldBe true
       status should equal(ProblemStatus.OPTIMAL)
 
       release()
     }
 
     describe("Test II") {
-      implicit val problem = new LQProblem(SolverLib.gurobi)
+      implicit val problem = LQProblem(SolverLib.gurobi)
 
       val x = MPFloatVar("x", 100, 200)
       val y = MPFloatVar("y", 80, 170)
@@ -45,7 +45,7 @@ final class GurobiSpecTest extends FunSpec with Matchers {
       x.value should equal(Some(200))
       y.value should equal(Some(80))
       objectiveValue should equal(0)
-      checkConstraints() should be(true)
+      checkConstraints() shouldBe true
       status should equal(ProblemStatus.OPTIMAL)
 
       release()
@@ -68,7 +68,7 @@ final class GurobiSpecTest extends FunSpec with Matchers {
     }
 
     describe("Test IV") {
-      implicit val lp = new LQProblem(SolverLib.gurobi)
+      implicit val lp = LQProblem(SolverLib.gurobi)
 
       val x = MPFloatVar("x", 100, 200)
       val y = MPFloatVar("y", 80, 170)
@@ -91,7 +91,7 @@ final class GurobiSpecTest extends FunSpec with Matchers {
     }
 
     describe("Test V") {
-      implicit val lp = new LQProblem(SolverLib.gurobi)
+      implicit val lp = LQProblem(SolverLib.gurobi)
 
       val x = MPFloatVar("x", 0, 10)
       val y = MPFloatVar("y", 0, 10)
@@ -109,7 +109,7 @@ final class GurobiSpecTest extends FunSpec with Matchers {
     }
 
     describe("Test VI") {
-      implicit val lp = new LQProblem(SolverLib.gurobi)
+      implicit val lp = LQProblem(SolverLib.gurobi)
 
       val x = MPFloatVar("x", 0, 10)
       val y = MPFloatVar("y", 0, 10)
@@ -126,31 +126,31 @@ final class GurobiSpecTest extends FunSpec with Matchers {
 
       start()
 
-      x.value.get should be(10.0 +- 1e-6)
-      y.value.get should be(7.5 +- 1e-6)
+      x.value.get shouldBe 10.0 +- 1e-6
+      y.value.get shouldBe 7.5 +- 1e-6
 
-      cons(0).isTight() should be(false)
-      cons(1).isTight() should be(true)
-      cons(2).isTight() should be(false)
-      cons(3).isTight() should be(true)
-      cons(4).isTight() should be(true)
+      cons.head.isTight() shouldBe false
+      cons(1).isTight() shouldBe true
+      cons(2).isTight() shouldBe false
+      cons(3).isTight() shouldBe true
+      cons(4).isTight() shouldBe true
 
-      cons(0).slack should be(12.5 +- 1e-6)
-      cons(1).slack should be(0.0 +- 1e-6)
-      cons(2).slack should be(5.0 +- 1e-6)
-      cons(3).slack should be(0.0 +- 1e-6)
-      cons(4).slack should be(0.0 +- 1e-6)
+      cons.head.slack shouldBe 12.5 +- 1e-6
+      cons(1).slack shouldBe 0.0 +- 1e-6
+      cons(2).slack shouldBe 5.0 +- 1e-6
+      cons(3).slack shouldBe 0.0 +- 1e-6
+      cons(4).slack shouldBe 0.0 +- 1e-6
 
-      cons.foreach(c => c.check() should be(true))
+      cons.foreach(c => c.check() shouldBe true)
 
-      objectiveValue should be(17.5 +- 1e-6)
+      objectiveValue shouldBe 17.5 +- 1e-6
       status should equal(ProblemStatus.OPTIMAL)
 
       release()
     }
 
     describe("Test VII") {
-      implicit val lp = new LQProblem(SolverLib.gurobi)
+      implicit val lp = LQProblem(SolverLib.gurobi)
 
       val x = MPFloatVar("x", 0, Double.PositiveInfinity)
       val y = MPFloatVar("y", 0, Double.PositiveInfinity)
@@ -169,34 +169,34 @@ final class GurobiSpecTest extends FunSpec with Matchers {
 
       start()
 
-      x.value.get should be(0.0 +- 1e-6)
-      y.value.get should be(6.666666666666667 +- 1e-6)
-      z.value.get should be(16.666666666666667 +- 1e-6)
+      x.value.get shouldBe 0.0 +- 1e-6
+      y.value.get shouldBe 6.666666666666667 +- 1e-6
+      z.value.get shouldBe 16.666666666666667 +- 1e-6
 
-      cons(0).isTight() should be(true)
-      cons(1).isTight() should be(true)
-      cons(2).isTight() should be(false)
-      cons(3).isTight() should be(false)
-      cons(4).isTight() should be(false)
-      cons(5).isTight() should be(false)
+      cons.head.isTight() shouldBe true
+      cons(1).isTight() shouldBe true
+      cons(2).isTight() shouldBe false
+      cons(3).isTight() shouldBe false
+      cons(4).isTight() shouldBe false
+      cons(5).isTight() shouldBe false
 
-      cons(0).slack should be(0.0 +- 1e-6)
-      cons(1).slack should be(0.0 +- 1e-6)
-      cons(2).slack should be(26.666666666666667 +- 1e-6)
-      cons(3).slack should be(80.0 +- 1e-6)
-      cons(4).slack should be(56.666666666666667 +- 1e-6)
-      cons(5).slack should be(16.671666666666667 +- 1e-6)
+      cons.head.slack shouldBe 0.0 +- 1e-6
+      cons(1).slack shouldBe 0.0 +- 1e-6
+      cons(2).slack shouldBe 26.666666666666667 +- 1e-6
+      cons(3).slack shouldBe 80.0 +- 1e-6
+      cons(4).slack shouldBe 56.666666666666667 +- 1e-6
+      cons(5).slack shouldBe 16.671666666666667 +- 1e-6
 
-      cons.foreach(c => c.check() should be(true))
+      cons.foreach(c => c.check() shouldBe true)
 
-      objectiveValue should be(76.666666666666667 +- 1e-6)
+      objectiveValue shouldBe 76.666666666666667 +- 1e-6
       status should equal(ProblemStatus.OPTIMAL)
 
       release()
     }
 
     describe("Test VIII") {
-      implicit val lp = new LQProblem(SolverLib.gurobi)
+      implicit val lp = LQProblem(SolverLib.gurobi)
 
       val w = MPFloatVar("w", 0, Double.PositiveInfinity)
       val x = MPFloatVar("x", 0, Double.PositiveInfinity)
@@ -204,11 +204,8 @@ final class GurobiSpecTest extends FunSpec with Matchers {
       val z = MPFloatVar("z", 0, Double.PositiveInfinity)
 
       var cons: Vector[MPConstraint] = Vector()
-
-      // Max 5w + x + 3y + 4z
+      
       maximize(3*w - 8*w + 10*w + 0.001*x - (-0.999*x) - 0.3*10*(-y) - 4*0.0006*0*(w-x-z) + 2*z - 2*z + 4*z)
-//      subjectTo( w + x + y + z <= 40,
-//        2*w + x - y - z >= 10 )
 
       cons = cons :+ add(w + x + y + z <= 40)
       cons = cons :+ add(2*w + x - y - z >= 10)
@@ -219,15 +216,15 @@ final class GurobiSpecTest extends FunSpec with Matchers {
       x.value.get should equal (0.0 +- 1.0e-6)
       y.value.get should equal (0.0 +- 1.0e-6)
       z.value.get should equal (0.0 +- 1.0e-6)
-      objectiveValue should be(2.0e+2 +- 1.0e-6)
+      objectiveValue shouldBe 2.0e+2 +- 1.0e-6
 
-      cons(0).isTight() should be(true)
-      cons(1).isTight() should be(false)
+      cons.head.isTight() shouldBe true
+      cons(1).isTight() shouldBe false
 
       status should equal(ProblemStatus.OPTIMAL)
-      checkConstraints() should be (true)
+      checkConstraints() shouldBe true
 
-      //TODO: Constraint of the form y >= w doesn't work. Seen as boolean.
+      // TODO: Constraint of the form y >= w doesn't work. Seen as boolean.
       cons = cons :+ add(y - w >= 0)
       cons = cons :+ add(x >= 15)
       start()
@@ -236,15 +233,15 @@ final class GurobiSpecTest extends FunSpec with Matchers {
       x.value.get should equal (1.5e+1 +- 1.0e-6)
       y.value.get should equal (12.5 +- 1.0e-6)   //  6.66666667
       z.value.get should equal (0.0 +- 1.0e-6)    // 11.66666667
-      objectiveValue should be(1.15e+2 +- 1.0e-6)
+      objectiveValue shouldBe 1.15e+2 +- 1.0e-6
 
-      cons(0).isTight() should be(true)
-      cons(1).isTight() should be(false)
-      cons(2).isTight() should be(true)
-      cons(3).isTight() should be(true)
+      cons.head.isTight() shouldBe true
+      cons(1).isTight() shouldBe false
+      cons(2).isTight() shouldBe true
+      cons(3).isTight() shouldBe true
 
       status should equal(ProblemStatus.OPTIMAL)
-      checkConstraints() should be (true)
+      checkConstraints() shouldBe true
 
       // Constraint: w - 2x + 4y + 3z >= 40
       cons = cons :+ add(-(-w) - 2*x + 4*y + 3*0.5*2*z >= 40 - 3 + 2.7 + 0.3)
@@ -254,15 +251,15 @@ final class GurobiSpecTest extends FunSpec with Matchers {
       x.value.get should equal (1.5e+1 +- 1.0e-6)
       y.value.get should equal (8.33333333 +- 1.0e-6)
       z.value.get should equal (1.0e+1 +- 1.0e-6)
-      objectiveValue should be(1.1333333333e+2 +- 1.0e-6)
+      objectiveValue shouldBe 1.1333333333e+2 +- 1.0e-6
       status should equal(ProblemStatus.OPTIMAL)
-      checkConstraints() should be (true)
+      checkConstraints() shouldBe true
 
-      cons(0).isTight() should be(true)
-      cons(1).isTight() should be(true)
-      cons(2).isTight() should be(false)
-      cons(3).isTight() should be(true)
-      cons(4).isTight() should be(true)
+      cons.head.isTight() shouldBe true
+      cons(1).isTight() shouldBe true
+      cons(2).isTight() shouldBe false
+      cons(3).isTight() shouldBe true
+      cons(4).isTight() shouldBe true
 
       release()
     }
@@ -271,7 +268,7 @@ final class GurobiSpecTest extends FunSpec with Matchers {
   describe("Quadratic programming") {
 
     describe("Test I") {
-      implicit val lp = new LQProblem(SolverLib.gurobi)
+      implicit val lp = LQProblem(SolverLib.gurobi)
 
       val x = MPFloatVar("x", Double.NegativeInfinity, Double.PositiveInfinity)
       val y = MPFloatVar("y", -0.5, 0.5)
@@ -282,12 +279,12 @@ final class GurobiSpecTest extends FunSpec with Matchers {
 
       x.value should equal (Some(1.0))
       y.value should equal (Some(0.0))
-      objectiveValue should be(1.0 +- 0.0001)
+      objectiveValue shouldBe 1.0 +- 0.0001
       status should equal(ProblemStatus.OPTIMAL)
     }
 
     describe("Test II") {
-      implicit val lp = new LQProblem(SolverLib.gurobi)
+      implicit val lp = LQProblem(SolverLib.gurobi)
 
       val x = MPFloatVar("x", 0, Double.PositiveInfinity)
       val y = MPFloatVar("y", 0, Double.PositiveInfinity)
@@ -299,14 +296,14 @@ final class GurobiSpecTest extends FunSpec with Matchers {
 
       x.value.get should equal (0.4682428458167764 +- 0.0001)
       y.value.get should equal (0.012630817746014237 +- 0.0001)
-      objectiveValue should be(0.4161924543450218 +- 0.0001)
+      objectiveValue shouldBe 0.4161924543450218 +- 0.0001
       status should equal(ProblemStatus.OPTIMAL)
 
       release()
     }
 
     describe("Test IIΙ") {
-      implicit val lp = new LQProblem(SolverLib.gurobi)
+      implicit val lp = LQProblem(SolverLib.gurobi)
 
       var cons: Vector[MPConstraint] = Vector()
 
@@ -322,23 +319,23 @@ final class GurobiSpecTest extends FunSpec with Matchers {
       x.value.get should equal (3.0 +- 1.0e-6)
       y.value.get should equal (2.0 +- 1.0e-4)  // imprecise!
 
-      cons(0).isTight() should be(false)  // !
-      cons(0).isTight(10e-4) should be(true)  // !
-      cons(1).isTight() should be(true)
+      cons.head.isTight() shouldBe false  // !
+      cons.head.isTight(10e-4) shouldBe true  // !
+      cons(1).isTight() shouldBe true
 
-      cons(0).slack should be(0.0 +- 1.0e-4)  // !
-      cons(1).slack should be(0.0 +- 1.0e-6)
+      cons.head.slack shouldBe 0.0 +- 1.0e-4  // !
+      cons(1).slack shouldBe 0.0 +- 1.0e-6
 
-      cons.foreach(c => c.check() should be(true))
+      cons.foreach(c => c.check() shouldBe true)
 
-      objectiveValue should be(-31.0 +- 1.0e-4) // !
+      objectiveValue shouldBe -31.0 +- 1.0e-4 // !
       status should equal(ProblemStatus.OPTIMAL)
 
       release()
     }
 
     describe("Test IV") {
-      implicit val lp = new LQProblem(SolverLib.gurobi)
+      implicit val lp = LQProblem(SolverLib.gurobi)
 
       var cons: Vector[MPConstraint] = Vector()
 
@@ -354,24 +351,24 @@ final class GurobiSpecTest extends FunSpec with Matchers {
       x.value.get should equal (2.5e-1 +- 1.0e-6)
       y.value.get should equal (7.5e-1 +- 1.0e-6)
 
-      cons(0).isTight() should be(true)
-      cons(1).isTight() should be(false)
-      cons(2).isTight() should be(false)
+      cons.head.isTight() shouldBe true
+      cons(1).isTight() shouldBe false
+      cons(2).isTight() shouldBe false
 
-      cons(0).slack should be(0.0 +- 1.0e-6)
-      cons(1).slack should be(3.25 +- 1.0e-6)
-      cons(2).slack should be(7.501e-1 +- 1.0e-6)
+      cons.head.slack shouldBe 0.0 +- 1.0e-6
+      cons(1).slack shouldBe 3.25 +- 1.0e-6
+      cons(2).slack shouldBe 7.501e-1 +- 1.0e-6
 
-      cons.foreach(c => c.check() should be(true))
+      cons.foreach(c => c.check() shouldBe true)
 
-      objectiveValue should be(1.875 +- 1.0e-6)
+      objectiveValue shouldBe 1.875 +- 1.0e-6
       status should equal(ProblemStatus.OPTIMAL)
 
       release()
     }
 
     describe("Test V") {
-      implicit val lp = new LQProblem(SolverLib.gurobi)
+      implicit val lp = LQProblem(SolverLib.gurobi)
 
       var cons: Vector[MPConstraint] = Vector()
 
@@ -387,17 +384,17 @@ final class GurobiSpecTest extends FunSpec with Matchers {
       x.value.get should equal (2.5e-1 +- 1.0e-6)
       y.value.get should equal (7.5e-1 +- 1.0e-6)
 
-      cons(0).isTight() should be(true)
-      cons(1).isTight() should be(false)
-      cons(2).isTight() should be(false)
+      cons.head.isTight() shouldBe true
+      cons(1).isTight() shouldBe false
+      cons(2).isTight() shouldBe false
 
-      cons(0).slack should be(0.0 +- 1.0e-6)
-      cons(1).slack should be(3.25 +- 1.0e-6)
-      cons(2).slack should be(7.501e-1 +- 1.0e-6)
+      cons.head.slack shouldBe 0.0 +- 1.0e-6
+      cons(1).slack shouldBe 3.25 +- 1.0e-6
+      cons(2).slack shouldBe 7.501e-1 +- 1.0e-6
 
-      cons.foreach(c => c.check() should be(true))
+      cons.foreach(c => c.check() shouldBe true)
 
-      objectiveValue should be(1.875 +- 1.0e-6)
+      objectiveValue shouldBe 1.875 +- 1.0e-6
       status should equal(ProblemStatus.OPTIMAL)
 
       release()
@@ -407,7 +404,7 @@ final class GurobiSpecTest extends FunSpec with Matchers {
      * Almost identical to III
      */
     describe("Test VI") {
-      implicit val lp = new LQProblem(SolverLib.gurobi)
+      implicit val lp = LQProblem(SolverLib.gurobi)
 
       val x = MPFloatVar("x", 0, Double.PositiveInfinity)
       val y = MPFloatVar("y", 0, Double.PositiveInfinity)
@@ -421,9 +418,9 @@ final class GurobiSpecTest extends FunSpec with Matchers {
 
       x.value.get should equal (2.9999999998374056 +- 0.0001)
       y.value.get should equal (1.999958833749785 +- 0.0001)
-      objectiveValue should be(-3.10000000e+01 +- 0.0001)
+      objectiveValue shouldBe -3.10000000e+01 +- 0.0001
       status should equal(ProblemStatus.OPTIMAL)
-      checkConstraints() should be(true)
+      checkConstraints() shouldBe true
 
       release()
     }
@@ -432,7 +429,7 @@ final class GurobiSpecTest extends FunSpec with Matchers {
      * Fails on OJalgo!
      */
     describe("Test VII") {
-      implicit val lp = new LQProblem(SolverLib.gurobi)
+      implicit val lp = LQProblem(SolverLib.gurobi)
 
       val w0 = MPFloatVar("w0", Double.NegativeInfinity, Double.PositiveInfinity)
       val w1 = MPFloatVar("w1", Double.NegativeInfinity, Double.PositiveInfinity)
@@ -448,9 +445,9 @@ final class GurobiSpecTest extends FunSpec with Matchers {
       w1.value.get should equal (0.0 +- 0.0001)
       w2.value.get should equal (-8.0 +- 0.0001)
       slack.value.get should equal (4.642039067684605E-16 +- 0.0001)
-      objectiveValue should be(3.20000000e+01 +- 0.0001)
+      objectiveValue shouldBe 3.20000000e+01 +- 0.0001
       status should equal(ProblemStatus.OPTIMAL)
-      checkConstraints() should be (true)
+      checkConstraints() shouldBe true
 
       add(-2.0*w1 + -2.0*w0 + 6.0*w2 + 0.0 >= -1.0*slack + 6.0)
       start()
@@ -459,14 +456,80 @@ final class GurobiSpecTest extends FunSpec with Matchers {
       w1.value.get should equal (-13.5 +- 0.0001)
       w2.value.get should equal (-8.0 +- 0.0001)
       slack.value.get should equal (8.241638881309338E-15 +- 0.0001)
-      objectiveValue should be(2.14250000e+02 +- 0.0001)
+      objectiveValue shouldBe 2.14250000e+02 +- 0.0001
       status should equal(ProblemStatus.OPTIMAL)
-      checkConstraints() should be (true)
+      checkConstraints() shouldBe true
 
       release()
     }
   }
 
-  println()
+  describe("Mixed-Integer Programming") {
 
+    describe("Test I") {
+      implicit val mip = MIProblem(SolverLib.gurobi)
+
+      val x0 = MPFloatVar("x0", 0, 40)
+      val x1 = MPIntVar("x1", 0 to 1000)
+      val x2 = MPIntVar("x2", 0 until 18)
+      val x3 = MPFloatVar("x3", 2, 3)
+
+      maximize(x0 + 2*x1 + 3*x2 + x3)
+      subjectTo(
+        -1*x0 + x1 + x2 + 10*x3 <= 20,
+        x0 - 3.0*x1 + x2 <= 30,
+        x1 - 3.5*x3 := 0
+      )
+
+      start()
+
+      x0.value.get should equal (39.999999 +- 1.0e-6)
+      x1.value.get should equal (10.0 )
+      x2.value.get should equal (17.0)
+      x3.value.get should equal (2.8571428 +- 1.0e-6)
+      objectiveValue shouldBe 113.857142 +- 1.0e-6
+      status should equal(ProblemStatus.OPTIMAL)
+
+      release()
+    }
+
+    describe("Test II") {
+
+      implicit val mip = MIProblem(SolverLib.gurobi)
+
+      val x = MPFloatVar("x", 0, 100)
+      val y = MPIntVar("y", 0 to 100)
+
+      maximize(8 * x + 12 * y)
+      add(10 * x + 20 * y <= 140)
+      add(6 * x + 8 * y <= 72)
+      start()
+
+      status should equal(ProblemStatus.OPTIMAL)
+      x.value.get shouldBe 8.0 +- 0.00001
+      y.value should equal(Some(3))
+      release()
+    }
+
+    describe("Test III") {
+
+      implicit val lp = MIProblem(SolverLib.gurobi)
+
+      val x = Array.tabulate(6)(j => MPIntVar(s"x$j", 0 to 1))
+      val z = 3 * x(0) + 5 * x(1) + 6 * x(2) + 9 * x(3) + 10 * x(4) + 10 * x(5)
+      minimize(z)
+      add(-2 * x(0) + 6 * x(1) - 3 * x(2) + 4 * x(3) + x(4) - 2 * x(5) >= 2)
+      add(-5 * x(0) - 3 * x(1) + x(2) + 3 * x(3) - 2 * x(4) + x(5) >= -2)
+      add(5 * x(0) - x(1) + 4 * x(2) -2 * x(3) + 2 * x(4) - x(5) >= 3)
+
+      x.foreach(_.isBinary shouldBe true)
+
+      start()
+      status should equal(ProblemStatus.OPTIMAL)
+      lp.objectiveValue shouldBe 11.0
+      release()
+    }
+  }
+
+  println()
 }

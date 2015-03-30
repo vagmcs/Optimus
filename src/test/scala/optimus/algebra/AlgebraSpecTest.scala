@@ -1,7 +1,7 @@
 package optimus.algebra
 
 import org.scalatest.{Matchers, FunSpec}
-import optimus.lqprog.{LQProblem, MPFloatVar}
+import optimus.optimization.{LQProblem, MPFloatVar}
 
 /**
 * Specification for algebra.
@@ -11,7 +11,7 @@ import optimus.lqprog.{LQProblem, MPFloatVar}
 */
 final class AlgebraSpecTest extends FunSpec with Matchers {
 
-  implicit val problem = new LQProblem
+  implicit val problem = LQProblem()
 
   /**
    * Definition of variables
@@ -196,7 +196,7 @@ final class AlgebraSpecTest extends FunSpec with Matchers {
 
     val startSum = System.currentTimeMillis()
     sum(variables)
-    info("Summation of " + variables.size + " variables took " + (System.currentTimeMillis() - startSum) + "ms to calculate")
+    info("Summation of " + variables.length + " variables took " + (System.currentTimeMillis() - startSum) + "ms to calculate")
 
     val startProd = System.currentTimeMillis()
     val expr = (x + y + x + y + t + z + t + z + 4.1*y + x + 5) * (x + y + x + y + t + z + t + z + y + x + 2)

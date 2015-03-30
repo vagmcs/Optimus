@@ -1,8 +1,9 @@
-package optimus.lqprog
+package optimus.optimization
 
 import lpsolve.LpSolve
 import optimus.algebra._
-import optimus.lqprog.ProblemStatus.ProblemStatus
+import optimus.optimization.PreSolve.PreSolve
+import optimus.optimization.ProblemStatus.ProblemStatus
 
 /*
  *    /\\\\\
@@ -70,7 +71,7 @@ final class LPSolve extends AbstractMPSolver {
     lp = LpSolve.makeLp(0, nbCols)
     lp.setInfinite(Double.MaxValue)
     lp.setAddRowmode(true)
-    lp.setVerbose(LpSolve.CRITICAL)
+    lp.setVerbose(LpSolve.IMPORTANT)
   }
 
   /**
@@ -115,6 +116,33 @@ final class LPSolve extends AbstractMPSolver {
   }
 
   /**
+   * Set the column/variable as an integer variable
+   *
+   * @param colId position of the variable
+   */
+  def setInteger(colId: Int) {
+    lp.setInt(colId + 1, true)
+  }
+
+  /**
+   * Set the column / variable as an binary integer variable
+   *
+   * @param colId position of the variable
+   */
+  def setBinary(colId: Int) {
+    lp.setBinary(colId + 1, true)
+  }
+
+  /**
+   * Set the column/variable as a float variable
+   *
+   * @param colId position of the variable
+   */
+  def setFloat(colId: Int) {
+    lp.setInt(colId + 1, false)
+  }
+
+  /**
    * Add objective expression to be optimized by the solver.
    *
    * @param objective the expression to be optimized
@@ -126,7 +154,7 @@ final class LPSolve extends AbstractMPSolver {
         throw new IllegalArgumentException("LPSolve can handle only linear expressions and " + objective + " is higher order!")
 
     val list = objective.terms.toList
-    lp.setObjFnex(objective.terms.size, list.map(pair => pair._2).toArray, list.map(pair => pair._1(0).index + 1).toArray)
+    lp.setObjFnex(objective.terms.size, list.map(pair => pair._2).toArray, list.map(pair => pair._1.head.index + 1).toArray)
     if (!minimize) lp.setMaxim()
   }
 
@@ -149,7 +177,7 @@ final class LPSolve extends AbstractMPSolver {
     }
 
     lp.addConstraintex(lhs.terms.size, list.map(pair => pair._2).toArray,
-                      list.map(pair => pair._1(0).index + 1).toArray, LPOperator, -lhs.constant)
+                      list.map(pair => pair._1.head.index + 1).toArray, LPOperator, -lhs.constant)
     lp.setRowName(nbRows, "")
   }
 
@@ -158,11 +186,14 @@ final class LPSolve extends AbstractMPSolver {
    *
    * @return status code indicating the nature of the solution
    */
-  def solveProblem(): ProblemStatus = {
+  def solveProblem(preSolve: PreSolve = PreSolve.DISABLE): ProblemStatus = {
 
+    if (preSolve == PreSolve.CONSERVATIVE) lp.setPresolve(LpSolve.PRESOLVE_ROWS + LpSolve.PRESOLVE_COLS, 0)
+    else if (preSolve == PreSolve.AGGRESSIVE) lp.setPresolve(LpSolve.PRESOLVE_ROWS + LpSolve.PRESOLVE_COLS + LpSolve.PRESOLVE_LINDEP, 0)
+    
     lp.setAddRowmode(false)
 
-    val status = lp.solve match {
+    lp.solve match {
 
       case LpSolve.OPTIMAL =>
         solution = Array.tabulate(nbCols)(c => lp.getVarPrimalresult(nbRows + c + 1))
@@ -187,13 +218,6 @@ final class LPSolve extends AbstractMPSolver {
       case _ =>
         ProblemStatus.INFEASIBLE
     }
-
-    if (status.id == LpSolve.OPTIMAL) {
-      println("------- Solving ------- " + status)
-      println("Number of cols:" + lp.getNcolumns + " origin columns:" + lp.getNorigColumns)
-      println("Number of rows:" + lp.getNrows + " origin rows:" + lp.getNorigRows)
-    }
-    status
   }
 
   /**

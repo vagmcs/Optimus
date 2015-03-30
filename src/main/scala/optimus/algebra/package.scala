@@ -60,6 +60,20 @@ package object algebra {
     }
   }
 
+  // These functions produce mathematical expressions over joint iterable and then summing out the results
+
+  def sum[A](indexes: Iterable[A])(f : A => Expression) : Expression = sum(indexes map f)
+
+  def sum[A, B](indexesA: Iterable[A], indexesB: Iterable[B])(f : (A, B) => Expression) : Expression = sum( for(a <- indexesA; b <- indexesB) yield f(a, b) )
+
+  def sum[A, B, C](indexesA: Iterable[A], indexesB: Iterable[B], indexesC: Iterable[C])(f : (A, B, C) => Expression) : Expression = {
+    sum( for(a <- indexesA; b <- indexesB; c <- indexesC) yield f(a, b, c) )
+  }
+
+  def sum[A, B, C, D](indexesA: Iterable[A], indexesB: Iterable[B], indexesC: Iterable[C], indexesD: Iterable[D])(f : (A, B, C, D) => Expression) : Expression = {
+    sum( for(a <- indexesA; b <- indexesB; c <- indexesC; d <- indexesD) yield f(a, b, c, d) )
+  }
+
   // algebra implicit conversions
 
   implicit def Int2Const(value: Int): Const = if(value == 0) Zero else Const(value.toDouble)

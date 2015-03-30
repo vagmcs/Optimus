@@ -28,13 +28,14 @@ package optimus
  */
 
 import optimus.algebra.{Expression, Constraint}
+import optimus.optimization.PreSolve.PreSolve
 
 /**
  * Helper functions for linear-quadratic optimization
  *
  * @author Vagelis Michelioudakis
  */
-package object lqprog {
+package object optimization {
 
   object SolverLib extends Enumeration {
 
@@ -43,32 +44,49 @@ package object lqprog {
     val lp_solve = Value("lp_solve")
     val gurobi = Value("gurobi")
     val mosek = Value("mosek")
-    val OJalgo = Value("oJalgo")
+    val oJalgo = Value("oJalgo")
   }
 
+  // Used for testing multiple solvers at once
+  lazy val solvers = List(SolverLib.lp_solve, SolverLib.gurobi, SolverLib.oJalgo).filter(canInstantiateSolver)
+
+  // Checks if the given solver can be ran on this system
+  private def canInstantiateSolver(s: SolverLib.Value): Boolean = {
+    try new LQProblem(s)
+    catch {
+      case e: Exception => println(e.getMessage); return false
+    }
+    true
+  }
+
+  object PreSolve extends Enumeration {
+    
+    type PreSolve = Value
+
+    val DISABLE = Value("Disabled")
+    val CONSERVATIVE = Value("Conservative")
+    val AGGRESSIVE = Value("Aggressive")
+  }
+  
   // Helper functions to model using an implicit mathematical programming problem
 
-  def add(constraint: Constraint)(implicit lqProblem: LQProblem) = lqProblem.add(constraint)
+  def add(constraint: Constraint)(implicit problem: AbstractMPProblem) = problem.add(constraint)
 
-  def addAll(constraints: Constraint*)(implicit lqProblem: LQProblem) {
+  def subjectTo(constraints: Constraint*)(implicit problem: AbstractMPProblem) {
     constraints.foreach(add)
   }
 
-  def subjectTo(constraints: Constraint*)(implicit lQProblem: LQProblem) {
-    constraints.foreach(add)
-  }
+  def start(preSolve: PreSolve = PreSolve.DISABLE, timeLimit: Int = Int.MaxValue)(implicit problem: AbstractMPProblem) = problem.start(timeLimit, preSolve)
 
-  def start()(implicit lqProblem: LQProblem) = lqProblem.start()
+  def minimize(expression: Expression)(implicit problem: AbstractMPProblem) = problem.minimize(expression)
 
-  def minimize(expression: Expression)(implicit lqProblem: LQProblem) = lqProblem.minimize(expression)
+  def maximize(expression: Expression)(implicit problem: AbstractMPProblem) = problem.maximize(expression)
 
-  def maximize(expression: Expression)(implicit lqProblem: LQProblem) = lqProblem.maximize(expression)
+  def release()(implicit problem: AbstractMPProblem) = problem.release()
 
-  def release()(implicit lqProblem: LQProblem) = lqProblem.release()
+  def objectiveValue(implicit problem: AbstractMPProblem) = problem.objectiveValue()
 
-  def objectiveValue(implicit lqProblem: LQProblem) = lqProblem.objectiveValue()
+  def status(implicit problem: AbstractMPProblem) = problem.getStatus
 
-  def status(implicit lqProblem: LQProblem) = lqProblem.getStatus
-
-  def checkConstraints(tol: Double = 10e-6)(implicit lqProblem: LQProblem) = lqProblem.checkConstraints(tol)
+  def checkConstraints(tol: Double = 10e-6)(implicit problem: AbstractMPProblem) = problem.checkConstraints(tol)
 }

@@ -1,7 +1,8 @@
-package optimus.lqprog
+package optimus.optimization
 
 import optimus.algebra.{ConstraintRelation, Expression}
-import optimus.lqprog.ProblemStatus.ProblemStatus
+import optimus.optimization.PreSolve.PreSolve
+import optimus.optimization.ProblemStatus.ProblemStatus
 import org.ojalgo.constant.BigMath
 import org.ojalgo.optimisation.{Optimisation, Variable, ExpressionsBasedModel}
 
@@ -47,6 +48,9 @@ final class OJalgo extends AbstractMPSolver {
 
   val model = new ExpressionsBasedModel
 
+  // Internal flag for keeping optimization state
+  private var minimize = true
+
   /**
    * Problem builder, should configure the solver and append
    * mathematical model variables.
@@ -61,7 +65,7 @@ final class OJalgo extends AbstractMPSolver {
       """  ____________  /_____ ___  /______ ______  """ + "\n" +
       """  _  __ \__ _  /_  __  /_  /__  __  /  __ \ """ + "\n" +
       """  / /_/ / /_/ / / /_/ /_  / _  /_/ // /_/ / """ + "\n" +
-      """  \____/\____/  \__,_/ /_/  _\__, / \____/  """ + "\n" +
+      """  \____/\____/  \__._/ /_/  _\__. / \____/  """ + "\n" +
       """                            /____/          """ + "\n"
     }
 
@@ -116,6 +120,33 @@ final class OJalgo extends AbstractMPSolver {
   }
 
   /**
+   * Set the column/variable as an integer variable
+   *
+   * @param colId position of the variable
+   */
+  def setInteger(colId: Int) {
+    model.getVariable(colId).integer(true)
+  }
+
+  /**
+   * Set the column / variable as an binary integer variable
+   *
+   * @param colId position of the variable
+   */
+  def setBinary(colId: Int) {
+    model.getVariable(colId).binary()
+  }
+
+  /**
+   * Set the column/variable as a float variable
+   *
+   * @param colId position of the variable
+   */
+  def setFloat(colId: Int) {
+    model.getVariable(colId).integer(false)
+  }
+
+  /**
    * Add objective expression to be optimized by the solver.
    *
    * @param objective the expression to be optimized
@@ -126,10 +157,11 @@ final class OJalgo extends AbstractMPSolver {
     objectiveFunction.weight(BigMath.ONE)
 
     for(term <- objective.terms) {
-      if(term._1.length == 1) objectiveFunction.setLinearFactor(model.getVariable(term._1(0).index), term._2)
-      else objectiveFunction.setQuadraticFactor(model.getVariable(term._1(0).index), model.getVariable(term._1(1).index), term._2)
+      if(term._1.length == 1) objectiveFunction.setLinearFactor(model.getVariable(term._1.head.index), term._2)
+      else objectiveFunction.setQuadraticFactor(model.getVariable(term._1.head.index), model.getVariable(term._1(1).index), term._2)
     }
-    model.setMinimisation(minimize)
+
+    if(!minimize) this.minimize = false else this.minimize = true
   }
 
   /**
@@ -144,8 +176,8 @@ final class OJalgo extends AbstractMPSolver {
 
     val constraint = model.addExpression(mpConstraint.index.toString)
     for(term <- lhs.terms) {
-      if(term._1.length == 1)constraint.setLinearFactor(model.getVariable(term._1(0).index), term._2)
-      else constraint.setQuadraticFactor(model.getVariable(term._1(0).index), model.getVariable(term._1(1).index), term._2)
+      if(term._1.length == 1)constraint.setLinearFactor(model.getVariable(term._1.head.index), term._2)
+      else constraint.setQuadraticFactor(model.getVariable(term._1.head.index), model.getVariable(term._1(1).index), term._2)
     }
 
     operator match {
@@ -160,9 +192,11 @@ final class OJalgo extends AbstractMPSolver {
    *
    * @return status code indicating the nature of the solution
    */
-  def solveProblem(): ProblemStatus = {
+  def solveProblem(preSolve: PreSolve = PreSolve.DISABLE): ProblemStatus = {
 
-    val result = model.solve()
+    if(preSolve != PreSolve.DISABLE) println("oJalgo does not support pre-solving!")
+    
+    val result = if(this.minimize) model.minimise() else model.maximise()
 
     result.getState match {
 
@@ -172,11 +206,9 @@ final class OJalgo extends AbstractMPSolver {
         ProblemStatus.OPTIMAL
 
       case Optimisation.State.INFEASIBLE =>
-        println("Problem is infeasible!")
         ProblemStatus.INFEASIBLE
 
       case Optimisation.State.UNBOUNDED =>
-        println("Problem is unbounded!")
         ProblemStatus.UNBOUNDED
 
       case _ =>
@@ -200,6 +232,6 @@ final class OJalgo extends AbstractMPSolver {
    */
   def setTimeout(limit: Int) = {
     require(0 <= limit)
-    model.getDefaultSolver.options.time_abort = limit
+    model.options.time_abort = limit
   }
 }
