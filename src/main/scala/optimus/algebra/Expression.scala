@@ -40,7 +40,7 @@ abstract class Expression {
 
   // keep the variables and their corresponding coefficients and the constant term of the expression
   val constant: Double
-  val terms: Map[Vector[Variable], Double]
+  val terms: Map[Long, Double]
 
   def +(other: Expression): Expression = other match {
     case Zero => this
@@ -68,7 +68,7 @@ abstract class Expression {
 
   private def order = {
     var order = 0
-    for(term <- terms) order = Math.max(order, term._1.length)
+    for(term <- terms) order = Math.max(order, decode(term._1).length)
     order
   }
 
@@ -81,7 +81,7 @@ abstract class Expression {
 
   override def toString =
     if (terms.isEmpty) constant.toString
-    else "(" + terms.map(pair => pair._2 + pair._1.mkString("*")).reduce(_ + " + " + _) + " + " + constant + ")"
+    else "(" + terms.map(pair => pair._2 + decode(pair._1).map(index => "idx" + index).mkString("*")).reduce(_ + " + " + _) + " + " + constant + ")"
 
   override def equals(that: Any) = that match {
     case other: Expression =>
@@ -101,9 +101,8 @@ abstract class Expression {
  */
 abstract class Variable(val symbol: String) extends Expression with Ordered[Variable] {
 
-  // A variable alone has a constant value of 1 in front of her
+  // A variable alone always has a constant value 0
   val constant = 0.0
-  val terms = Map(Vector(this) -> 1.0)
 
   val upperBound: Double
   val lowerBound: Double
@@ -159,8 +158,15 @@ object Variable { final val ANONYMOUS = "" }
  */
 case class Term(coefficient: Const, variables: Vector[Variable]) extends Expression {
 
+  if(variables.length > 2)
+    throw new IllegalArgumentException("Algebra cannot handle expressions of higher order!")
+
   val constant = 0.0
-  val terms = Map(variables.sorted -> coefficient.value)
+  val terms = if(variables.length == 1) Map(encode(variables.head.index) -> coefficient.value)
+              else {
+                val sorted = variables.sorted
+                Map(encode(sorted.head.index, sorted(1).index) -> coefficient.value)
+              }
 
   override def *(other: Expression) = other match {
 
@@ -190,7 +196,7 @@ case class Term(coefficient: Const, variables: Vector[Variable]) extends Express
 class Const(val value: Double) extends Expression {
 
   val constant = value
-  val terms = Map.empty[Vector[Variable], Double]
+  val terms = Map.empty[Long, Double]
 
   def +(other: Const) = other match {
     case Zero => this
@@ -268,7 +274,7 @@ case class ConstProduct(c: Const, a: Expression) extends Expression {
 
   val constant = if (c == Zero) 0.0 else c.value * a.constant
 
-  val terms = if (c == Zero) Map.empty[Vector[Variable], Double]
+  val terms = if (c == Zero) Map.empty[Long, Double]
               else a.terms.map(pair => pair._1 -> c.value * pair._2)
 
   override def unary_-(): Expression = ConstProduct(Const(-c.value), a)
@@ -290,8 +296,8 @@ abstract class BinaryOp(val a: Expression, val b: Expression) extends Expression
 
   def op(x: Double, y: Double): Double
 
-  def merge: Map[Vector[Variable], Double] = {
-    var temporal = scala.collection.mutable.Map[Vector[Variable], Double]()
+  def merge: Map[Long, Double] = {
+    var temporal = scala.collection.mutable.Map[Long, Double]()
 
     // 1. Add all terms of expression A to the result
     for ( (variables, c) <- a.terms )
@@ -346,8 +352,8 @@ case class Product(override val a: Expression, override val b: Expression) exten
 
   def op(x: Double, y: Double) = x * y
 
-  override def merge: Map[Vector[Variable], Double] = {
-    var temporal = scala.collection.mutable.Map[Vector[Variable], Double]()
+  override def merge: Map[Long, Double] = {
+    var temporal = scala.collection.mutable.Map[Long, Double]()
 
     for ( (variablesA, cA) <- a.terms) {
 
@@ -360,7 +366,10 @@ case class Product(override val a: Expression, override val b: Expression) exten
       for( (variablesB, cB) <- b.terms) {
 
         // 2. Calculate products involving terms from both A and B expressions
-        val variables = (variablesA ++ variablesB).sorted
+        val variablesTemp = (decode(variablesA) ++ decode(variablesB)).sorted
+
+        assert(variablesTemp.length <= 2)
+        val variables = encode(variablesTemp.head, variablesTemp(1))
 
         temporal.get(variables) match {
           case None => temporal += (variables -> cA*cB)

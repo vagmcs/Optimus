@@ -311,6 +311,9 @@ class MPVariable(val problem: AbstractMPProblem, val lowerBound: Double, val upp
 
   val index = problem.register(this)
 
+  // A variable alone has a coefficient value of 1 in front of her
+  val terms = Map(encode(index) -> 1.0)
+
   protected var integer = false
 
   protected var binary = false
@@ -357,10 +360,10 @@ class MPConstraint(val problem: AbstractMPProblem, val constraint: Constraint, v
     var res = 0.0
 
     for ( (variables, c) <- constraint.lhs.terms)
-      res += c * variables.map(v => v.asInstanceOf[MPVariable].value.get).product
+      res += c * decode(variables).map(v => problem.getValue(v).get).product
 
     for ( (variables, c) <- constraint.rhs.terms)
-      res -= c * variables.map(v => v.asInstanceOf[MPVariable].value.get).product
+      res -= c * decode(variables).map(v => problem.getValue(v).get).product
 
     val c = constraint.rhs.constant - constraint.lhs.constant
     constraint.operator match {

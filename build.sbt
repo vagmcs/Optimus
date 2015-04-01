@@ -53,4 +53,7 @@ libraryDependencies += "org.scalatest" %% "scalatest" % "2.2.4" % "test"
 // Optimized Range foreach loops
 //libraryDependencies += "com.nativelibs4java" %% "scalaxy-streams" % "0.3.4" % "provided"
 
+// Trove Collections
+//libraryDependencies += "net.sf.trove4j" % "trove4j" % "3.0.3"
+
 publishTo := Some(Resolver.file("file",  new File(Path.userHome.absolutePath+"/.m2/repository")))

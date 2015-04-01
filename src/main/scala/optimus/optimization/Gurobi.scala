@@ -67,6 +67,8 @@ final class Gurobi extends AbstractMPSolver {
 
     println("Model gurobi: " + nbRows + "x" + nbCols)
 
+    model.getEnv.set(GRB.IntParam.OutputFlag, 0)
+
     this.nbRows = nbRows
     this.nbCols = nbCols
     val cols = (1 to nbCols).toArray
@@ -158,15 +160,16 @@ final class Gurobi extends AbstractMPSolver {
       case ExpressionOrder.QUADRATIC =>
         val QExpression = new GRBQuadExpr
         for(term <- objective.terms) {
-          if(term._1.length == 1) QExpression.addTerm(term._2, model.getVar(term._1.head.index))
-          else QExpression.addTerm(term._2, model.getVar(term._1.head.index), model.getVar(term._1(1).index))
+          val indexes = decode(term._1)
+          if(indexes.length == 1) QExpression.addTerm(term._2, model.getVar(indexes.head))
+          else QExpression.addTerm(term._2, model.getVar(indexes.head), model.getVar(indexes(1)))
         }
         model.setObjective(QExpression, if (minimize) 1 else -1)
 
       case ExpressionOrder.LINEAR =>
         val LExpression = new GRBLinExpr
-        val terms = objective.terms.toArray
-        LExpression.addTerms(terms.map(pair => pair._2), terms.map(pair => model.getVar(pair._1.head.index)))
+        val list = objective.terms.keys.map(code => decode(code))
+        LExpression.addTerms(objective.terms.values.toArray, list.map(indexes => model.getVar(indexes.head)).toArray)
         model.setObjective(LExpression, if (minimize) 1 else -1)
     }
 
@@ -198,15 +201,16 @@ final class Gurobi extends AbstractMPSolver {
       case ExpressionOrder.QUADRATIC =>
         val QExpression = new GRBQuadExpr
         for(term <- lhs.terms) {
-          if(term._1.length == 1) QExpression.addTerm(term._2, model.getVar(term._1.head.index))
-          else QExpression.addTerm(term._2, model.getVar(term._1.head.index), model.getVar(term._1(1).index))
+          val indexes = decode(term._1)
+          if(indexes.length == 1) QExpression.addTerm(term._2, model.getVar(indexes.head))
+          else QExpression.addTerm(term._2, model.getVar(indexes.head), model.getVar(indexes(1)))
         }
         model.addQConstr(QExpression, GRBOperator, rhs, "")
 
       case ExpressionOrder.LINEAR =>
         val LExpression = new GRBLinExpr
-        val terms = lhs.terms.toArray
-        LExpression.addTerms(terms.map(pair => pair._2), terms.map(pair => model.getVar(pair._1.head.index)))
+        val list = lhs.terms.keys.map(code => decode(code))
+        LExpression.addTerms(lhs.terms.values.toArray, list.map(indexes => model.getVar(indexes.head)).toArray)
         model.addConstr(LExpression, GRBOperator, rhs, "")
     }
   }

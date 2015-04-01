@@ -67,17 +67,17 @@ final class AlgebraSpecTest extends FunSpec with Matchers {
     /**
      * Checking expression term properties
      */
-    info(2.1 * x * y * z + " should be equal to " + y * x * z * 2.1)
-    2.1 * x * y * z should equal (y * x * z * 2.1)
+    info(2.1 * x * y + " should be equal to " + y * x * 2.1)
+    2.1 * x * y should equal (y * x * 2.1)
 
-    info(x * (-7.7) * y * z + " should be equal to " + y * z * x * (-7.7))
-    x * (-7.7) * y * z should equal (y * z * x * (-7.7))
+    info(x * (-7.7) * z + " should be equal to " + z * x * (-7.7))
+    x * (-7.7) * z should equal (z * x * (-7.7))
     
     info((x^2) + " should be equal to " + x * x)
     x^2 should equal (x * x)
 
-    info((x^4) + " should be equal to " + x * x * x * x)
-    x^4 should equal (x * x * x * x)
+    info((x^1) + " should be equal to " + x)
+    x^1 should equal (x)
 
     info((x^0) + " should be equal to " + One)
     x^0 should equal (One)
@@ -96,7 +96,7 @@ final class AlgebraSpecTest extends FunSpec with Matchers {
      */
     val expression1 = 2 * x * y + 2 * z * t
     val expression2 = 2 * x * z + 4 * t + 5.0
-    val expression3 = 3 * x * y * t + z + y * z
+    val expression3 = 3 * x * t + z + y * z
     val expression4 = 4 + z
     val expressions = Array(expression1, expression2, expression3, expression4)
     val expressions12 = Array(expression1, expression2)
@@ -109,13 +109,13 @@ final class AlgebraSpecTest extends FunSpec with Matchers {
     expression1 + expression2 should equal (sum(expressions12))
 
     /**
-     * Produces 3.0(x * y * t) + 1.0(y * z) + 2.0z + 4.0
+     * Produces 3.0(x * t) + 1.0(y * z) + 2.0z + 4.0
      */
     info(expression3 + expression4 + " should be equal to " + sum(expressions34))
     expression3 + expression4 should equal (sum(expressions34))
 
     /**
-     * Produces 3.0(x * y * t) + 2.0(x * y) + 2.0(x * z) + 1.0(y * z) + 2.0(z * t) + 2.0z + 4.0t + 9.0
+     * Produces 3.0(x * t) + 2.0(x * y) + 2.0(x * z) + 1.0(y * z) + 2.0(z * t) + 2.0z + 4.0t + 9.0
      */
     info(expression1 + expression2 + expression3 + expression4 + " should be equal to " + sum(expressions))
     expression1 + expression2 + expression3 + expression4 should equal (sum(expressions))
@@ -184,10 +184,6 @@ final class AlgebraSpecTest extends FunSpec with Matchers {
     (x + t + -5*y + 2*t + -3.2*z).getOrder should equal(ExpressionOrder.LINEAR)
 
     (x*y + z*t + 5*y + 2*x*t + z*z).getOrder should equal(ExpressionOrder.QUADRATIC)
-
-    (x*y*z + z*t + 5*y + 2*x*t + x*z*z).getOrder should equal(ExpressionOrder.HIGHER)
-
-    (x*y*z + z*t + 5*y + 2*x*t + x*z*y*z).getOrder should equal(ExpressionOrder.HIGHER)
   }
 
   describe("Summation and product having many variables") {
@@ -205,7 +201,7 @@ final class AlgebraSpecTest extends FunSpec with Matchers {
 
   describe("Constraints") {
 
-    info( (x*z + 5.7*x - 34*t >= x) + ", " + (x*x*x*x + z*t + 9.1 := y*t + 8.7*z))
+    info( (x*z + 5.7*x - 34*t >= x) + ", " + (x*x + z*t + 9.1 := y*t + 8.7*z))
   }
 
   println() // end specification

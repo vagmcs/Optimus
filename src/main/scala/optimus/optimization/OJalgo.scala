@@ -5,6 +5,7 @@ import optimus.optimization.PreSolve.PreSolve
 import optimus.optimization.ProblemStatus.ProblemStatus
 import org.ojalgo.constant.BigMath
 import org.ojalgo.optimisation.{Optimisation, Variable, ExpressionsBasedModel}
+import optimus.algebra._
 
 /*
  *    /\\\\\
@@ -157,8 +158,9 @@ final class OJalgo extends AbstractMPSolver {
     objectiveFunction.weight(BigMath.ONE)
 
     for(term <- objective.terms) {
-      if(term._1.length == 1) objectiveFunction.setLinearFactor(model.getVariable(term._1.head.index), term._2)
-      else objectiveFunction.setQuadraticFactor(model.getVariable(term._1.head.index), model.getVariable(term._1(1).index), term._2)
+      val indexes = decode(term._1)
+      if(indexes.length == 1) objectiveFunction.setLinearFactor(model.getVariable(indexes.head), term._2)
+      else objectiveFunction.setQuadraticFactor(model.getVariable(indexes.head), model.getVariable(indexes(1)), term._2)
     }
 
     if(!minimize) this.minimize = false else this.minimize = true
@@ -176,8 +178,9 @@ final class OJalgo extends AbstractMPSolver {
 
     val constraint = model.addExpression(mpConstraint.index.toString)
     for(term <- lhs.terms) {
-      if(term._1.length == 1)constraint.setLinearFactor(model.getVariable(term._1.head.index), term._2)
-      else constraint.setQuadraticFactor(model.getVariable(term._1.head.index), model.getVariable(term._1(1).index), term._2)
+      val indexes = decode(term._1)
+      if(indexes.length == 1) constraint.setLinearFactor(model.getVariable(indexes.head), term._2)
+      else constraint.setQuadraticFactor(model.getVariable(indexes.head), model.getVariable(indexes(1)), term._2)
     }
 
     operator match {
