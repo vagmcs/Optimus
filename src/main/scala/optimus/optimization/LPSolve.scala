@@ -150,11 +150,11 @@ final class LPSolve extends AbstractMPSolver {
    */
   def addObjective(objective: Expression, minimize: Boolean) = {
 
-    if(objective.getOrder == ExpressionOrder.QUADRATIC || objective.getOrder == ExpressionOrder.HIGHER )
+    if(objective.getOrder == ExpressionOrder.QUADRATIC || objective.getOrder == ExpressionOrder.HIGHER)
         throw new IllegalArgumentException("LPSolve can handle only linear expressions and " + objective + " is higher order!")
 
-    val list = objective.terms.keys.map(code => decode(code))
-    lp.setObjFnex(objective.terms.size, objective.terms.values.toArray, list.map(indexes => indexes.head + 1).toArray)
+    val indexes = objective.terms.keys.map(code => decode(code).head + 1)
+    lp.setObjFnex(objective.terms.size, objective.terms.values, indexes)
 
     if (!minimize) lp.setMaxim()
   }
@@ -168,7 +168,6 @@ final class LPSolve extends AbstractMPSolver {
     nbRows += 1
 
     val lhs = mpConstraint.constraint.lhs - mpConstraint.constraint.rhs
-    val list = lhs.terms.keys.map(code => decode(code))
     val operator = mpConstraint.constraint.operator
 
     val LPOperator = operator match {
@@ -177,8 +176,9 @@ final class LPSolve extends AbstractMPSolver {
       case ConstraintRelation.EQ => LpSolve.EQ
     }
 
-    lp.addConstraintex(lhs.terms.size, lhs.terms.values.toArray,
-                      list.map(indexes => indexes.head + 1).toArray, LPOperator, -lhs.constant)
+    val indexes = lhs.terms.keys.map(code => decode(code).head + 1)
+    lp.addConstraintex(lhs.terms.size, lhs.terms.values,
+                      indexes, LPOperator, -lhs.constant)
     lp.setRowName(nbRows, "")
   }
 

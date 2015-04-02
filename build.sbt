@@ -2,7 +2,7 @@ import com.typesafe.sbt.SbtNativePackager._
 
 name := "Optimus"
 
-version := "1.1"
+version := "1.2"
 
 organization := "com.github.vagm"
 
@@ -50,10 +50,7 @@ libraryDependencies ++= Seq(
 // Dependencies for unit testing (only for compile and test, exclude from publishing)
 libraryDependencies += "org.scalatest" %% "scalatest" % "2.2.4" % "test"
 
-// Optimized Range foreach loops
-//libraryDependencies += "com.nativelibs4java" %% "scalaxy-streams" % "0.3.4" % "provided"
-
 // Trove Collections
-//libraryDependencies += "net.sf.trove4j" % "trove4j" % "3.0.3"
+libraryDependencies += "net.sf.trove4j" % "trove4j" % "3.0.3"
 
 publishTo := Some(Resolver.file("file",  new File(Path.userHome.absolutePath+"/.m2/repository")))

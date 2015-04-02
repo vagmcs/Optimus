@@ -27,6 +27,7 @@ package optimus.optimization
  * along with this program. If not, see <http://www.gnu.org/licenses/lgpl-3.0.en.html>.
  */
 
+import gnu.trove.map.hash.TLongDoubleHashMap
 import optimus.algebra._
 import optimus.optimization.PreSolve.PreSolve
 import optimus.optimization.ProblemStatus.ProblemStatus
@@ -312,7 +313,8 @@ class MPVariable(val problem: AbstractMPProblem, val lowerBound: Double, val upp
   val index = problem.register(this)
 
   // A variable alone has a coefficient value of 1 in front of her
-  val terms = Map(encode(index) -> 1.0)
+  val terms = new TLongDoubleHashMap()
+  terms.put(encode(index), 1.0)
 
   protected var integer = false
 
@@ -359,11 +361,17 @@ class MPConstraint(val problem: AbstractMPProblem, val constraint: Constraint, v
   def slack: Double = {
     var res = 0.0
 
-    for ( (variables, c) <- constraint.lhs.terms)
-      res += c * decode(variables).map(v => problem.getValue(v).get).product
+    val iteratorLHS = constraint.lhs.terms.iterator()
+    while(iteratorLHS.hasNext) {
+      iteratorLHS.advance()
+      res += iteratorLHS.value * decode(iteratorLHS.key).map(v => problem.getValue(v).get).product
+    }
 
-    for ( (variables, c) <- constraint.rhs.terms)
-      res -= c * decode(variables).map(v => problem.getValue(v).get).product
+    val iteratorRHS = constraint.rhs.terms.iterator()
+    while(iteratorRHS.hasNext) {
+      iteratorRHS.advance()
+      res -= iteratorRHS.value * decode(iteratorRHS.key).map(v => problem.getValue(v).get).product
+    }
 
     val c = constraint.rhs.constant - constraint.lhs.constant
     constraint.operator match {

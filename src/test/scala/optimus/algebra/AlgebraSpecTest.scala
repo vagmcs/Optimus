@@ -181,6 +181,8 @@ final class AlgebraSpecTest extends FunSpec with Matchers {
 
     (x - x).getOrder should equal(ExpressionOrder.CONSTANT)
 
+    (x*x - (x*x + y)).getOrder should equal(ExpressionOrder.LINEAR)
+
     (x + t + -5*y + 2*t + -3.2*z).getOrder should equal(ExpressionOrder.LINEAR)
 
     (x*y + z*t + 5*y + 2*x*t + z*z).getOrder should equal(ExpressionOrder.QUADRATIC)
@@ -188,7 +190,7 @@ final class AlgebraSpecTest extends FunSpec with Matchers {
 
   describe("Summation and product having many variables") {
 
-    val variables = Array.tabulate(100000)(i => MPFloatVar(i.toString, 0, 1))
+    val variables = Array.tabulate(1000000)(i => MPFloatVar(i.toString, 0, 1))
 
     val startSum = System.currentTimeMillis()
     sum(variables)
@@ -197,6 +199,7 @@ final class AlgebraSpecTest extends FunSpec with Matchers {
     val startProd = System.currentTimeMillis()
     val expr = (x + y + x + y + t + z + t + z + 4.1*y + x + 5) * (x + y + x + y + t + z + t + z + y + x + 2)
     info("Product of " + expr + " took " + (System.currentTimeMillis() - startProd) + "ms to calculate")
+    expr should equal(12*x*z + 18.2*y*t + 4*z*z + 4*t*t + 44*t + 12*x*t + 18.2*y*z + 44*z + 8*z*t + 18.299999999999997*y*y + 72.2*y + 27.299999999999997*x*y + 66*x + 9*x*x + 10)
   }
 
   describe("Constraints") {

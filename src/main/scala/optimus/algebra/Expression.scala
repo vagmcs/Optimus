@@ -1,5 +1,7 @@
 package optimus.algebra
 
+import gnu.trove.map.hash.TLongDoubleHashMap
+import gnu.trove.procedure.TLongDoubleProcedure
 import optimus.algebra.ExpressionOrder.ExpressionOrder
 
 /*
@@ -40,7 +42,7 @@ abstract class Expression {
 
   // keep the variables and their corresponding coefficients and the constant term of the expression
   val constant: Double
-  val terms: Map[Long, Double]
+  val terms: TLongDoubleHashMap
 
   def +(other: Expression): Expression = other match {
     case Zero => this
@@ -66,9 +68,14 @@ abstract class Expression {
 
   def :=(other: Expression) = new Constraint(this, ConstraintRelation.EQ, other)
 
-  private def order = {
+  // Order of the expression (e.g linear) maybe is a little slow
+  @inline private def order: Int = {
     var order = 0
-    for(term <- terms) order = Math.max(order, decode(term._1).length)
+    val iterator = terms.iterator
+    while(iterator.hasNext) {
+      iterator.advance()
+      order = Math.max(order, decode(iterator.key).length)
+    }
     order
   }
 
@@ -81,7 +88,16 @@ abstract class Expression {
 
   override def toString =
     if (terms.isEmpty) constant.toString
-    else "(" + terms.map(pair => pair._2 + decode(pair._1).map(index => "idx" + index).mkString("*")).reduce(_ + " + " + _) + " + " + constant + ")"
+    else {
+      var output = "("
+      val iterator = terms.iterator
+      while(iterator.hasNext) {
+        iterator.advance()
+        output += iterator.value + decode(iterator.key).map(index => "idx" + index).mkString("*") + " + "
+      }
+      output += constant + ")"
+      output
+    }
 
   override def equals(that: Any) = that match {
     case other: Expression =>
@@ -162,11 +178,13 @@ case class Term(coefficient: Const, variables: Vector[Variable]) extends Express
     throw new IllegalArgumentException("Algebra cannot handle expressions of higher order!")
 
   val constant = 0.0
-  val terms = if(variables.length == 1) Map(encode(variables.head.index) -> coefficient.value)
-              else {
-                val sorted = variables.sorted
-                Map(encode(sorted.head.index, sorted(1).index) -> coefficient.value)
-              }
+  val terms = new TLongDoubleHashMap()
+
+  if(variables.length == 1) terms.put(encode(variables.head.index), coefficient.value)
+  else {
+    val sorted = variables.sorted
+    terms.put(encode(sorted.head.index, sorted(1).index), coefficient.value)
+  }
 
   override def *(other: Expression) = other match {
 
@@ -196,7 +214,7 @@ case class Term(coefficient: Const, variables: Vector[Variable]) extends Express
 class Const(val value: Double) extends Expression {
 
   val constant = value
-  val terms = Map.empty[Long, Double]
+  val terms = new TLongDoubleHashMap()
 
   def +(other: Const) = other match {
     case Zero => this
@@ -274,8 +292,8 @@ case class ConstProduct(c: Const, a: Expression) extends Expression {
 
   val constant = if (c == Zero) 0.0 else c.value * a.constant
 
-  val terms = if (c == Zero) Map.empty[Long, Double]
-              else a.terms.map(pair => pair._1 -> c.value * pair._2)
+  val terms = if (c == Zero) new TLongDoubleHashMap()
+              else new TLongDoubleHashMap(a.terms.keys, a.terms.values.map(value => c.value * value))
 
   override def unary_-(): Expression = ConstProduct(Const(-c.value), a)
 }
@@ -296,23 +314,22 @@ abstract class BinaryOp(val a: Expression, val b: Expression) extends Expression
 
   def op(x: Double, y: Double): Double
 
-  def merge: Map[Long, Double] = {
-    var temporal = scala.collection.mutable.Map[Long, Double]()
+  def merge: TLongDoubleHashMap = {
 
     // 1. Add all terms of expression A to the result
-    for ( (variables, c) <- a.terms )
-      temporal += variables -> c
+    val temporal = new TLongDoubleHashMap(a.terms)
 
     // 2. For each term of the expression B perform the desired operation if the term already exists
-    for ( (variables, c) <- b.terms ) {
-      temporal.get(variables) match {
-        case Some(coefficient) => temporal(variables) = op(coefficient, c)
-        case None => temporal += (variables -> op(0, c))
-      }
+    val iterator = b.terms.iterator
+    while(iterator.hasNext) {
+      iterator.advance()
+      val value = op(0, iterator.value)
+      temporal.adjustOrPutValue(iterator.key, value, value)
     }
 
-    // 3. Filter out zero terms
-    temporal.filterNot(_._2 == 0).toMap
+    // 3. Filter out zero terms (very slow)
+    temporal.retainEntries(new TLongDoubleProcedure { override def execute(l: Long, v: Double): Boolean = v != 0.0 })
+    temporal
   }
 }
 
@@ -352,40 +369,38 @@ case class Product(override val a: Expression, override val b: Expression) exten
 
   def op(x: Double, y: Double) = x * y
 
-  override def merge: Map[Long, Double] = {
-    var temporal = scala.collection.mutable.Map[Long, Double]()
+  override def merge: TLongDoubleHashMap = {
+    val temporal = new TLongDoubleHashMap()
 
-    for ( (variablesA, cA) <- a.terms) {
+    val iteratorA = a.terms.iterator
+    while(iteratorA.hasNext) {
+      iteratorA.advance()
+      val variablesA = iteratorA.key
+      val cA = iteratorA.value
 
       // 1. Calculate products involving terms only from expression A and the constant of B
-      temporal.get(variablesA) match {
-        case None => temporal += (variablesA -> cA*b.constant)
-        case Some(c) => temporal(variablesA) = c + cA*b.constant
-      }
+      temporal.adjustOrPutValue(variablesA, cA*b.constant, cA*b.constant)
 
-      for( (variablesB, cB) <- b.terms) {
+      val iteratorB = b.terms.iterator
+      while(iteratorB.hasNext) {
+        iteratorB.advance()
+        val variablesB = iteratorB.key
+        val cB = iteratorB.value
 
         // 2. Calculate products involving terms from both A and B expressions
-        val variablesTemp = (decode(variablesA) ++ decode(variablesB)).sorted
+        val variablesProduct = (decode(variablesA) ++ decode(variablesB)).sorted
+        assert(variablesProduct.length <= 2, "Algebra cannot handle expressions of higher order!")
 
-        assert(variablesTemp.length <= 2)
-        val variables = encode(variablesTemp.head, variablesTemp(1))
-
-        temporal.get(variables) match {
-          case None => temporal += (variables -> cA*cB)
-          case Some(c) => temporal(variables) = c + cA*cB
-        }
+        val variables = encode(variablesProduct.head, variablesProduct(1))
+        temporal.adjustOrPutValue(variables, cA*cB, cA*cB)
 
         // 3. Calculate products involving terms only from expression B and the constant of A
-        temporal.get(variablesB) match {
-          case None => temporal += (variablesB -> cB*a.constant)
-          case Some(c) => temporal(variablesB) = c + cB*a.constant
-        }
-
+        temporal.adjustOrPutValue(variablesB, cB*a.constant, cB*a.constant)
       }
     }
 
-    // 4. Filter out zero terms
-    temporal.filterNot(_._2 == 0).toMap
+    // 4. Filter out zero terms (very slow)
+    temporal.retainEntries(new TLongDoubleProcedure { override def execute(l: Long, v: Double): Boolean = v != 0.0 })
+    temporal
   }
 }

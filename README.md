@@ -9,9 +9,9 @@ This program comes with ABSOLUTELY NO WARRANTY. This is free software, and you a
 #### Features:
 1. High level mathematical modeling in Scala using algebraic expressions
   * Linear and quadratic objective and constraint expressions
-  * Higher order expressions are also supported, but they cannot be handled by the solvers yet
+  * Higher order expressions cannot be defined or handled by the solvers yet
   * Addition, subtraction and multiplication operations can be performed on expressions
-  * Exponentiation can be performed on variables
+  * Exponentiation can be performed on variables (up to quadratic)
 2. Supports various optimization settings by using existing mathematical programming solvers
   * Linear programming (LP)
   * Quadratic programming (QP)
@@ -174,7 +174,7 @@ scala> maximize(x + 2*y + 3*z + t)
 subjectTo(
           -1*x + y + z + 10*t <= 20,
           x - 3.0*y + z <= 30,
-          x1 - 3.5*t := 0
+          y - 3.5*t := 0
          )
 ```
 

@@ -43,7 +43,6 @@ package object optimization {
 
     val lp_solve = Value("lp_solve")
     val gurobi = Value("gurobi")
-    val mosek = Value("mosek")
     val oJalgo = Value("oJalgo")
   }
 

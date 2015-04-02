@@ -1,7 +1,7 @@
 package optimus
 
-import scala.annotation.tailrec
-import scala.collection.parallel.mutable
+import gnu.trove.map.hash.TLongDoubleHashMap
+import gnu.trove.procedure.TLongDoubleProcedure
 
 /*
  *    /\\\\\
@@ -71,29 +71,29 @@ package object algebra {
 
   // functions over iterable data structures
 
-  def sum(expressions : Iterable[Expression]) : Expression = {
+  def sum(expressions: Iterable[Expression]) : Expression = {
 
-    var temporal = scala.collection.mutable.Map[Long, Double]()
+    val temporal = new TLongDoubleHashMap()
     var tConstant = 0.0
 
     for (expr <- expressions) {
       tConstant += expr.constant
-      for ((variables, coefficient) <- expr.terms) {
-        temporal.get(variables) match {
-          case Some(c) => temporal(variables) = c + coefficient
-          case None => temporal += (variables -> coefficient)
-        }
+      val iterator = expr.terms.iterator
+      while(iterator.hasNext) {
+        iterator.advance()
+        val coefficient = iterator.value
+        temporal.adjustOrPutValue(iterator.key, coefficient, coefficient)
       }
     }
-    temporal = temporal.filterNot(_._2 == 0)
+    temporal.retainEntries(new TLongDoubleProcedure { override def execute(l: Long, v: Double): Boolean = v != 0.0 })
 
     new Expression {
       val constant = tConstant
-      val terms = temporal.toMap
+      val terms = temporal
     }
   }
 
-  // These functions produce mathematical expressions over joint iterable and then summing out the results
+  // these functions produce mathematical expressions over joint iterable and then summing out the results
 
   def sum[A](indexes: Iterable[A])(f : A => Expression) : Expression = sum(indexes map f)
 

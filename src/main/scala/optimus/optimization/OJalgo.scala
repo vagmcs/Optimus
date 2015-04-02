@@ -154,13 +154,19 @@ final class OJalgo extends AbstractMPSolver {
    * @param minimize flag for minimization instead of maximization
    */
   def addObjective(objective: Expression, minimize: Boolean) = {
+
+    if(objective.getOrder == ExpressionOrder.HIGHER)
+      throw new IllegalArgumentException("oJalgo cannot handle expressions of higher order!")
+
     val objectiveFunction = model.addExpression("objective")
     objectiveFunction.weight(BigMath.ONE)
 
-    for(term <- objective.terms) {
-      val indexes = decode(term._1)
-      if(indexes.length == 1) objectiveFunction.setLinearFactor(model.getVariable(indexes.head), term._2)
-      else objectiveFunction.setQuadraticFactor(model.getVariable(indexes.head), model.getVariable(indexes(1)), term._2)
+    val iterator = objective.terms.iterator
+    while(iterator.hasNext) {
+      iterator.advance()
+      val indexes = decode(iterator.key)
+      if(indexes.length == 1) objectiveFunction.setLinearFactor(model.getVariable(indexes.head), iterator.value)
+      else objectiveFunction.setQuadraticFactor(model.getVariable(indexes.head), model.getVariable(indexes(1)), iterator.value)
     }
 
     if(!minimize) this.minimize = false else this.minimize = true
@@ -177,10 +183,13 @@ final class OJalgo extends AbstractMPSolver {
     val operator = mpConstraint.constraint.operator
 
     val constraint = model.addExpression(mpConstraint.index.toString)
-    for(term <- lhs.terms) {
-      val indexes = decode(term._1)
-      if(indexes.length == 1) constraint.setLinearFactor(model.getVariable(indexes.head), term._2)
-      else constraint.setQuadraticFactor(model.getVariable(indexes.head), model.getVariable(indexes(1)), term._2)
+
+    val iterator = lhs.terms.iterator
+    while(iterator.hasNext) {
+      iterator.advance()
+      val indexes = decode(iterator.key)
+      if(indexes.length == 1) constraint.setLinearFactor(model.getVariable(indexes.head), iterator.value)
+      else constraint.setQuadraticFactor(model.getVariable(indexes.head), model.getVariable(indexes(1)), iterator.value)
     }
 
     operator match {

@@ -159,17 +159,19 @@ final class Gurobi extends AbstractMPSolver {
 
       case ExpressionOrder.QUADRATIC =>
         val QExpression = new GRBQuadExpr
-        for(term <- objective.terms) {
-          val indexes = decode(term._1)
-          if(indexes.length == 1) QExpression.addTerm(term._2, model.getVar(indexes.head))
-          else QExpression.addTerm(term._2, model.getVar(indexes.head), model.getVar(indexes(1)))
+        val iterator = objective.terms.iterator
+        while(iterator.hasNext) {
+          iterator.advance()
+          val indexes = decode(iterator.key)
+          if(indexes.length == 1) QExpression.addTerm(iterator.value, model.getVar(indexes.head))
+          else QExpression.addTerm(iterator.value, model.getVar(indexes.head), model.getVar(indexes(1)))
         }
         model.setObjective(QExpression, if (minimize) 1 else -1)
 
       case ExpressionOrder.LINEAR =>
         val LExpression = new GRBLinExpr
-        val list = objective.terms.keys.map(code => decode(code))
-        LExpression.addTerms(objective.terms.values.toArray, list.map(indexes => model.getVar(indexes.head)).toArray)
+        val variables = objective.terms.keys.map(code => model.getVar(decode(code).head))
+        LExpression.addTerms(objective.terms.values, variables)
         model.setObjective(LExpression, if (minimize) 1 else -1)
     }
 
@@ -200,17 +202,22 @@ final class Gurobi extends AbstractMPSolver {
 
       case ExpressionOrder.QUADRATIC =>
         val QExpression = new GRBQuadExpr
-        for(term <- lhs.terms) {
-          val indexes = decode(term._1)
-          if(indexes.length == 1) QExpression.addTerm(term._2, model.getVar(indexes.head))
-          else QExpression.addTerm(term._2, model.getVar(indexes.head), model.getVar(indexes(1)))
+        val iterator = lhs.terms.iterator
+        while(iterator.hasNext) {
+          iterator.advance()
+          val indexes = decode(iterator.key)
+          if(indexes.length == 1) QExpression.addTerm(iterator.value, model.getVar(indexes.head))
+          else QExpression.addTerm(iterator.value, model.getVar(indexes.head), model.getVar(indexes(1)))
         }
         model.addQConstr(QExpression, GRBOperator, rhs, "")
 
       case ExpressionOrder.LINEAR =>
         val LExpression = new GRBLinExpr
-        val list = lhs.terms.keys.map(code => decode(code))
-        LExpression.addTerms(lhs.terms.values.toArray, list.map(indexes => model.getVar(indexes.head)).toArray)
+        val iterator = lhs.terms.iterator
+        while(iterator.hasNext) {
+          iterator.advance()
+          LExpression.addTerm(iterator.value, model.getVar(decode(iterator.key).head))
+        }
         model.addConstr(LExpression, GRBOperator, rhs, "")
     }
   }
