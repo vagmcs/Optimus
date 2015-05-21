@@ -19,7 +19,7 @@ This program comes with ABSOLUTELY NO WARRANTY. This is free software, and you a
   * Mixed integer programming (MIP)
 3. Available solvers:
   * Open source [lp_solve](http://sourceforge.net/projects/lpsolve/) can be used for LP and MIP
-  * Open source [ojAlgo](http://ojalgo.org/) can be used for LP, QP and MIP
+  * Open source [ojalgo](http://ojalgo.org/) can be used for LP, QP and MIP
   * Proprietary solver [Gurobi](http://www.gurobi.com/) can be used for efficiency to solve LP, QP, QCQP and MIP
 
 #### Future work:
@@ -28,17 +28,14 @@ This program comes with ABSOLUTELY NO WARRANTY. This is free software, and you a
 
 ## Instructions to build Optimus from source
 
-In order to build Optimus from source, you need to have Java 8 and [sbt](http://www.scala-sbt.org/) installed in your system. Furthermore, Optimus build depends on the [lp_solve](http://lpsolve.sourceforge.net), [Gurobi](http://www.gurobi.com/) and [ojAlgo](http://ojalgo.org/).
+In order to build Optimus from source, you need to have Java 8 and [sbt](http://www.scala-sbt.org/) installed in your system. Furthermore, Optimus build optionally depends on the [lp_solve](http://lpsolve.sourceforge.net) and [Gurobi](http://www.gurobi.com/). In case the dependencies for lp_solve and/or Gurobi are not included, Optimus would build a minimal version having only included solvers and ojalgo. 
 
-Step 1. Include lp_solve, Gurobi and ojAlgo library dependencies to `./lib`, as it is illustrated in the tree below:
+Step 1. Optionally, include lp_solve and Gurobi library dependencies to `./lib`, as it is illustrated in the tree below:
 
 ```
 lib/
 |-- gurobi.jar
 |-- lpsolve55j.jar
-|-- ojalgo-38.0.jar
-|-- ojalgo-biz-38.0.jar
-|-- ojalgo-ext-38.0.jar
 ```
 
 Step 2. For using Gurobi and lp_solve you should also set the environment variables of your system to make use of the solver native executable files.

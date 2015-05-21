@@ -49,6 +49,7 @@ libraryDependencies += "org.scalatest" %% "scalatest" % "2.2.4" % "test"
 // Trove Collections
 libraryDependencies += "net.sf.trove4j" % "trove4j" % "3.0.3"
 
+// oJalgo library for optimization
 libraryDependencies += "org.ojalgo" % "ojalgo" % "38.0" from "https://repo1.maven.org/maven2/org/ojalgo/ojalgo/38.0/ojalgo-38.0.jar"
 
 publishTo := Some(Resolver.file("file",  new File(Path.userHome.absolutePath+"/.m2/repository")))
@@ -67,7 +68,8 @@ excludeFilter := {
       excludeNames += "LPSolve"
     }
     excludeNames.map(n => new SimpleFileFilter(_.getName.contains(n)).asInstanceOf[FileFilter]).reduceRight(_ || _)
-  } catch{
+  }
+  catch {
     case _ : Exception => new SimpleFileFilter(_ => false)
   }
 }

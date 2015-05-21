@@ -42,25 +42,25 @@ import scala.util.{Success, Try}
 
 /**
  * A Linear-Quadratic problem. Can be solved using one of the supported
- * solvers (LPSolve, oJalgo, Gurobi or Mosek).
+ * solvers (LPSolve, oJalgo or Gurobi).
  *
  * @param solverLib solver library type
  */
 class LQProblem private[optimization](solverLib: SolverLib = SolverLib.oJalgo) extends AbstractMPProblem {
 
   val solver = solverLib match {
+
     case SolverLib.gurobi =>
-      Try(Class.forName("optimus.optimization.Gurobi")) match{
+      Try(Class.forName("optimus.optimization.Gurobi")) match {
         case Success(c) => c.newInstance().asInstanceOf[AbstractMPSolver]
         case _ => sys.error("Gurobi is not supported in this build. Please rebuild Optimus with Gurobi dependencies.")
       }
 
     case SolverLib.lp_solve =>
-      Try(Class.forName("optimus.optimization.LPSolve")) match{
+      Try(Class.forName("optimus.optimization.LPSolve")) match {
         case Success(c) => c.newInstance().asInstanceOf[AbstractMPSolver]
         case _ => sys.error("LPSolve is not supported in this build. Please rebuild Optimus with LPSolve dependencies.")
       }
-
 
     case _ => new OJalgo
   }
@@ -72,21 +72,22 @@ object LQProblem {
 
 /**
  * A Mixed-Integer problem. Can be solved using one of the supported
- * solvers (LPSolve, oJalgo, Gurobi or Mosek).
+ * solvers (LPSolve, oJalgo or Gurobi).
  *
  * @param solverLib solver library type
  */
 class MIProblem private[optimization](solverLib: SolverLib = SolverLib.oJalgo) extends AbstractMPProblem {
 
   val solver = solverLib match {
+
     case SolverLib.gurobi =>
-      Try(Class.forName("optimus.optimization.Gurobi")) match{
+      Try(Class.forName("optimus.optimization.Gurobi")) match {
         case Success(c) => c.newInstance().asInstanceOf[AbstractMPSolver]
         case _ => sys.error("Gurobi is not supported in this build. Please rebuild Optimus with Gurobi dependencies.")
       }
 
     case SolverLib.lp_solve =>
-      Try(Class.forName("optimus.optimization.LPSolve")) match{
+      Try(Class.forName("optimus.optimization.LPSolve")) match {
         case Success(c) => c.newInstance().asInstanceOf[AbstractMPSolver]
         case _ => sys.error("LPSolve is not supported in this build. Please rebuild Optimus with LPSolve dependencies.")
       }
