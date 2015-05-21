@@ -52,9 +52,12 @@ libraryDependencies += "net.sf.trove4j" % "trove4j" % "3.0.3"
 // oJalgo library for optimization
 libraryDependencies += "org.ojalgo" % "ojalgo" % "38.0" from "https://repo1.maven.org/maven2/org/ojalgo/ojalgo/38.0/ojalgo-38.0.jar"
 
+//lp_solve
+libraryDependencies += "com.datumbox" % "lpsolve" % "5.5.2.0"
+
 publishTo := Some(Resolver.file("file",  new File(Path.userHome.absolutePath+"/.m2/repository")))
 
-// Optionally build for LP Solve and Gurobi solvers
+// Optionally build for commercial solvers
 excludeFilter := {
   var excludeNames = Set[String]()
   try {
@@ -62,10 +65,6 @@ excludeFilter := {
     if (!jars.contains("gurobi.jar")) {
       println(s"[warn] Will build without the support of Gurobi solver ('gurobi.jar' is missing from '${unmanagedBase.value.getName}' directory)")
       excludeNames += "Gurobi"
-    }
-    if (!jars.contains("lpsolve55j.jar")) {
-      println(s"[warn] Will build without the support of LP-solver ('lpsolve55j.jar' is missing from '${unmanagedBase.value.getName}' directory)")
-      excludeNames += "LPSolve"
     }
     excludeNames.map(n => new SimpleFileFilter(_.getName.contains(n)).asInstanceOf[FileFilter]).reduceRight(_ || _)
   }
