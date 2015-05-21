@@ -52,7 +52,7 @@ libraryDependencies += "net.sf.trove4j" % "trove4j" % "3.0.3"
 // oJalgo library for optimization
 libraryDependencies += "org.ojalgo" % "ojalgo" % "38.0" from "https://repo1.maven.org/maven2/org/ojalgo/ojalgo/38.0/ojalgo-38.0.jar"
 
-//lp_solve
+// lpsolve library for optimization
 libraryDependencies += "com.datumbox" % "lpsolve" % "5.5.2.0"
 
 publishTo := Some(Resolver.file("file",  new File(Path.userHome.absolutePath+"/.m2/repository")))

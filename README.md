@@ -28,14 +28,13 @@ This program comes with ABSOLUTELY NO WARRANTY. This is free software, and you a
 
 ## Instructions to build Optimus from source
 
-In order to build Optimus from source, you need to have Java 8 and [sbt](http://www.scala-sbt.org/) installed in your system. Furthermore, Optimus build optionally depends on the [lp_solve](http://lpsolve.sourceforge.net) and [Gurobi](http://www.gurobi.com/). In case the dependencies for lp_solve and/or Gurobi are not included, Optimus would build a minimal version having only included solvers and ojalgo. 
+In order to build Optimus from source, you need to have Java 8 and [sbt](http://www.scala-sbt.org/) installed in your system. Furthermore, Optimus build optionally depends on [Gurobi](http://www.gurobi.com/). In case the dependencies for Gurobi are not included, Optimus would build a minimal version having only lp_solve and ojalgo. 
 
-Step 1. Optionally, include lp_solve and Gurobi library dependencies to `./lib`, as it is illustrated in the tree below:
+Step 1. Optionally, include Gurobi library dependencies to `./lib`, as it is illustrated in the tree below:
 
 ```
 lib/
 |-- gurobi.jar
-|-- lpsolve55j.jar
 ```
 
 Step 2. For using Gurobi and lp_solve you should also set the environment variables of your system to make use of the solver native executable files.
