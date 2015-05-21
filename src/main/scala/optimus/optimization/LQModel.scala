@@ -30,6 +30,8 @@ package optimus.optimization
 import optimus.algebra.Variable
 import optimus.optimization.SolverLib._
 
+import scala.util.{Success, Try}
+
 /**
  * Models for mathematical programming. Everything related to this field of
  * optimization should be included here.
@@ -47,8 +49,19 @@ import optimus.optimization.SolverLib._
 class LQProblem private[optimization](solverLib: SolverLib = SolverLib.oJalgo) extends AbstractMPProblem {
 
   val solver = solverLib match {
-    case SolverLib.gurobi => new Gurobi
-    case SolverLib.lp_solve => new LPSolve
+    case SolverLib.gurobi =>
+      Try(Class.forName("optimus.optimization.Gurobi")) match{
+        case Success(c) => c.newInstance().asInstanceOf[AbstractMPSolver]
+        case _ => sys.error("Gurobi is not supported in this build. Please rebuild Optimus with Gurobi dependencies.")
+      }
+
+    case SolverLib.lp_solve =>
+      Try(Class.forName("optimus.optimization.LPSolve")) match{
+        case Success(c) => c.newInstance().asInstanceOf[AbstractMPSolver]
+        case _ => sys.error("LPSolve is not supported in this build. Please rebuild Optimus with LPSolve dependencies.")
+      }
+
+
     case _ => new OJalgo
   }
 }
@@ -66,8 +79,18 @@ object LQProblem {
 class MIProblem private[optimization](solverLib: SolverLib = SolverLib.oJalgo) extends AbstractMPProblem {
 
   val solver = solverLib match {
-    case SolverLib.gurobi => new Gurobi
-    case SolverLib.lp_solve => new LPSolve
+    case SolverLib.gurobi =>
+      Try(Class.forName("optimus.optimization.Gurobi")) match{
+        case Success(c) => c.newInstance().asInstanceOf[AbstractMPSolver]
+        case _ => sys.error("Gurobi is not supported in this build. Please rebuild Optimus with Gurobi dependencies.")
+      }
+
+    case SolverLib.lp_solve =>
+      Try(Class.forName("optimus.optimization.LPSolve")) match{
+        case Success(c) => c.newInstance().asInstanceOf[AbstractMPSolver]
+        case _ => sys.error("LPSolve is not supported in this build. Please rebuild Optimus with LPSolve dependencies.")
+      }
+
     case _ => new OJalgo
   }
 
