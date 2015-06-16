@@ -11,6 +11,49 @@ import org.scalatest.{FunSpec, Matchers}
  */
 final class GurobiSpecTest extends FunSpec with Matchers {
 
+  describe("Constant programming") {
+
+    describe("Test I") {
+      implicit val problem = LQProblem(SolverLib.gurobi)
+
+      val x = MPFloatVar("x", 100, 200)
+      val y = MPFloatVar("y", 80, 170)
+
+      maximize(-5)
+      add(x >= 5)
+      add(y <= 100)
+      start()
+
+      x.value should equal(Some(200))
+      y.value should equal(Some(80))
+      objectiveValue should equal(-5)
+      checkConstraints() shouldBe true
+      status should equal(ProblemStatus.OPTIMAL)
+
+      release()
+    }
+
+    describe("Test II") {
+      implicit val problem = LQProblem(SolverLib.gurobi)
+
+      val x = MPFloatVar("x", 100, 200)
+      val y = MPFloatVar("y", 80, 170)
+
+      minimize(-5)
+      add(x >= 5)
+      add(y <= 100)
+      start()
+
+      x.value should equal(Some(200))
+      y.value should equal(Some(80))
+      objectiveValue should equal(-5)
+      checkConstraints() shouldBe true
+      status should equal(ProblemStatus.OPTIMAL)
+
+      release()
+    }
+  }
+
   describe("Linear programming") {
 
     describe("Test I") {
