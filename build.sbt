@@ -60,12 +60,13 @@ publishTo := Some(Resolver.file("file",  new File(Path.userHome.absolutePath+"/.
 // Optionally build for commercial solvers
 excludeFilter := {
   var excludeNames = Set[String]()
-  val jars = try unmanagedBase.value.list().map(_.toLowerCase).filter(_.endsWith(".jar"))
+  val jars = try unmanagedBase.value.list.map(_.toLowerCase).filter(_.endsWith(".jar"))
   catch { case _ : Exception => Array[String]() }
 
   if (!jars.contains("gurobi.jar")) {
     println(s"[warn] Will build without the support of Gurobi solver ('gurobi.jar' is missing from '${unmanagedBase.value.getName}' directory)")
     excludeNames += "Gurobi"
   }
-  excludeNames.map(n => new SimpleFileFilter(_.getName.contains(n)).asInstanceOf[FileFilter]).reduceRight(_ || _)
+  if(excludeNames.isEmpty) new SimpleFileFilter(_ => false)
+  else excludeNames.map(n => new SimpleFileFilter(_.getName.contains(n)).asInstanceOf[FileFilter]).reduceRight(_ || _)
 }
