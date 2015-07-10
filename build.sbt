@@ -4,7 +4,7 @@ version := "1.2.1"
 
 organization := "com.github.vagm"
 
-scalaVersion := "2.11.6"
+scalaVersion := "2.11.7"
 
 autoScalaLibrary := true
 
@@ -50,7 +50,7 @@ libraryDependencies += "org.scalatest" %% "scalatest" % "2.2.4" % "test"
 libraryDependencies += "net.sf.trove4j" % "trove4j" % "3.0.3"
 
 // oJalgo library for optimization
-libraryDependencies += "org.ojalgo" % "ojalgo" % "38.0" from "https://repo1.maven.org/maven2/org/ojalgo/ojalgo/38.0/ojalgo-38.0.jar"
+libraryDependencies += "org.ojalgo" % "ojalgo" % "38.1" from "https://repo1.maven.org/maven2/org/ojalgo/ojalgo/38.1/ojalgo-38.1.jar"
 
 // lpsolve library for optimization
 libraryDependencies += "com.datumbox" % "lpsolve" % "5.5.2.0"
@@ -60,15 +60,13 @@ publishTo := Some(Resolver.file("file",  new File(Path.userHome.absolutePath+"/.
 // Optionally build for commercial solvers
 excludeFilter := {
   var excludeNames = Set[String]()
-  try {
-    val jars = unmanagedBase.value.list().map(_.toLowerCase).filter(_.endsWith(".jar"))
-    if (!jars.contains("gurobi.jar")) {
-      println(s"[warn] Will build without the support of Gurobi solver ('gurobi.jar' is missing from '${unmanagedBase.value.getName}' directory)")
-      excludeNames += "Gurobi"
-    }
-    excludeNames.map(n => new SimpleFileFilter(_.getName.contains(n)).asInstanceOf[FileFilter]).reduceRight(_ || _)
-  }
+  val jars = try unmanagedBase.value.list().map(_.toLowerCase).filter(_.endsWith(".jar"))
   catch {
-    case _ : Exception => new SimpleFileFilter(_ => false)
+    case _ : Exception => Array[String]()
   }
+  if (!jars.contains("gurobi.jar")) {
+    println(s"[warn] Will build without the support of Gurobi solver ('gurobi.jar' is missing from '${unmanagedBase.value.getName}' directory)")
+    excludeNames += "Gurobi"
+  }
+  excludeNames.map(n => new SimpleFileFilter(_.getName.contains(n)).asInstanceOf[FileFilter]).reduceRight(_ || _)
 }
