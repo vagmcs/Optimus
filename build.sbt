@@ -1,36 +1,5 @@
-name := "Optimus"
 
-version := "1.2.1"
-
-organization := "com.github.vagm"
-
-scalaVersion := "2.11.7"
-
-autoScalaLibrary := true
-
-managedScalaInstance := true
-
-// Append several options to the list of options passed to the Java compiler
-javacOptions ++= Seq("-source", "1.8", "-target", "1.8", "-Xlint:unchecked", "-Xlint:deprecation")
-
-// Append scalac options
-scalacOptions ++= Seq(
-  "-Yclosure-elim",
-  "-Yinline",
-  "-feature",
-  "-target:jvm-1.8",
-  "-language:implicitConversions",
-  "-Ybackend:GenBCode"
-)
-
-// fork a new JVM for 'run' and 'test:run'
-fork := true
-
-// fork a new JVM for 'test:run', but not 'run'
-fork in Test := true
-
-// add a JVM option to use when forking a JVM for 'run'
-javaOptions += "-Xmx2G"
+OptimusBuild.settings
 
 resolvers ++= Seq(
   "typesafe" at "http://repo.typesafe.com/typesafe/releases/",
@@ -50,7 +19,12 @@ libraryDependencies += "org.scalatest" %% "scalatest" % "2.2.4" % "test"
 libraryDependencies += "net.sf.trove4j" % "trove4j" % "3.0.3"
 
 // oJalgo library for optimization
-libraryDependencies += "org.ojalgo" % "ojalgo" % "38.1" from "https://repo1.maven.org/maven2/org/ojalgo/ojalgo/38.1/ojalgo-38.1.jar"
+libraryDependencies += {
+  if(OptimusBuild.javaVersion >= 1.8)
+    "org.ojalgo" % "ojalgo" % "38.1" from "https://repo1.maven.org/maven2/org/ojalgo/ojalgo/38.1/ojalgo-38.1.jar"
+  else
+    "org.ojalgo" % "ojalgo" % "37.1" from "https://repo1.maven.org/maven2/org/ojalgo/ojalgo/37.1/ojalgo-37.1.jar"
+}
 
 // lpsolve library for optimization
 libraryDependencies += "com.datumbox" % "lpsolve" % "5.5.2.0"
