@@ -134,11 +134,11 @@ final class OJalgoSpecTest extends FunSpec with Matchers {
       cons(3).isTight() shouldBe true
       cons(4).isTight() shouldBe true
 
-      cons.head.slack shouldBe 12.5 +- 1e-6
-      cons(1).slack shouldBe 0.0 +- 1e-6
-      cons(2).slack shouldBe 5.0 +- 1e-6
-      cons(3).slack shouldBe 0.0 +- 1e-6
-      cons(4).slack shouldBe 0.0 +- 1e-6
+      cons.head.slack.get shouldBe 12.5 +- 1e-6
+      cons(1).slack.get shouldBe 0.0 +- 1e-6
+      cons(2).slack.get shouldBe 5.0 +- 1e-6
+      cons(3).slack.get shouldBe 0.0 +- 1e-6
+      cons(4).slack.get shouldBe 0.0 +- 1e-6
 
       cons.foreach(c => c.check() shouldBe true)
 
@@ -179,12 +179,12 @@ final class OJalgoSpecTest extends FunSpec with Matchers {
       cons(4).isTight() shouldBe false
       cons(5).isTight() shouldBe false
 
-      cons.head.slack shouldBe 0.0 +- 1e-6
-      cons(1).slack shouldBe 0.0 +- 1e-6
-      cons(2).slack shouldBe 26.666666666666667 +- 1e-6
-      cons(3).slack shouldBe 80.0 +- 1e-6
-      cons(4).slack shouldBe 56.666666666666667 +- 1e-6
-      cons(5).slack shouldBe 16.671666666666667 +- 1e-6
+      cons.head.slack.get shouldBe 0.0 +- 1e-6
+      cons(1).slack.get shouldBe 0.0 +- 1e-6
+      cons(2).slack.get shouldBe 26.666666666666667 +- 1e-6
+      cons(3).slack.get shouldBe 80.0 +- 1e-6
+      cons(4).slack.get shouldBe 56.666666666666667 +- 1e-6
+      cons(5).slack.get shouldBe 16.671666666666667 +- 1e-6
 
       cons.foreach(c => c.check() shouldBe true)
 
@@ -287,8 +287,8 @@ final class OJalgoSpecTest extends FunSpec with Matchers {
       cons.head.isTight(10e-4) shouldBe true
       cons(1).isTight() shouldBe true
 
-      cons.head.slack shouldBe 0.0 +- 1.0e-6
-      cons(1).slack shouldBe 0.0 +- 1.0e-6
+      cons.head.slack.get shouldBe 0.0 +- 1.0e-6
+      cons(1).slack.get shouldBe 0.0 +- 1.0e-6
 
       cons.foreach(c => c.check() shouldBe true)
 
@@ -319,9 +319,9 @@ final class OJalgoSpecTest extends FunSpec with Matchers {
       cons(1).isTight() shouldBe false
       cons(2).isTight() shouldBe false
 
-      cons.head.slack shouldBe 0.0 +- 1.0e-6
-      cons(1).slack shouldBe 3.25 +- 1.0e-6
-      cons(2).slack shouldBe 7.501e-1 +- 1.0e-6
+      cons.head.slack.get shouldBe 0.0 +- 1.0e-6
+      cons(1).slack.get shouldBe 3.25 +- 1.0e-6
+      cons(2).slack.get shouldBe 7.501e-1 +- 1.0e-6
 
       cons.foreach(c => c.check() shouldBe true)
 
@@ -352,9 +352,9 @@ final class OJalgoSpecTest extends FunSpec with Matchers {
       cons(1).isTight() shouldBe false
       cons(2).isTight() shouldBe false
 
-      cons.head.slack shouldBe 0.0 +- 1.0e-6
-      cons(1).slack shouldBe 3.25 +- 1.0e-6
-      cons(2).slack shouldBe 7.501e-1 +- 1.0e-6
+      cons.head.slack.get shouldBe 0.0 +- 1.0e-6
+      cons(1).slack.get shouldBe 3.25 +- 1.0e-6
+      cons(2).slack.get shouldBe 7.501e-1 +- 1.0e-6
 
       cons.foreach(c => c.check() shouldBe true)
 

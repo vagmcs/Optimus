@@ -62,6 +62,7 @@ final class LPSolveSpecTest extends FunSpec with Matchers {
 
       // Solution is infeasible but some solvers consider it dual infeasible
       status should (equal(ProblemStatus.UNBOUNDED) or equal(ProblemStatus.INFEASIBLE))
+      checkConstraints() shouldBe false
 
       release()
     }
@@ -134,11 +135,11 @@ final class LPSolveSpecTest extends FunSpec with Matchers {
       cons(3).isTight() shouldBe true
       cons(4).isTight() shouldBe true
 
-      cons.head.slack shouldBe 12.5 +- 1e-6
-      cons(1).slack shouldBe 0.0 +- 1e-6
-      cons(2).slack shouldBe 5.0 +- 1e-6
-      cons(3).slack shouldBe 0.0 +- 1e-6
-      cons(4).slack shouldBe 0.0 +- 1e-6
+      cons.head.slack.get shouldBe 12.5 +- 1e-6
+      cons(1).slack.get shouldBe 0.0 +- 1e-6
+      cons(2).slack.get shouldBe 5.0 +- 1e-6
+      cons(3).slack.get shouldBe 0.0 +- 1e-6
+      cons(4).slack.get shouldBe 0.0 +- 1e-6
 
       cons.foreach(c => c.check() shouldBe true)
 
@@ -179,12 +180,12 @@ final class LPSolveSpecTest extends FunSpec with Matchers {
       cons(4).isTight() shouldBe false
       cons(5).isTight() shouldBe false
 
-      cons.head.slack shouldBe 0.0 +- 1e-6
-      cons(1).slack shouldBe 0.0 +- 1e-6
-      cons(2).slack shouldBe 26.666666666666667 +- 1e-6
-      cons(3).slack shouldBe 80.0 +- 1e-6
-      cons(4).slack shouldBe 56.666666666666667 +- 1e-6
-      cons(5).slack shouldBe 16.671666666666667 +- 1e-6
+      cons.head.slack.get shouldBe 0.0 +- 1e-6
+      cons(1).slack.get shouldBe 0.0 +- 1e-6
+      cons(2).slack.get shouldBe 26.666666666666667 +- 1e-6
+      cons(3).slack.get shouldBe 80.0 +- 1e-6
+      cons(4).slack.get shouldBe 56.666666666666667 +- 1e-6
+      cons(5).slack.get shouldBe 16.671666666666667 +- 1e-6
 
       cons.foreach(c => c.check() shouldBe true)
 

@@ -217,6 +217,7 @@ final class LPSolve extends AbstractMPSolver {
         ProblemStatus.NOT_SOLVED
 
       case _ =>
+        println("LPSolve cannot handle the problem. Status was set to INFEASIBLE.")
         ProblemStatus.INFEASIBLE
     }
   }

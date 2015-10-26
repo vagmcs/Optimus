@@ -33,6 +33,7 @@ import optimus.optimization.PreSolve.PreSolve
 import optimus.optimization.ProblemStatus.ProblemStatus
 import scala.collection.mutable
 import scala.collection.mutable.ArrayBuffer
+import scala.util.{Success, Failure, Try}
 
 /**
  * Abstract mathematical programming model.
@@ -240,7 +241,7 @@ abstract class AbstractMPProblem {
 
   def objectiveValue() = solver.objectiveValue
 
-  def getValue(varIndex: Int): Option[Double] = Some(solution(varIndex))
+  def getValue(varIndex: Int): Option[Double] = solution.get(varIndex)
 
   protected def optimize(expression: Expression, minimize: Boolean): AbstractMPProblem = {
     reOptimize = false
@@ -284,7 +285,7 @@ abstract class AbstractMPProblem {
     println("Solving...")
     status = solver.solveProblem(preSolve)
     if ( (status == ProblemStatus.OPTIMAL) || (status == ProblemStatus.SUBOPTIMAL) )
-      (0 until variables.length) foreach { i => solution(i) = solver.getValue(i) }
+      variables.indices foreach { i => solution(i) = solver.getValue(i) }
 
     println("Solution status is " + status)
   }
@@ -352,36 +353,50 @@ class MPVariable(val problem: AbstractMPProblem, val lowerBound: Double, val upp
  */
 class MPConstraint(val problem: AbstractMPProblem, val constraint: Constraint, val index: Int) {
 
-  def check(tol: Double = 10e-6): Boolean = constraint.operator match {
-      case ConstraintRelation.GE => slack + tol >= 0
-      case ConstraintRelation.LE => slack + tol >= 0
-      case ConstraintRelation.EQ => slack.abs - tol <= 0
+  def check(tol: Double = 10e-6): Boolean = slack match {
+    case Success(value) => constraint.operator match {
+      case ConstraintRelation.GE => value + tol >= 0
+      case ConstraintRelation.LE => value + tol >= 0
+      case ConstraintRelation.EQ => value.abs - tol <= 0
+    }
+    case Failure(exception) =>
+      println(exception.getMessage)
+      false
   }
 
-  def slack: Double = {
+  def slack: Try[Double] = {
     var res = 0.0
 
     val iteratorLHS = constraint.lhs.terms.iterator()
     while(iteratorLHS.hasNext) {
       iteratorLHS.advance()
-      res += iteratorLHS.value * decode(iteratorLHS.key).map(v => problem.getValue(v).get).product
+      res += iteratorLHS.value * decode(iteratorLHS.key).map { v =>
+        problem.getValue(v).getOrElse(return Failure(new NoSuchElementException(s"Value for variable ${problem.variable(v)} not found!")))
+      }.product
     }
 
     val iteratorRHS = constraint.rhs.terms.iterator()
     while(iteratorRHS.hasNext) {
       iteratorRHS.advance()
-      res -= iteratorRHS.value * decode(iteratorRHS.key).map(v => problem.getValue(v).get).product
+      res -= iteratorRHS.value * decode(iteratorRHS.key).map{ v =>
+        problem.getValue(v).getOrElse(return Failure(new NoSuchElementException(s"Value for variable ${problem.variable(v)} not found!")))
+      }.product
     }
 
     val c = constraint.rhs.constant - constraint.lhs.constant
     constraint.operator match {
-      case ConstraintRelation.GE => res - c
-      case ConstraintRelation.LE => c - res
-      case ConstraintRelation.EQ => c - res
+      case ConstraintRelation.GE => Success(res - c)
+      case ConstraintRelation.LE => Success(c - res)
+      case ConstraintRelation.EQ => Success(c - res)
     }
   }
 
-  def isTight(tol: Double = 10e-6) = slack.abs <= tol
+  def isTight(tol: Double = 10e-6) = slack match {
+    case Success(value) => value.abs <= tol
+    case Failure(exception) =>
+      println(exception.getMessage)
+      false
+  }
 
   override def toString = constraint.toString
 }
