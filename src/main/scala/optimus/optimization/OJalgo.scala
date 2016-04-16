@@ -165,8 +165,8 @@ final class OJalgo extends AbstractMPSolver {
     while(iterator.hasNext) {
       iterator.advance()
       val indexes = decode(iterator.key)
-      if(indexes.length == 1) objectiveFunction.setLinearFactor(model.getVariable(indexes.head), iterator.value)
-      else objectiveFunction.setQuadraticFactor(model.getVariable(indexes.head), model.getVariable(indexes(1)), iterator.value)
+      if(indexes.length == 1) objectiveFunction.set(model.getVariable(indexes.head), iterator.value)
+      else objectiveFunction.set(model.getVariable(indexes.head), model.getVariable(indexes(1)), iterator.value)
     }
 
     if(!minimize) this.minimize = false else this.minimize = true
@@ -188,8 +188,8 @@ final class OJalgo extends AbstractMPSolver {
     while(iterator.hasNext) {
       iterator.advance()
       val indexes = decode(iterator.key)
-      if(indexes.length == 1) constraint.setLinearFactor(model.getVariable(indexes.head), iterator.value)
-      else constraint.setQuadraticFactor(model.getVariable(indexes.head), model.getVariable(indexes(1)), iterator.value)
+      if(indexes.length == 1) constraint.set(model.getVariable(indexes.head), iterator.value)
+      else constraint.set(model.getVariable(indexes.head), model.getVariable(indexes(1)), iterator.value)
     }
 
     operator match {
@@ -233,7 +233,7 @@ final class OJalgo extends AbstractMPSolver {
    * Release the memory of this solver
    */
   def release() = {
-    model.destroy()
+    model.dispose()
   }
 
   /**

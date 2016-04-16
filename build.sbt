@@ -18,16 +18,17 @@ libraryDependencies += "org.scalatest" %% "scalatest" % "2.2.4" % "test"
 // Trove Collections
 libraryDependencies += "net.sf.trove4j" % "trove4j" % "3.0.3"
 
-// oJalgo library for optimization
-libraryDependencies += {
-  if(OptimusBuild.javaVersion >= 1.8)
-    "org.ojalgo" % "ojalgo" % "38.1" from "https://repo1.maven.org/maven2/org/ojalgo/ojalgo/38.1/ojalgo-38.1.jar"
-  else
-    "org.ojalgo" % "ojalgo" % "37.1" from "https://repo1.maven.org/maven2/org/ojalgo/ojalgo/37.1/ojalgo-37.1.jar"
-}
+// oj algorithms library for optimization
+libraryDependencies += "org.ojalgo" % "ojalgo" % "39.0"
 
-// lpsolve library for optimization
+// lp solve library for optimization
 libraryDependencies += "com.datumbox" % "lpsolve" % "5.5.2.0"
+
+// Dependencies override
+libraryDependencies ++= Seq(
+  "org.scala-lang" % "scala-reflect" % "2.11.7",
+  "org.scala-lang.modules" % "scala-xml_2.11" % "1.0.4"
+)
 
 publishTo := Some(Resolver.file("file",  new File(Path.userHome.absolutePath+"/.m2/repository")))
 
@@ -38,7 +39,7 @@ excludeFilter := {
   catch { case _ : Exception => Array[String]() }
 
   if (!jars.contains("gurobi.jar")) {
-    println(s"[warn] Will build without the support of Gurobi solver ('gurobi.jar' is missing from '${unmanagedBase.value.getName}' directory)")
+    println(s"[warn] Building without the support of Gurobi solver ('gurobi.jar' is missing from '${unmanagedBase.value.getName}' directory)")
     excludeNames += "Gurobi"
   }
   if(excludeNames.isEmpty) new SimpleFileFilter(_ => false)
