@@ -31,10 +31,8 @@ import optimus.algebra.{Expression, Constraint}
 import optimus.optimization.PreSolve.PreSolve
 
 /**
- * Helper functions for linear-quadratic optimization
- *
- * @author Vagelis Michelioudakis
- */
+  * Helper functions for linear-quadratic optimization
+  */
 package object optimization {
 
   object SolverLib extends Enumeration {

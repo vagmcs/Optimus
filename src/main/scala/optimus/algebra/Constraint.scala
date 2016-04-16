@@ -30,10 +30,8 @@ package optimus.algebra
 import optimus.algebra.ConstraintRelation.ConstraintRelation
 
 /**
- * A constraint has the form (expression RELATION expression) with RELATION in {<=, ==, >=}
- *
- * @author Vagelis Michelioudakis
- */
+  * A constraint has the form (expression RELATION expression) with RELATION in {<=, ==, >=}
+  */
 class Constraint(val lhs: Expression, val operator: ConstraintRelation, val rhs: Expression) {
 
   override def toString = lhs + " " + operator + " " + rhs

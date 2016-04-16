@@ -33,14 +33,6 @@ import optimus.optimization.SolverLib._
 import scala.util.{Success, Try}
 
 /**
- * Models for mathematical programming. Everything related to this field of
- * optimization should be included here.
- *
- * @author Vagelis Michelioudakis
- */
-
-
-/**
  * A Linear-Quadratic problem. Can be solved using one of the supported
  * solvers (LPSolve, oJalgo or Gurobi).
  *

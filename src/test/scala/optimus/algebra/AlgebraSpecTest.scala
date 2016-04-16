@@ -4,11 +4,8 @@ import org.scalatest.{Matchers, FunSpec}
 import optimus.optimization.{LQProblem, MPFloatVar}
 
 /**
-* Specification for algebra.
-*
-* @author Vagelis Michelioudakis
-* @author Christos Vlassopoulos
-*/
+  * Specification for algebra.
+  */
 final class AlgebraSpecTest extends FunSpec with Matchers {
 
   implicit val problem = LQProblem()

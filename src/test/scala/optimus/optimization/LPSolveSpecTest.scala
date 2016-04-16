@@ -3,11 +3,8 @@ package optimus.optimization
 import org.scalatest.{FunSpec, Matchers}
 
 /**
- * Specification for LPSolve.
- *
- * @author Vagelis Michelioudakis
- * @author Christos Vlassopoulos
- */
+  * Specification for LPSolve.
+  */
 final class LPSolveSpecTest extends FunSpec with Matchers {
 
   describe("Linear programming") {

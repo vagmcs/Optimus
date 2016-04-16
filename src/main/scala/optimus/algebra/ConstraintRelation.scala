@@ -28,10 +28,8 @@ package optimus.algebra
  */
 
 /**
- * Constraint relations (>= <= ==).
- *
- * @author Vagelis Michelioudakis
- */
+  * Constraint relations (>= <= ==).
+  */
 object ConstraintRelation extends Enumeration {
 
   type ConstraintRelation = Value

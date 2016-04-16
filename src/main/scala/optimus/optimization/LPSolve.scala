@@ -33,10 +33,8 @@ import optimus.optimization.ProblemStatus.ProblemStatus
  */
 
 /**
- * LPSolve solver.
- *
- * @author Vagelis Michelioudakis
- */
+  * LPSolve solver.
+  */
 final class LPSolve extends AbstractMPSolver {
 
   var lp: LpSolve = null

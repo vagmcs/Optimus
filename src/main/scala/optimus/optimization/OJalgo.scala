@@ -35,10 +35,8 @@ import optimus.algebra._
  */
 
 /**
- * OJalgo solver.
- *
- * @author Vagelis Michelioudakis
- */
+  * OJalgo solver.
+  */
 final class OJalgo extends AbstractMPSolver {
 
   var nbRows = 0

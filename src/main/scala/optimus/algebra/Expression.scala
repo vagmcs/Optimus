@@ -32,12 +32,9 @@ import optimus.algebra.ExpressionOrder.ExpressionOrder
  */
 
 /**
- * Expression abstraction, should be extended by anything that is
- * an expression type.
- *
- * @author Vagelis Michelioudakis
- * @author Anastasios Skarlatidis
- */
+  * Expression abstraction, should be extended by anything that is
+  * an expression type.
+  */
 abstract class Expression {
 
   // keep the variables and their corresponding coefficients and the constant term of the expression

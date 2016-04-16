@@ -31,12 +31,9 @@ import gnu.trove.procedure.TLongDoubleProcedure
  */
 
 /**
- * Helper functions for summation of multiple expressions
- * stored in iterable data structures and encoding/decoding of terms.
- *
- * @author Vagelis Michelioudakis
- * @author Anastasios Skarlatidis
- */
+  * Helper functions for summation of multiple expressions
+  * stored in iterable data structures and encoding/decoding of terms.
+  */
 package object algebra {
 
   /**

@@ -3,11 +3,8 @@ package optimus.optimization
 import org.scalatest.{FunSpec, Matchers}
 
 /**
- * Specification for oJalgo.
- *
- * @author Vagelis Michelioudakis
- * @author Christos Vlassopoulos
- */
+  * Specification for oJalgo.
+  */
 final class OJalgoSpecTest extends FunSpec with Matchers {
 
   describe("Linear programming") {

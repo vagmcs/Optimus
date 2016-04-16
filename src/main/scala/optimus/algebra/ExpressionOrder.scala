@@ -28,10 +28,8 @@ package optimus.algebra
  */
 
 /**
- * Expression order may be constant, linear, quadratic or higher order.
- *
- * @author Vagelis Michelioudakis
- */
+  * Expression order may be constant, linear, quadratic or higher order.
+  */
 object ExpressionOrder extends Enumeration {
 
   type ExpressionOrder = Value

@@ -3,12 +3,8 @@ package optimus.optimization
 import org.scalatest.{FunSpec, Matchers}
 
 /**
- * Specification for Gurobi solver.
- *
- * @author Anastasios Skarlatidis
- * @author Vagelis Michelioudakis
- * @author Christos Vlassopoulos
- */
+  * Specification for Gurobi solver.
+  */
 final class GurobiSpecTest extends FunSpec with Matchers {
 
   describe("Constant programming") {

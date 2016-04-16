@@ -35,12 +35,6 @@ import scala.collection.mutable
 import scala.collection.mutable.ArrayBuffer
 import scala.util.{Success, Failure, Try}
 
-/**
- * Abstract mathematical programming model.
- *
- * @author Vagelis Michelioudakis
- */
-
 object ProblemStatus extends Enumeration {
 
   type ProblemStatus = Value

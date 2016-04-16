@@ -33,10 +33,8 @@ import optimus.optimization.ProblemStatus.ProblemStatus
 import gurobi._
 
 /**
- * Gurobi solver.
- *
- * @author Vagelis Michelioudakis
- */
+  * Gurobi solver.
+  */
 final class Gurobi extends AbstractMPSolver {
 
   var nbRows = 0

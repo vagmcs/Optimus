@@ -4,8 +4,8 @@ import org.scalatest.{Matchers, FunSpec}
 import optimus.algebra._
 
 /**
- * N-Queens puzzle using MIP programming.
- */
+  * N-Queens puzzle using MIP programming.
+  */
 final class QueensTest extends FunSpec with Matchers {
 
   val n = 8
