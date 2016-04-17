@@ -18,12 +18,12 @@ This program comes with ABSOLUTELY NO WARRANTY. This is free software, and you a
   * Quadratic constraint quadratic programming (QCQP)
   * Mixed integer programming (MIP)
 3. Available solvers:
-  * Open source [lp_solve](http://sourceforge.net/projects/lpsolve/) can be used for LP and MIP
-  * Open source [ojalgo](http://ojalgo.org/) can be used for LP, QP and MIP
+  * Open source [lpsolve](http://sourceforge.net/projects/lpsolve/) can be used for LP and MIP
+  * Open source [ojAlgo](http://ojalgo.org/) can be used for LP, QP and MIP
   * Proprietary solver [Gurobi](http://www.gurobi.com/) can be used for efficiently solving LP, QP, QCQP and MIP
 
 ## Reference in Scientific Publications
-Please use the following BibTex entry when you cite Optimus in your papers:
+Please use the following BibTeX entry when you cite Optimus in your papers:
 ```
 @misc{Optimus,
       author = {Evangelos Michelioudakis},
@@ -43,4 +43,4 @@ See [Building and Linking](docs/building_and_linking.md)
 
 ## The development of Optimus is powered by:
 
-[![Intellij IDEA](https://www.jetbrains.com/idea/docs/logo_intellij_idea.png)](https://www.jetbrains.com/idea/)
+[![Intellij IDEA](https://www.jetbrains.com/img/logos/logo_intellij_idea.png)](https://www.jetbrains.com/idea/)

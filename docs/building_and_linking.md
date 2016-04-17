@@ -1,40 +1,38 @@
 # Building and Linking Optimus
 
-In order to build Optimus from source, you need to have Java SE Development Kit (e.g., OpenJDK) version 8 or higher and [SBT](http://www.scala-sbt.org/)(v0.13.x) installed in your system. Moreover, Optimus build optionally depends on [Gurobi](http://www.gurobi.com/). In case the dependencies for Gurobi are not included, Optimus would build a minimal version having only lp_solve and ojalgo.
+In order to build Optimus from source, you need to have Java SE Development Kit version 8 or higher and [SBT](http://www.scala-sbt.org/)(v0.13.x) installed in your system. Optimus build optionally depends on [Gurobi](http://www.gurobi.com/) solver. In case the dependencies for Gurobi are not included, Optimus would build a minimal version having only lpsolve and ojAlgo.
 
 ## Instructions to build Optimus from source
 
-**Step 1.** Optionally, include Gurobi library dependencies to `./lib`, as it is illustrated in the tree below:
+**Step 1.** Optionally include Gurobi library dependencies to `./lib` as illustrated in the tree:
 ```
 lib/
 |-- gurobi.jar
 ```
 
-**Step 2.** For using Gurobi and lp_solve you should also set the environment variables of your system to make use of the solver native executable files.
+**Step 2.** In order to use Gurobi or lpsolve you must also set the environment variables of your system to include the solver native executables. Detailed instructions can be found in Sections [LPSolve Installation](#lpsolve-installation) and [Gurobi Installation](#gurobi-installation).
 
 **Step 3.** To build the Optimus distribution type the following command:
 ```
 $ sbt dist
 ```
 
-After a successful compilation, distribution is located inside the `./target/universal/optimus-<version>.zip` file. The distribution contains all library dependencies and requires only Java 8 (or higher). Sources, documentation and the compiled library (without dependencies) are archived as jar files into the `./target/scala-2.11/` directory.
+After a successful compilation, the distribution is located inside the `./target/universal/optimus-<version>.zip` file. The distribution contains all library dependencies and requires only Java 8 (or higher). Sources, documentation and the compiled library (without dependencies) are archived as jar files into the `./target/scala-2.11/` directory.
 
-## LPSolve installation instructions (optional)
+## LPSolve Installation (optional)
 
-For example, on a***Debian-based***distribution, type the following command:
+#### Install LPSolve v5.5.x to ***Debian-based*** distribution:
 ```bash
 $ sudo apt-get install lp-solve
 ```
 
-To install Java Native Interface support for LPSolve v5.5.x you need follow the instructions below:
-* Download LPSolve dev, 64bit *lp_solve_5.5.2.x_dev_ux64.zip* or for 32bit *lp_solve_5.5.2.x_dev_ux32.zip*, from [LPSolve official repository](http://sourceforge.net/projects/lpsolve/files/lpsolve/5.5.2.0/).
-  * Extract the file
-  * We only need the `lpsolve55.so` file.
-* Download LPSolve java bindings (lp_solve_5.5.2.x_java.zip) from [LPSolve official repository](http://sourceforge.net/projects/lpsolve/files/lpsolve/5.5.2.0/).
-    * Extract the file
-    * We only need the `lpsolve55j.so` files
+Installation of Java Native Interface support for LPSolve v5.5.x:
+* Download [LPSolve dev](http://sourceforge.net/projects/lpsolve/files/lpsolve/5.5.2.0/), 64bit *lp_solve_5.5.2.x_dev_ux64.zip* or for 32bit *lp_solve_5.5.2.x_dev_ux32.zip*.
+  * Extract the archive and keep `lpsolve55.so` file.
+* Download LPSolve java bindings [lp_solve_5.5.2.x_java.zip](http://sourceforge.net/projects/lpsolve/files/lpsolve/5.5.2.0/).
+    * Extract the archive and keep `lpsolve55j.so` file.
 * Create a directory containing the `lpsolve55.so` and `lpsolve55j.so` files, e.g., `$HOME/lib/lpsolve55`
-* Add this directory to `LD_LIBRARY_PATH` in your profile file:
+* Add this directory to `LD_LIBRARY_PATH` in your profile:
 
 **BASH** e.g., inside `.profile`, `.bashrc` or `.bash_profile` file in your home directory:
 ```bash
@@ -50,9 +48,8 @@ or in `~/.cshrc` file in your home directory:
 setenv LD_LIBRARY_PATH $LD_LIBRARY_PATH:$HOME/lib/lpsolve55:.
 ```
 
-### Apple MacOS X
-
-Either download and install from the[LPSolve website](http://lpsolve.sourceforge.net)or from your favorite package manager.
+#### Install LPSolve 5.5.2.x to ***Apple Mac OSX***
+For ***Apple Mac OSX*** either download and install from the [LPSolve website](http://lpsolve.sourceforge.net) or from your favorite package manager.
 
 [Macports](https://www.macports.org):
 ```bash
@@ -65,13 +62,11 @@ $ brew tap homebrew/science
 $ brew install lp_solve
 ```
 
-To install the Java Native Interface support for LPSolve v5.5.x you need follow the  instructions below:
-* Download LPSolve dev, 64bit *lp_solve_5.5.2.x_dev_ux64.zip* or for 32bit *lp_solve_5.5.2.x_dev_ux32.zip*, from [LPSolve official repository](http://sourceforge.net/projects/lpsolve/files/lpsolve/5.5.2.0/).
-  * Extract the file
-  * We only need the `lpsolve55.dylib` file.
-* Download LPSolve java bindings (lp_solve_5.5.2.x_java.zip) from [LPSolve official repository](http://sourceforge.net/projects/lpsolve/files/lpsolve/5.5.2.0/).
-    * Extract the file
-    * We only need the `lpsolve55j.jnilib` files
+Installation of Java Native Interface support for LPSolve v5.5.x:
+* Download [LPSolve dev](http://sourceforge.net/projects/lpsolve/files/lpsolve/5.5.2.0/), 64bit *lp_solve_5.5.2.x_dev_ux64.zip* or for 32bit *lp_solve_5.5.2.x_dev_ux32.zip*.
+  * Extract the archive and keep `lpsolve55.dylib` file.
+* Download LPSolve java bindings [lp_solve_5.5.2.x_java.zip](http://sourceforge.net/projects/lpsolve/files/lpsolve/5.5.2.0/).
+    * Extract the archive and keep `lpsolve55j.jnilib` file.
 * Create a directory containing the `lpsolve55.dylib` and `lpsolve55j.jnilib` files, e.g., `$HOME/lib/lpsolve55`
 * Add this directory to `LD_LIBRARY_PATH` inside `.profile` file in your home directory:
 
@@ -79,34 +74,31 @@ To install the Java Native Interface support for LPSolve v5.5.x you need follow 
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$HOME/lib/lpsolve55
 ```
 
-### Microsoft Windows
-To install LPSolve v5.5.x in your system, follow the instructions below:
-  * Download LPSolve dev, 64bit *lp_solve_5.5.2.x_dev_win64.zip* or for 32bit *lp_solve_5.5.2.x_dev_win64.zip*, from [LPSolve official repository](http://sourceforge.net/projects/lpsolve/files/lpsolve/5.5.2.0/).
-    * Extract the file
-    * We only need the `lpsolve55.dll` file.
-  * Download LPSolve java bindings (lp_solve_5.5.2.x_java.zip) from [LPSolve official repository](http://sourceforge.net/projects/lpsolve/files/lpsolve/5.5.2.0/).
-    * Extract the file
-    * We only need the `lpsolve55j.jar` and `lpsolve55j.dll` files
+#### Install LPSolve v5.5.x to ***Microsoft Windows***
+  * Download [LPSolve dev](http://sourceforge.net/projects/lpsolve/files/lpsolve/5.5.2.0/), 64bit *lp_solve_5.5.2.x_dev_win64.zip* or for 32bit *lp_solve_5.5.2.x_dev_win64.zip*.
+    * Extract the archive and keep `lpsolve55.dll` file.
+  * Download LPSolve java bindings [lp_solve_5.5.2.x_java.zip](http://sourceforge.net/projects/lpsolve/files/lpsolve/5.5.2.0/).
+    * Extract the archive and keep `lpsolve55j.jar` and `lpsolve55j.dll` files.
   * Create a directory containing the `lpsolve55.dll`, `lpsolve55j.jar` and `lpsolve55j.dll` files, e.g., `C:\path\to\lpsolve55`
-  * Add this directory to the PATH environment variable in your system environment variables (see [instructions](#microsoft-windows-operating-systems))
+  * Add this directory to the PATH environment variable in your system environment variables (see [instructions](#microsoft-windows-operating-systems)).
 
-## Gurobi installation instructions (optional)
+## Gurobi Installation (optional)
 Please follow the installation instructions from the [Gurobi website](http://www.gurobi.com).
 
 ## Local publish Optimus
-Follow **steps 1 and 2** of Section[Instructions to build Optimus from source](#instructions-to-build-optimus-from-source)to build Optimus and then publish locally Optimus to your Apache Ivy directory (e.g., inside ~/.ivy2/local/):
+Follow **steps 1 and 2** of Section [Instructions to build Optimus from source](#instructions-to-build-optimus-from-source) to build Optimus and then publish locally Optimus to your Apache Ivy directory (e.g., inside ~/.ivy2/local/):
 
 ```bash
 $ sbt publishLocal
 ```
 
-Thereafter, in order to link Optimus (e.g., version 1.2.2) to your[SBT](http://www.scala-sbt.org/)project, add the following dependency:
+In order to link Optimus (e.g., version 1.2.2) to your [SBT](http://www.scala-sbt.org/) project, add the following dependency:
 
 ```sbt
 libraryDependencies += "com.github.vagm" %% "optimus" % "1.2.2"
 ```
 
-Similarly in an[Apache Maven](https://maven.apache.org/)pom file add:
+Likewise in an [Apache Maven](https://maven.apache.org/) pom xml file add:
 
 ```xml
 <dependency>
