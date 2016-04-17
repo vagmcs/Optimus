@@ -13,7 +13,7 @@ libraryDependencies ++= Seq(
 )
 
 // Dependencies for unit testing (only for compile and test, exclude from publishing)
-libraryDependencies += "org.scalatest" %% "scalatest" % "2.2.4" % "test"
+libraryDependencies += "org.scalatest" %% "scalatest" % "2.2.6" % "test"
 
 // Trove Collections
 libraryDependencies += "net.sf.trove4j" % "trove4j" % "3.0.3"
@@ -26,7 +26,7 @@ libraryDependencies += "com.datumbox" % "lpsolve" % "5.5.2.0"
 
 // Dependencies override
 libraryDependencies ++= Seq(
-  "org.scala-lang" % "scala-reflect" % "2.11.7",
+  "org.scala-lang" % "scala-reflect" % "2.11.8",
   "org.scala-lang.modules" % "scala-xml_2.11" % "1.0.4"
 )
 

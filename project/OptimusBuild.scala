@@ -15,11 +15,11 @@ object OptimusBuild {
 
     name := "Optimus",
 
-    version := "1.2.1",
+    version := "1.2.2",
 
     organization := "com.github.vagm",
 
-    scalaVersion := "2.11.7",
+    scalaVersion := "2.11.8",
 
     autoScalaLibrary := true,
 
