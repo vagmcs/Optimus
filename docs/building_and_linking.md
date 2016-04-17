@@ -10,16 +10,16 @@ lib/
 |-- gurobi.jar
 ```
 
-**Step 2.** In order to use Gurobi or lpsolve you must also set the environment variables of your system to include the solver native executables. Detailed instructions can be found in Sections [LPSolve Installation](#lpsolve-installation-(optional)) and [Gurobi Installation](#gurobi-installation-(optional)).
+**Step 2.** In order to use Gurobi or lpsolve you must also set the environment variables of your system to include the solver native executables. Detailed instructions can be found in Sections [LPSolve Installation](#optional-lpsolve-installation) and [Gurobi Installation](#optional-gurobi-installation).
 
 **Step 3.** To build the Optimus distribution type the following command:
 ```
 $ sbt dist
 ```
 
-After a successful compilation, the distribution is located inside `./target/universal/optimus-<version>.zip`. The distribution contains all library dependencies and requires only Java 8 (or higher). Sources, documentation and the compiled library (without dependencies) are archived as jar files into the `./target/scala-2.11/` directory.
+After a successful compilation, the distribution is located inside the `./target/universal/optimus-<version>.zip` archive. The distribution contains all library dependencies and requires only Java 8 (or higher). Sources, documentation and the compiled library (without dependencies) are archived as jar files into the `./target/scala-2.11/` directory.
 
-## LPSolve Installation (optional)
+## Optional LPSolve Installation
 
 #### Install LPSolve v5.5.x to ***Debian-based*** distribution:
 ```bash
@@ -82,7 +82,7 @@ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$HOME/lib/lpsolve55
   * Create a directory containing the `lpsolve55.dll`, `lpsolve55j.jar` and `lpsolve55j.dll` files, e.g., `C:\path\to\lpsolve55`
   * Add the directory to the PATH environment variable in your system environment variables (see [instructions](#microsoft-windows-operating-systems)).
 
-## Gurobi Installation (optional)
+## Optional Gurobi Installation
 Please follow the installation instructions from the [Gurobi website](http://www.gurobi.com).
 
 ## Local publish Optimus
