@@ -4,7 +4,9 @@ import org.scalatest.{Matchers, FunSpec}
 import optimus.algebra._
 
 /**
-  * N-Queens puzzle using MIP programming.
+  * N-Queens puzzle: Place n chess queens on an n×n chessboard so that no two
+  * queens threaten each other. Thus, a solution requires that no two queens
+  * share the same row, column, or diagonal.
   */
 final class QueensTest extends FunSpec with Matchers {
 
@@ -40,12 +42,18 @@ final class QueensTest extends FunSpec with Matchers {
 
     start()
 
-    status should equal(ProblemStatus.OPTIMAL)
-    objectiveValue shouldBe 8.0 +- 0.00001
+    it(s"$lib solution status should be optimal") {
+      status shouldBe ProblemStatus.OPTIMAL
+    }
+
+    it(s"$lib objective value should be 8.0 +- 0.00001") {
+      objectiveValue shouldBe 8.0 +- 0.00001
+    }
+
+    it(s"$lib constraints should be satisfied") {
+      checkConstraints() shouldBe true
+    }
 
     release()
-
-    checkConstraints() shouldBe true
   }
-  println()
 }
