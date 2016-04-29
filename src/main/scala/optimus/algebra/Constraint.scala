@@ -35,4 +35,10 @@ import optimus.algebra.ConstraintRelation.ConstraintRelation
 class Constraint(val lhs: Expression, val operator: ConstraintRelation, val rhs: Expression) {
 
   override def toString = lhs + " " + operator + " " + rhs
+
+  override def equals(that: Any) = that match {
+    case other: Constraint =>
+      operator == other.operator && rhs == other.rhs && lhs == other.lhs
+    case _ => false
+  }
 }

@@ -97,8 +97,8 @@ object MIProblem {
  * Mathematical programming integer/binary variables.
  *
  * @param problem the linear-quadratic problem the variable belongs
- * @param domain the variable domain defined by a range of integers. If the range is [0,1]
- *               then the variable is
+ * @param domain the variable domain defined by a range of integers. If the range is {0,1}
+ *               then the variable is binary.
  * @param symbol the symbol of the variable (default is anonymous)
  */
 final class MPIntVar private(problem: AbstractMPProblem, domain: Range, override val symbol: String = Variable.ANONYMOUS)
@@ -110,15 +110,17 @@ final class MPIntVar private(problem: AbstractMPProblem, domain: Range, override
 
 object MPIntVar {
 
-  def apply(symbol: String,  domain: Range)(implicit problem: AbstractMPProblem) =  new MPIntVar(problem, domain, symbol)
-  
   def apply(domain: Range)(implicit problem: AbstractMPProblem) = new MPIntVar(problem, domain)
+
+  def apply(problem: AbstractMPProblem, domain: Range) = new MPIntVar(problem, domain)
+
+  def apply(symbol: String,  domain: Range)(implicit problem: AbstractMPProblem) =  new MPIntVar(problem, domain, symbol)
   
   def apply(problem: AbstractMPProblem, symbol: String,  domain: Range) = new MPIntVar(problem, domain, symbol)
 }
 
 /**
- * Mathematical programming float variables (bounded or unbounded).
+ * Mathematical programming float variables (bounded or double unbounded).
  *
  * @param problem the linear-quadratic problem the variable belongs
  * @param lBound the lower bound of variable domain (default is 0.0)
@@ -133,7 +135,7 @@ final class MPFloatVar private(problem: AbstractMPProblem, val lBound: Double = 
     this.unbounded = unbounded
   }
 
-  def this(symbol: String, problem: AbstractMPProblem, unbounded: Boolean) = {
+  def this(problem: AbstractMPProblem, symbol: String, unbounded: Boolean) = {
     this(problem, if (unbounded) Double.PositiveInfinity else 0.0, Double.PositiveInfinity, symbol)
     this.unbounded = unbounded
   }
@@ -145,19 +147,21 @@ object MPFloatVar {
 
   def apply(unbounded: Boolean)(implicit problem: AbstractMPProblem) = new MPFloatVar(problem, unbounded)
 
-  def apply(implicit problem: AbstractMPProblem, unbounded: Boolean) = new MPFloatVar(problem, unbounded)
+  def apply(problem: AbstractMPProblem, unbounded: Boolean) = new MPFloatVar(problem, unbounded)
 
   def apply(lBound: Double, uBound: Double)(implicit problem: AbstractMPProblem) = new MPFloatVar(problem, lBound, uBound)
 
-  def apply(implicit problem: AbstractMPProblem, lBound: Double, uBound: Double) = new MPFloatVar(problem, lBound, uBound)
+  def apply(problem: AbstractMPProblem, lBound: Double, uBound: Double) = new MPFloatVar(problem, lBound, uBound)
 
-  def apply(symbol: String)(implicit problem: AbstractMPProblem) = new MPFloatVar(symbol, problem, false)
+  def apply(symbol: String)(implicit problem: AbstractMPProblem) = new MPFloatVar(problem, symbol, false)
 
-  def apply(symbol: String, unbounded: Boolean)(implicit problem: AbstractMPProblem) = new MPFloatVar(symbol, problem, unbounded)
+  def apply(problem: AbstractMPProblem, symbol: String) = new MPFloatVar(problem, symbol, false)
 
-  def apply(implicit problem: AbstractMPProblem, symbol: String, unbounded: Boolean) = new MPFloatVar(symbol, problem, unbounded)
+  def apply(symbol: String, unbounded: Boolean)(implicit problem: AbstractMPProblem) = new MPFloatVar(problem, symbol, unbounded)
+
+  def apply(problem: AbstractMPProblem, symbol: String, unbounded: Boolean) = new MPFloatVar(problem, symbol, unbounded)
 
   def apply(symbol: String, lBound: Double, uBound: Double)(implicit problem: AbstractMPProblem) = new MPFloatVar(problem, lBound, uBound, symbol)
 
-  def apply(implicit problem: AbstractMPProblem, symbol: String, lBound: Double, uBound: Double) = new MPFloatVar(problem, lBound, uBound, symbol)
+  def apply(problem: AbstractMPProblem, symbol: String, lBound: Double, uBound: Double) = new MPFloatVar(problem, lBound, uBound, symbol)
 }

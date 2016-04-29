@@ -66,7 +66,7 @@ package object algebra {
     else Vector(x.toInt, y.toInt / 2)
   }
 
-  // functions over iterable data structures
+  // Functions over iterable data structures of expressions
 
   def sum(expressions: Iterable[Expression]) : Expression = {
 
@@ -82,7 +82,8 @@ package object algebra {
         temporal.adjustOrPutValue(iterator.key, coefficient, coefficient)
       }
     }
-    temporal.retainEntries(new TLongDoubleProcedure { override def execute(l: Long, v: Double): Boolean = v != 0.0 })
+    temporal.retainEntries(new TLongDoubleProcedure {
+      override def execute(l: Long, v: Double): Boolean = v != 0.0 })
 
     new Expression {
       val constant = tConstant
@@ -90,23 +91,30 @@ package object algebra {
     }
   }
 
-  // these functions produce mathematical expressions over joint iterable and then summing out the results
+  // These functions produce mathematical expressions over joint iterable and then summing out the results
 
-  def sum[A](indexes: Iterable[A])(f : A => Expression) : Expression = sum(indexes map f)
+  def sum[A](indexes: Iterable[A])(f : A => Expression): Expression = sum(indexes map f)
 
-  def sum[A, B](indexesA: Iterable[A], indexesB: Iterable[B])(f : (A, B) => Expression) : Expression = sum( for(a <- indexesA; b <- indexesB) yield f(a, b) )
+  def sum[A, B](indexesA: Iterable[A],
+                indexesB: Iterable[B])(f : (A, B) => Expression): Expression = {
+    sum( for(a <- indexesA; b <- indexesB) yield f(a, b) )
+  }
 
-  def sum[A, B, C](indexesA: Iterable[A], indexesB: Iterable[B], indexesC: Iterable[C])(f : (A, B, C) => Expression) : Expression = {
+  def sum[A, B, C](indexesA: Iterable[A], indexesB: Iterable[B],
+                   indexesC: Iterable[C])(f : (A, B, C) => Expression): Expression = {
     sum( for(a <- indexesA; b <- indexesB; c <- indexesC) yield f(a, b, c) )
   }
 
-  def sum[A, B, C, D](indexesA: Iterable[A], indexesB: Iterable[B], indexesC: Iterable[C], indexesD: Iterable[D])(f : (A, B, C, D) => Expression) : Expression = {
+  def sum[A, B, C, D](indexesA: Iterable[A], indexesB: Iterable[B],
+                      indexesC: Iterable[C], indexesD: Iterable[D])(f : (A, B, C, D) => Expression): Expression = {
     sum( for(a <- indexesA; b <- indexesB; c <- indexesC; d <- indexesD) yield f(a, b, c, d) )
   }
 
-  // algebra implicit conversions
+  // Algebra implicit conversions
 
-  implicit def Int2Const(value: Int): Const = if(value == 0) Zero else Const(value.toDouble)
+  implicit def Int2Const(value: Int): Const =
+    if(value == 0) Zero else Const(value.toDouble)
 
-  implicit def Double2Const(value: Double): Const = if(value == 0.0) Zero else Const(value)
+  implicit def Double2Const(value: Double): Const =
+    if(value == 0.0) Zero else Const(value)
 }

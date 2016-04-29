@@ -1,96 +1,151 @@
 package optimus.algebra
 
-import org.scalatest.{Matchers, FunSpec}
-import optimus.optimization.{LQProblem, MPFloatVar}
+import org.scalatest.{FunSpec, Matchers}
+import optimus.optimization.{LQProblem, MPFloatVar, MPIntVar}
 
 /**
-  * Specification for algebra.
+  * Specification test for algebra.
   */
 final class AlgebraSpecTest extends FunSpec with Matchers {
 
   implicit val problem = LQProblem()
 
-  /**
-   * Definition of variables
-   */
+  // Definition of float variables
   val x = MPFloatVar("x", 0.0, 1.0)
   val y = MPFloatVar("y", 3.5, 100)
   val z = MPFloatVar("z", true)
   val t = MPFloatVar("t")
 
+  // Definition of integer variables
+  val p = MPIntVar(5 until 10)
+  val k = MPIntVar("k", 0 to 1)
+
   describe("Domain of variables") {
 
-    x.lowerBound should equal (0.0)
-    x.upperBound should equal (1.0)
-    x.isUnbounded should equal (false)
+    it("Variable x is float and should be bounded to [0, 1]") {
+      x.symbol shouldEqual "x"
+      x.lowerBound shouldEqual 0.0
+      x.upperBound shouldEqual 1.0
+      x.isInteger shouldEqual false
+      x.isBinary shouldEqual false
+      x.isUnbounded shouldEqual false
+    }
 
-    y.lowerBound should equal (3.5)
-    y.upperBound should equal (100)
-    y.isUnbounded should equal (false)
+    it("Variable y is float and should be bounded to [3.5, 100]") {
+      y.symbol shouldEqual "y"
+      y.lowerBound shouldEqual 3.5
+      y.upperBound shouldEqual 100
+      y.isInteger shouldEqual false
+      y.isBinary shouldEqual false
+      y.isUnbounded shouldEqual false
+    }
 
-    z.lowerBound should equal (Double.PositiveInfinity)
-    z.upperBound should equal (Double.PositiveInfinity)
-    z.isUnbounded should equal (true)
+    it("Variable z is float and should be unbounded") {
+      z.symbol shouldBe "z"
+      z.lowerBound shouldEqual Double.PositiveInfinity
+      z.upperBound shouldEqual Double.PositiveInfinity
+      z.isInteger shouldEqual false
+      z.isBinary shouldEqual false
+      z.isUnbounded shouldEqual true
+    }
 
-    t.lowerBound should equal (0.0)
-    t.upperBound should equal (Double.PositiveInfinity)
-    t.isUnbounded should equal (false)
+    it("Variable t is float and should be bounded to [0, +infinite)") {
+      t.symbol shouldEqual "t"
+      t.lowerBound shouldEqual 0.0
+      t.upperBound shouldEqual Double.PositiveInfinity
+      t.isInteger shouldEqual false
+      t.isBinary shouldEqual false
+      t.isUnbounded shouldEqual false
+    }
+
+    it("Variable p is integer and should have domain {5...9}") {
+      p.symbol shouldEqual Variable.ANONYMOUS
+      p.lowerBound shouldEqual 5
+      p.upperBound shouldEqual 9
+      p.isInteger shouldEqual true
+      p.isBinary shouldEqual false
+      p.isUnbounded shouldEqual false
+    }
+
+    it("Variable k is binary and should have domain {0...1}") {
+      k.symbol shouldEqual "k"
+      k.lowerBound shouldEqual 0
+      k.upperBound shouldEqual 1
+      k.isInteger shouldEqual true
+      k.isBinary shouldEqual true
+      k.isUnbounded shouldEqual false
+    }
   }
 
   describe("Equality of expressions") {
 
-    /**
-     * Checking variable properties
-     */
-    info(x - 0 + " should be equal to " + (x + 0))
-    x - 0 should equal (x + 0)
+    // Checking variable properties
 
-    info(x*1.0 + " should be equal to " + -(-x))
-    x*1.0 should equal (-(-x))
+    it("x - 0 should be equal to x + 0 (check also for p variable)") {
+      x - 0 shouldEqual x + 0
+      p - 0 shouldEqual p + 0
+    }
 
-    info(x*(-1.0) + " should be equal to " + -x)
-    x*(-1.0) should equal (-x)
+    it("x should be equal to -(-x)") {
+      1.0*x shouldEqual -(-x)
+    }
 
-    info(0 - x + " should be equal to " + (-x))
-    0 - x should equal (-x)
+    it("x * (-1) should be equal to -x") {
+      x*(-1.0) shouldEqual -x
+    }
 
-    info(-x + " should be equal to " + -(-(-x)))
-    -x should equal ( -(-(-x)) )
+    it("0 - x should be equal to -x") {
+      0 - x shouldEqual -x
+    }
 
-    info(x * -5 + " should be equal to " + -5.0 * x)
-    x * -4.2 should equal (-4.2 * x)
-    x * -5 should equal (-5.0 * x)
+    it("-x should be equal to -(-(-x))") {
+      -x shouldEqual -(-(-x))
+    }
 
-    /**
-     * Checking expression term properties
-     */
-    info(2.1 * x * y + " should be equal to " + y * x * 2.1)
-    2.1 * x * y should equal (y * x * 2.1)
+    it("x * (-5) should be equal to -5 * x") {
+      x * -5 shouldEqual -5.0 * x
+      x * -4.2 shouldEqual -4.2 * x
+    }
 
-    info(x * (-7.7) * z + " should be equal to " + z * x * (-7.7))
-    x * (-7.7) * z should equal (z * x * (-7.7))
-    
-    info((x^2) + " should be equal to " + x * x)
-    x^2 should equal (x * x)
+    // Checking expression term properties
 
-    info((x^1) + " should be equal to " + x)
-    x^1 should equal (x)
+    it("2.1 * x * y should be equal to y * x * 2.1") {
+      2.1 * x * y shouldEqual y * x * 2.1
+    }
 
-    info((x^0) + " should be equal to " + One)
-    x^0 should equal (One)
-    
-    /**
-     * Checking complex expression properties
-     */
-    info(2.1 * x * y + 3.2 * z * t + " should be equal to " + (2.1 * y * x + t * z * 3.2))
-    2.1 * x * y + 3.2 * z * t should equal (2.1 * y * x + t * z * 3.2)
+    it("x * -7.7 * z should be equal to z * x * -7.7") {
+      x * -7.7 * z shouldEqual z * x * -7.7
+    }
 
-    info(2.1 * x * y + 3.9 * z * t + 9 + " should be equal to " + (9.0 + 2.1 * x * y + 3.9 * z * t))
-    2.1 * x * y + 3.9 * z * t + 9 should equal (9.0 + 2.1 * x * y + 3.9 * z * t)
+    it("x^2 should be equal to x * x (also check for other variables)") {
+      x^2 shouldEqual x * x
+      p^2 shouldEqual p * p
+      k^2 shouldEqual k * k
+    }
 
-    /**
-     * Checking sum function over iterable
-     */
+    it("x^1 should be equal to x") {
+      x^1 shouldEqual x
+      z^1 shouldEqual z
+      k^1 shouldEqual k
+    }
+
+    it("x^0 should be equal to 1") {
+      x^0 shouldEqual One
+      k^0 shouldEqual One
+    }
+
+    // Checking complex expression properties
+
+    it("2.1*x*y + 3.2*z*t should be equal to 2.1*y*x + t*z*3.2") {
+      2.1 * x * y + 3.2 * z * t shouldEqual 2.1 * y * x + t * z * 3.2
+    }
+
+    it("2.1*x*y + 3.9*z*t + 9 should be equal to 9 + 2.1*x*y + 3.9*z*t") {
+      2.1 * x * y + 3.9 * z * t + 9 shouldEqual 9.0 + 2.1 * x * y + 3.9 * z * t
+    }
+
+    // Checking sum function over iterable
+
     val expression1 = 2 * x * y + 2 * z * t
     val expression2 = 2 * x * z + 4 * t + 5.0
     val expression3 = 3 * x * t + z + y * z
@@ -99,90 +154,120 @@ final class AlgebraSpecTest extends FunSpec with Matchers {
     val expressions12 = Array(expression1, expression2)
     val expressions34 = Array(expression3, expression4)
 
-    /**
+    /*
      * Produces 2.0(x * y) + 2.0(z * t) + 2.0(x * z) + 4.0t + 5.0
      */
-    info(expression1 + expression2 + " should be equal to " + sum(expressions12))
-    expression1 + expression2 should equal (sum(expressions12))
+    it("(2*x*y + 2*z*t) + (2*x*z + 4*t + 5) should be equal to 2*x*y + 2*z*t + 2*x*z + 4*t + 5") {
+      expression1 + expression2 shouldEqual sum(expressions12)
+    }
 
-    /**
+    /*
      * Produces 3.0(x * t) + 1.0(y * z) + 2.0z + 4.0
      */
-    info(expression3 + expression4 + " should be equal to " + sum(expressions34))
-    expression3 + expression4 should equal (sum(expressions34))
+    it("(3*x*t + z + y*z) + 4 + z should be equal to 3*x*t + 1*y*z + 2*z + 4") {
+      expression3 + expression4 shouldEqual sum(expressions34)
+    }
 
-    /**
+    /*
      * Produces 3.0(x * t) + 2.0(x * y) + 2.0(x * z) + 1.0(y * z) + 2.0(z * t) + 2.0z + 4.0t + 9.0
      */
-    info(expression1 + expression2 + expression3 + expression4 + " should be equal to " + sum(expressions))
-    expression1 + expression2 + expression3 + expression4 should equal (sum(expressions))
+    it("(2*x*y + 2*z*t) + (2*x*z + 4*t + 5) + (3*x*t + z + y*z) + 4 + z should be equal to 3*x*t + 2*x*y + 2*x*z + 1*y*z + 2*z*t + 2*z + 4*t + 9") {
+      expression1 + expression2 + expression3 + expression4 shouldEqual sum(expressions)
+    }
   }
 
   describe("Simplification of expressions") {
 
-    info(5*(x + y * z - t) + 3.0 + " should be equal to " + (5 * z * y + 5 * x - 5 * t + 3))
-    5*(x + y * z - t) + 3 should equal (5 * z * y + 5 * x - 5 * t + 3)
+    it("5*(x + y*z - t) + 3 should be simplified to 5*z*y + 5*x - 5*t + 3") {
+      5*(x + y * z - t) + 3 shouldEqual 5 * z * y + 5 * x - 5 * t + 3
+    }
 
-    info(x - x + " should equal to " + 0.0)
-    x - x should equal (Zero)
+    it("x - x should equal to 0") {
+      x - x shouldEqual Zero
+    }
 
-    info(-1 * x + x + " should equal to " + 0.0)
-    -1 * x + x should equal (Zero)
+    it("-1*x + x should equal to 0") {
+      -1 * x + x shouldEqual Zero
+    }
 
-    info(-x + x + y + " should equal to " + 1 * y)
-    -x + x + y should equal (1.0*y)
+    it("-x + x + y should equal to 1*y") {
+      -x + x + y shouldEqual 1*y
+    }
 
-    info(x + x + " should equal to " + 2 * x)
-    x + x should equal (2 * x)
+    it("x + x should equal to 2*x") {
+      x + x shouldEqual 2 * x
+    }
 
-    info(4 * t + 3 * t + " should equal to " + 7 * t)
-    4 * t + 3 * t should equal (7 * t)
+    it("4*t + 3*t + t should equal to 7*t") {
+      4 * t + 3 * t shouldEqual 7 * t
+    }
 
-    info(2 * x - 4 * x + " should equal to " + -2 * x)
-    2 * x - 4 * x should equal (-2 * x)
+    it("2*x -4*x should equal to -2*x") {
+      2 * x - 4 * x shouldEqual -2 * x
+    }
 
-    info(2 * x - 2 * x + " should equal to " + 0.0)
-    2 * x - 2 * x should equal (Zero)
+    it("2*x - 2*x should equal to 0") {
+      2 * x - 2 * x shouldEqual Zero
+    }
 
-    info(5 * x - x + " should equal to " + 4 * x)
-    5 * x - x should equal (4 * x)
+    it("5*x - x should equal to 4*x") {
+      5 * x - x shouldEqual 4 * x
+    }
 
-    info(-x + 4 * y + x + " should equal to " + 4 * y)
-    -x + 4 * y + x should equal (4 * y)
+    it("-x + 4*y + x should equal to 4*y") {
+      -x + 4 * y + x should equal (4 * y)
+    }
 
-    info((x + y) + (2 * x + y) + " should equal to " + (3 * x + 2 * y))
-    (x + y) + (2 * x + y) should equal (3 * x + 2 * y)
+    it("(x + y) + (2*x + y) should equal to 3*x + 2*y") {
+      (x + y) + (2 * x + y) shouldEqual 3 * x + 2 * y
+    }
 
-    info((t + z) - (t + z) + " should equal to " + 0.0)
-    (t + z) - (t + z) should equal (Zero)
+    it("(t + z) - (t + z) should equal to 0") {
+      (t + z) - (t + z) shouldEqual Zero
+    }
 
-    info((z - t) + (t - z) + " should equal to " + 0.0)
-    (z - t) + (t - z) should equal (Zero)
+    it("(z - t) + (t - z) should equal to 0") {
+      (z - t) + (t - z) shouldEqual Zero
+    }
 
-    info((x + 5) * (x + 4) + " should equal to " + (x*x + 9*x + 20))
-    (x + 5) * (x + 4) should equal (x*x + 9*x + 20)
+    it("(x + 5) * (x + 4) should equal to x*x + 9*x + 20") {
+      (x + 5) * (x + 4) shouldEqual x*x + 9*x + 20
+    }
 
-    val expr_0 = -2*z - 2*x - y + z + x - 1 + 1*z // equals -x1 - x2 - 1
-    expr_0.equals(-x - y - 1) should equal (true)
+    val expr_0 = -2*z - 2*x - y + z + x - 1 + 1*z // equals -x - y - 1
+    it("expr_0 = -2*z - 2*x - y + z + x - 1 + 1*z should equal to -x - y - 1") {
+      expr_0.equals(-x - y - 1) shouldEqual true
+    }
 
-    val expr_1 = 1 - (expr_0 - 1) + 2 - 1 // 4 + x1 + x2
-    expr_1.equals(4 + x + y) should equal (true)
+    val expr_1 = 1 - (expr_0 - 1) + 2 - 1 // 4 + x + y
+    it("expr_1 = 1 - (expr_0 - 1) + 2 - 1 should equal to 4 + x + y") {
+      expr_1.equals(4 + x + y) shouldEqual true
+    }
 
-    val expr_2 = -expr_1 // -4 - x1 - x2
-    expr_2.equals(-4 - x - y) should equal (true)
-
-    expr_2.equals( -4 - sum(Vector(x, y)) )
+    val expr_2 = -expr_1 // -4 - x - y
+    it("expr_2 = -expr_1 should be equal to -4 - x - y") {
+      expr_2.equals(-4 - x - y) shouldEqual true
+      expr_2.equals( -4 - sum(Vector(x, y)) ) shouldEqual true
+    }
   }
 
   describe("Order of expressions") {
 
-    (x - x).getOrder should equal(ExpressionOrder.CONSTANT)
+    it("x - x order should be constant") {
+      (x - x).getOrder shouldEqual ExpressionOrder.CONSTANT
+    }
 
-    (x*x - (x*x + y)).getOrder should equal(ExpressionOrder.LINEAR)
+    it("x*x - (x*x + y) order should be linear") {
+      (x*x - (x*x + y)).getOrder shouldEqual ExpressionOrder.LINEAR
+    }
 
-    (x + t + -5*y + 2*t + -3.2*z).getOrder should equal(ExpressionOrder.LINEAR)
+    it("x + t + -5*y + 2*t + -3.2*z order should be linear") {
+      (x + t + -5*y + 2*t + -3.2*z).getOrder shouldEqual ExpressionOrder.LINEAR
+    }
 
-    (x*y + z*t + 5*y + 2*x*t + z*z).getOrder should equal(ExpressionOrder.QUADRATIC)
+    it("x*y + z*t + 5*y + 2*x*t + z*z order should be quadratic") {
+      (x*y + z*t + 5*y + 2*x*t + z*z).getOrder shouldEqual ExpressionOrder.QUADRATIC
+    }
   }
 
   describe("Summation and product having many variables") {
@@ -196,13 +281,30 @@ final class AlgebraSpecTest extends FunSpec with Matchers {
     val startProd = System.currentTimeMillis()
     val expr = (x + y + x + y + t + z + t + z + 4.1*y + x + 5) * (x + y + x + y + t + z + t + z + y + x + 2)
     info("Product of " + expr + " took " + (System.currentTimeMillis() - startProd) + "ms to calculate")
-    expr should equal(12*x*z + 18.2*y*t + 4*z*z + 4*t*t + 44*t + 12*x*t + 18.2*y*z + 44*z + 8*z*t + 18.299999999999997*y*y + 72.2*y + 27.299999999999997*x*y + 66*x + 9*x*x + 10)
+    it("Checking product of expressions") {
+      expr shouldEqual 12 * x * z + 18.2 * y * t + 4 * z * z + 4 * t * t + 44 * t +
+        12 * x * t + 18.2 * y * z + 44 * z + 8 * z * t + 18.299999999999997 * y * y +
+        72.2 * y + 27.299999999999997 * x * y + 66 * x + 9 * x * x + 10
+    }
   }
 
   describe("Constraints") {
 
-    info( (x*z + 5.7*x - 34*t >= x) + ", " + (x*x + z*t + 9.1 := y*t + 8.7*z))
+    val constraint_1 = x*z + 5.7*x - 34*t >= x
+    val constraint_2 = x*x + z*t + 9.1 := y*t + 8.7*z
+
+    it("constraint_1 = x*z + 5.7*x -34*t >= x should be equal to itself") {
+     constraint_1.equals(x*z + 5.7*x - 34*t >= x) shouldEqual true
+    }
+
+    it("constraint_2 = x*x + z*t + 9.1 := y*t + 8.7*z should be equal to itself") {
+      constraint_2.equals(x*x + z*t + 9.1 := y*t + 8.7*z) shouldEqual true
+    }
+
+    it("constraint_1 should NOT be equal to constraint_2") {
+      constraint_1.equals(constraint_2) shouldEqual false
+    }
   }
 
-  println() // end specification
+  // end specification
 }
