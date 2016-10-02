@@ -29,16 +29,15 @@ package optimus.optimization
 
 import optimus.algebra.Variable
 import optimus.optimization.SolverLib._
-
 import scala.util.{Success, Try}
 
 /**
- * A Linear-Quadratic problem. Can be solved using one of the supported
- * solvers (LPSolve, oJalgo or Gurobi).
- *
- * @param solverLib solver library type
- */
-class LQProblem private[optimization](solverLib: SolverLib = SolverLib.oJalgo) extends AbstractMPProblem {
+  * A Linear-Quadratic problem. Can be solved using one of the supported
+  * solvers (LPSolve, ojalgo or Gurobi).
+  *
+  * @param solverLib solver library type
+  */
+class LQProblem private[optimization](solverLib: SolverLib = SolverLib.ojalgo) extends AbstractMPProblem {
 
   val solver = solverLib match {
 
@@ -55,16 +54,16 @@ class LQProblem private[optimization](solverLib: SolverLib = SolverLib.oJalgo) e
 }
 
 object LQProblem {
-  def apply(solverLib: SolverLib = SolverLib.oJalgo): LQProblem = new LQProblem(solverLib)
+  def apply(solverLib: SolverLib = SolverLib.ojalgo): LQProblem = new LQProblem(solverLib)
 }
 
 /**
- * A Mixed-Integer problem. Can be solved using one of the supported
- * solvers (LPSolve, oJalgo or Gurobi).
- *
- * @param solverLib solver library type
- */
-class MIProblem private[optimization](solverLib: SolverLib = SolverLib.oJalgo) extends AbstractMPProblem {
+  * A Mixed-Integer problem. Can be solved using one of the supported
+  * solvers (LPSolve, ojalgo or Gurobi).
+  *
+  * @param solverLib solver library type
+  */
+class MIProblem private[optimization](solverLib: SolverLib = SolverLib.ojalgo) extends AbstractMPProblem {
 
   val solver = solverLib match {
 
@@ -90,17 +89,17 @@ class MIProblem private[optimization](solverLib: SolverLib = SolverLib.oJalgo) e
 }
 
 object MIProblem {
-  def apply(solverLib: SolverLib = SolverLib.oJalgo): MIProblem = new MIProblem(solverLib)
+  def apply(solverLib: SolverLib = SolverLib.ojalgo): MIProblem = new MIProblem(solverLib)
 }
 
 /**
- * Mathematical programming integer/binary variables.
- *
- * @param problem the linear-quadratic problem the variable belongs
- * @param domain the variable domain defined by a range of integers. If the range is {0,1}
- *               then the variable is binary.
- * @param symbol the symbol of the variable (default is anonymous)
- */
+  * Mathematical programming integer/binary variables.
+  *
+  * @param problem the linear-quadratic problem the variable belongs
+  * @param domain the variable domain defined by a range of integers. If the range is {0,1}
+  *               then the variable is binary.
+  * @param symbol the symbol of the variable (default is anonymous)
+  */
 final class MPIntVar private(problem: AbstractMPProblem, domain: Range, override val symbol: String = Variable.ANONYMOUS)
   extends MPVariable(problem, domain.min, domain.max, false, symbol) {
   
@@ -120,13 +119,13 @@ object MPIntVar {
 }
 
 /**
- * Mathematical programming float variables (bounded or double unbounded).
- *
- * @param problem the linear-quadratic problem the variable belongs
- * @param lBound the lower bound of variable domain (default is 0.0)
- * @param uBound the upper bound of variable domain (default is infinite)
- * @param symbol the symbol of the variable (default is anonymous)
- */
+  * Mathematical programming float variables (bounded or double unbounded).
+  *
+  * @param problem the linear-quadratic problem the variable belongs
+  * @param lBound the lower bound of variable domain (default is 0.0)
+  * @param uBound the upper bound of variable domain (default is infinite)
+  * @param symbol the symbol of the variable (default is anonymous)
+  */
 final class MPFloatVar private(problem: AbstractMPProblem, val lBound: Double = 0.0, val uBound: Double = Double.PositiveInfinity,
                                override val symbol: String = Variable.ANONYMOUS) extends MPVariable(problem, lBound, uBound, false, symbol) {
 

@@ -23,22 +23,22 @@ final class QueensTest extends FunSpec with Matchers {
     maximize(sum(Lines, Columns) { (l, c) => x(l)(c) })
 
     // At most one queen can be placed in each row
-    for (l <- Lines) add(sum(Columns)(c => x(l)(c)) <= 1)
+    for (l <- Lines) add(sum(Columns)(c => x(l)(c)) <:= 1)
 
     // At most one queen can be placed in each column
-    for (c <- Columns) add(sum(Lines)(l => x(l)(c)) <= 1)
+    for (c <- Columns) add(sum(Lines)(l => x(l)(c)) <:= 1)
 
     // At most one queen can be placed in each /-diagonal upper half
-    for (i <- 1 until n) add(sum(0 to i)((j) => x(i - j)(j)) <= 1)
+    for (i <- 1 until n) add(sum(0 to i)((j) => x(i - j)(j)) <:= 1)
 
     // At most one queen can be placed in each /-diagonal lower half
-    for (i <- 1 until n) add(sum(i until n)((j) => x(j)(n - 1 - j + i)) <= 1)
+    for (i <- 1 until n) add(sum(i until n)((j) => x(j)(n - 1 - j + i)) <:= 1)
 
     // At most one queen can be placed in each /-diagonal upper half
-    for (i <- 0 until n) add(sum(0 until n - i)((j) => x(j)(j + i)) <= 1)
+    for (i <- 0 until n) add(sum(0 until n - i)((j) => x(j)(j + i)) <:= 1)
 
     // At most one queen can be placed in each /-diagonal lower half
-    for (i <- 1 until n) add(sum(0 until n - i)((j) => x(j + i)(j)) <= 1)
+    for (i <- 1 until n) add(sum(0 until n - i)((j) => x(j + i)(j)) <:= 1)
 
     start()
 

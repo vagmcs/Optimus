@@ -272,7 +272,7 @@ final class AlgebraSpecTest extends FunSpec with Matchers {
 
   describe("Summation and product having many variables") {
 
-    val variables = Array.tabulate(1000000)(i => MPFloatVar(i.toString, 0, 1))
+    val variables = Array.tabulate(100)(i => MPFloatVar(i.toString, 0, 1))
 
     val startSum = System.currentTimeMillis()
     sum(variables)
@@ -290,15 +290,23 @@ final class AlgebraSpecTest extends FunSpec with Matchers {
 
   describe("Constraints") {
 
-    val constraint_1 = x*z + 5.7*x - 34*t >= x
+    val constraint_1 = x*z + 5.7*x - 34*t >:= x
     val constraint_2 = x*x + z*t + 9.1 := y*t + 8.7*z
 
     it("constraint_1 = x*z + 5.7*x -34*t >= x should be equal to itself") {
-     constraint_1.equals(x*z + 5.7*x - 34*t >= x) shouldEqual true
+      constraint_1.equals(x*z + 5.7*x - 34*t >:= x) shouldEqual true
     }
 
-    it("constraint_2 = x*x + z*t + 9.1 := y*t + 8.7*z should be equal to itself") {
+    it("constraint_1 = x*z + 5.7*x -34*t >= x should be equal to x*z + 5.7*x -34*t - x >= 0") {
+      constraint_1.equals(x*z + 5.7*x - 34*t - x >:= 0) shouldEqual true
+    }
+
+    it("constraint_2 = x*x + z*t + 9.1 = y*t + 8.7*z should be equal to itself") {
       constraint_2.equals(x*x + z*t + 9.1 := y*t + 8.7*z) shouldEqual true
+    }
+
+    it("constraint_2 = x*x + z*t + 9.1 = y*t + 8.7*z should be equal to y*t + 8.7*z - x*x - z*t - 9.1 = 0") {
+      constraint_2.equals(y*t + 8.7*z - x*x - z*t - 9.1 := 0) shouldEqual true
     }
 
     it("constraint_1 should NOT be equal to constraint_2") {

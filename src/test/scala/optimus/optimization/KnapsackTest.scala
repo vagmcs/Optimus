@@ -35,7 +35,7 @@ final class KnapsackTest extends FunSpec with Matchers {
 
       // Given the limited capacity of the pack
       subjectTo {
-        sum(items)(item => item.x * item.weight) <= capacity
+        sum(items)(item => item.x * item.weight) <:= capacity
       }
 
       start()
@@ -83,7 +83,7 @@ final class KnapsackTest extends FunSpec with Matchers {
 
       // Given the limited capacity of the pack
       subjectTo {
-        sum(items)(item => item.x * item.weight) <= capacity
+        sum(items)(item => item.x * item.weight) <:= capacity
       }
 
       start()
