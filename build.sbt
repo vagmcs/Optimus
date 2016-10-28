@@ -1,5 +1,6 @@
-
 OptimusBuild.settings
+
+enablePlugins(JavaAppPackaging)
 
 resolvers ++= Seq(
   "typesafe" at "http://repo.typesafe.com/typesafe/releases/",
