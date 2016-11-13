@@ -49,7 +49,7 @@ package object optimization {
 
   // Checks if the given solver can be ran on this system
   private def canInstantiateSolver(s: SolverLib.Value): Boolean = {
-    try new LQProblem(s)
+    try SolverFactory.instantiate(s)
     catch {
       case e: Exception => println(e.getMessage); return false
     }

@@ -1,20 +1,22 @@
 package optimus.optimization
 
-import org.scalatest.{Matchers, FunSpec}
+import org.scalatest.{FunSpec, Matchers}
 import optimus.algebra._
+import optimus.optimization.SolverLib.SolverLib
 
 /**
   * N-Queens puzzle using MIP programming.
   */
-final class QueensTest extends FunSpec with Matchers {
+trait QueensTest extends FunSpec with Matchers {
 
-  val n = 8
-  val Lines = 0 until n
-  val Columns = 0 until n
+  def solver: SolverLib
 
-  for (lib <- solvers) {
+  describe(s"QueensTest using ${solver.toString}") {
+    val n = 8
+    val Lines = 0 until n
+    val Columns = 0 until n
 
-    implicit val queensProblem = MIProblem(lib)
+    implicit val queensProblem = MIProblem(solver)
 
     val x = Array.tabulate(n, n)((l, c) => MPIntVar("x" +(l, c), 0 to 1))
 
@@ -46,6 +48,6 @@ final class QueensTest extends FunSpec with Matchers {
     release()
 
     checkConstraints() shouldBe true
+    println()
   }
-  println()
 }

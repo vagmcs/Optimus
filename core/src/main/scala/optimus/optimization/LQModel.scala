@@ -32,6 +32,28 @@ import optimus.optimization.SolverLib._
 
 import scala.util.{Success, Try}
 
+object SolverFactory {
+  def instantiate(solverLib: SolverLib) = solverLib match {
+    case SolverLib.gurobi =>
+      Try(Class.forName("optimus.optimization.Gurobi")) match {
+        case Success(c) => c.newInstance().asInstanceOf[AbstractMPSolver]
+        case _ => sys.error("Gurobi dependency is missing.")
+      }
+
+    case SolverLib.lp_solve => 
+      Try(Class.forName("optimus.optimization.LPSolve")) match {
+        case Success(c) => c.newInstance().asInstanceOf[AbstractMPSolver]
+        case _ => sys.error("LPSolve dependency is missing.")
+      }
+
+    case _ => 
+      Try(Class.forName("optimus.optimization.OJalgo")) match {
+        case Success(c) => c.newInstance().asInstanceOf[AbstractMPSolver]
+        case _ => sys.error("OJalgo dependency is missing.")
+      }
+  }
+}
+
 /**
  * A Linear-Quadratic problem. Can be solved using one of the supported
  * solvers (LPSolve, oJalgo or Gurobi).
@@ -40,18 +62,7 @@ import scala.util.{Success, Try}
  */
 class LQProblem private[optimization](solverLib: SolverLib = SolverLib.oJalgo) extends AbstractMPProblem {
 
-  val solver = solverLib match {
-
-    case SolverLib.gurobi =>
-      Try(Class.forName("optimus.optimization.Gurobi")) match {
-        case Success(c) => c.newInstance().asInstanceOf[AbstractMPSolver]
-        case _ => sys.error("Gurobi is not supported in this build. Please rebuild Optimus with Gurobi dependencies.")
-      }
-
-    case SolverLib.lp_solve => new LPSolve
-
-    case _ => new OJalgo
-  }
+  val solver = SolverFactory.instantiate(solverLib)
 }
 
 object LQProblem {
@@ -66,18 +77,7 @@ object LQProblem {
  */
 class MIProblem private[optimization](solverLib: SolverLib = SolverLib.oJalgo) extends AbstractMPProblem {
 
-  val solver = solverLib match {
-
-    case SolverLib.gurobi =>
-      Try(Class.forName("optimus.optimization.Gurobi")) match {
-        case Success(c) => c.newInstance().asInstanceOf[AbstractMPSolver]
-        case _ => sys.error("Gurobi is not supported in this build. Please rebuild Optimus with Gurobi dependencies.")
-      }
-
-    case SolverLib.lp_solve => new LPSolve
-
-    case _ => new OJalgo
-  }
+  val solver = SolverFactory.instantiate(solverLib)
 
   override protected def setVariableProperties() = {
     super.setVariableProperties()
