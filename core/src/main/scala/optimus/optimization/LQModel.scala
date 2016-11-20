@@ -61,7 +61,7 @@ object SolverFactory {
   */
 class LQProblem private[optimization](solverLib: SolverLib = SolverLib.ojalgo) extends AbstractMPProblem {
 
-  val solver = SolverFactory.instantiate(solverLib)
+  override protected def instantiateSolver(): AbstractMPSolver = SolverFactory.instantiate(solverLib)
 }
 
 object LQProblem {
@@ -76,7 +76,7 @@ object LQProblem {
   */
 class MIProblem private[optimization](solverLib: SolverLib = SolverLib.ojalgo) extends AbstractMPProblem {
 
-  val solver = SolverFactory.instantiate(solverLib)
+  override protected def instantiateSolver(): AbstractMPSolver = SolverFactory.instantiate(solverLib)
 
   override protected def setVariableProperties() = {
     super.setVariableProperties()
