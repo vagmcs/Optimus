@@ -197,9 +197,11 @@ abstract class AbstractMPProblem {
   protected var minimize = false
   protected var reOptimize = false
 
-  protected val solver: AbstractMPSolver
+  protected lazy val solver: AbstractMPSolver = instantiateSolver()
 
   protected var status = ProblemStatus.NOT_SOLVED
+
+  protected def instantiateSolver(): AbstractMPSolver
 
   // Register a variables to this problem and return a index for it
   def register(variable: MPVariable) = {

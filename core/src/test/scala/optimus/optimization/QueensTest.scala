@@ -13,12 +13,13 @@ trait QueensTest extends FunSpec with Matchers {
 
   def solver: SolverLib
 
-  describe(s"QueensTest using ${solver.toString}") {
-    val n = 8
-    val Lines = 0 until n
-    val Columns = 0 until n
+  val n = 8
+  val Lines = 0 until n
+  val Columns = 0 until n
 
-    implicit val queensProblem = MIProblem(solver)
+  for (lib <- solvers) {
+
+    implicit val queensProblem = MIProblem(lib)
 
     val x = Array.tabulate(n, n)((l, c) => MPIntVar("x" +(l, c), 0 to 1))
 
@@ -44,15 +45,15 @@ trait QueensTest extends FunSpec with Matchers {
 
     start()
 
-    it(s"$solver solution status should be optimal") {
+    it(s"$lib solution status should be optimal") {
       status shouldBe ProblemStatus.OPTIMAL
     }
 
-    it(s"$solver objective value should be 8.0 +- 0.00001") {
+    it(s"$lib objective value should be 8.0 +- 0.00001") {
       objectiveValue shouldBe 8.0 +- 0.00001
     }
 
-    it(s"$solver constraints should be satisfied") {
+    it(s"$lib constraints should be satisfied") {
       checkConstraints() shouldBe true
     }
 
