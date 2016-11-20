@@ -41,11 +41,11 @@ package object optimization {
 
     val lp_solve = Value("lp_solve")
     val gurobi = Value("gurobi")
-    val oJalgo = Value("oJalgo")
+    val ojalgo = Value("ojalgo")
   }
 
   // Used for testing multiple solvers at once
-  lazy val solvers = List(SolverLib.lp_solve, SolverLib.gurobi, SolverLib.oJalgo).filter(canInstantiateSolver)
+  lazy val solvers = List(SolverLib.lp_solve, SolverLib.gurobi, SolverLib.ojalgo).filter(canInstantiateSolver)
 
   // Checks if the given solver can be ran on this system
   private def canInstantiateSolver(s: SolverLib.Value): Boolean = {
@@ -69,11 +69,10 @@ package object optimization {
 
   def add(constraint: Constraint)(implicit problem: AbstractMPProblem) = problem.add(constraint)
 
-  def subjectTo(constraints: Constraint*)(implicit problem: AbstractMPProblem) {
-    constraints.foreach(add)
-  }
+  def subjectTo(constraints: Constraint*)(implicit problem: AbstractMPProblem) = constraints.foreach(add)
 
-  def start(preSolve: PreSolve = PreSolve.DISABLE, timeLimit: Int = Int.MaxValue)(implicit problem: AbstractMPProblem) = problem.start(timeLimit, preSolve)
+  def start(preSolve: PreSolve = PreSolve.DISABLE,
+            timeLimit: Int = Int.MaxValue)(implicit problem: AbstractMPProblem) = problem.start(timeLimit, preSolve)
 
   def minimize(expression: Expression)(implicit problem: AbstractMPProblem) = problem.minimize(expression)
 

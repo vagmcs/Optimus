@@ -47,112 +47,112 @@ object ProblemStatus extends Enumeration {
 }
 
 /**
- * Abstract class that should be extended to define a linear-quadratic solver.
- */
+  * Abstract class that should be extended to define a linear-quadratic solver.
+  */
 abstract class AbstractMPSolver {
 
   /**
-   * Number of rows in the model
-   */
+    * Number of rows in the model
+    */
   var nbRows: Int
 
   /**
-   * Number of columns / variables in the model
-   */
+    * Number of columns / variables in the model
+    */
   var nbCols: Int
 
   /**
-   * Solution, one entry for each column / variable
-   */
+    * Solution, one entry for each column / variable
+    */
   var solution: Array[Double]
 
   /**
-   * Objective value
-   */
+    * Objective value
+    */
   var objectiveValue: Double
   
   /**
-   * Problem builder, should configure the solver and append
-   * mathematical model variables.
-   *
-   * @param nbRows rows in the model
-   * @param nbCols number of variables in the model
-   */
+    * Problem builder, should configure the solver and append
+    * mathematical model variables.
+    *
+    * @param nbRows rows in the model
+    * @param nbCols number of variables in the model
+    */
   def buildProblem(nbRows: Int, nbCols: Int)
 
   /**
-   * Get value of the variable in the specified position. Solution
-   * should exist in order for a value to exist.
-   *
-   * @param colId position of the variable
-   * @return the value of the variable in the solution
-   */
+    * Get value of the variable in the specified position. Solution
+    * should exist in order for a value to exist.
+    *
+    * @param colId position of the variable
+    * @return the value of the variable in the solution
+    */
   def getValue(colId: Int): Double
 
   /**
-   * Set bounds of variable in the specified position.
-   *
-   * @param colId position of the variable
-   * @param lower domain lower bound
-   * @param upper domain upper bound
-   */
+    * Set bounds of variable in the specified position.
+    *
+    * @param colId position of the variable
+    * @param lower domain lower bound
+    * @param upper domain upper bound
+    */
   def setBounds(colId: Int, lower: Double, upper: Double)
 
   /**
-   * Set upper bound to unbounded (infinite)
-   *
-   * @param colId position of the variable
-   */
+    * Set upper bound to unbounded (infinite)
+    *
+    * @param colId position of the variable
+    */
   def setUnboundUpperBound(colId: Int)
 
   /**
-   * Set lower bound to unbounded (infinite)
-   *
-   * @param colId position of the variable
-   */
+    * Set lower bound to unbounded (infinite)
+    *
+    * @param colId position of the variable
+    */
   def setUnboundLowerBound(colId: Int)
 
   /**
-   * Set the column/variable as an integer variable
-   *
-   * @param colId position of the variable
-   */
+    * Set the column/variable as an integer variable
+    *
+    * @param colId position of the variable
+    */
   def setInteger(colId: Int)
 
   /**
-   * Set the column / variable as an binary integer variable
-   *
-   * @param colId position of the variable
-   */
+    * Set the column / variable as an binary integer variable
+    *
+    * @param colId position of the variable
+    */
   def setBinary(colId: Int)
 
   /**
-   * Set the column/variable as a float variable
-   *
-   * @param colId position of the variable
-   */
+    * Set the column/variable as a float variable
+    *
+    * @param colId position of the variable
+    */
   def setFloat(colId: Int)
 
   /**
-   * Add objective expression to be optimized by the solver.
-   *
-   * @param objective the expression to be optimized
-   * @param minimize flag for minimization instead of maximization
-   */
+    * Add objective expression to be optimized by the solver.
+    *
+    * @param objective the expression to be optimized
+    * @param minimize flag for minimization instead of maximization
+    */
   def addObjective(objective: Expression, minimize: Boolean)
 
   /**
-   * Add a mathematical programming constraint to the solver.
-   *
-   * @param mpConstraint the mathematical programming constraint
-   */
+    * Add a mathematical programming constraint to the solver.
+    *
+    * @param mpConstraint the mathematical programming constraint
+    */
   def addConstraint(mpConstraint: MPConstraint)
 
   /**
-   * Add all given mathematical programming constraints to the solver.
-   *
-   * @param constraints array buffer containing the constraints
-   */
+    * Add all given mathematical programming constraints to the solver.
+    *
+    * @param constraints array buffer containing the constraints
+    */
   def addAllConstraints(constraints: ArrayBuffer[MPConstraint]) {
     var idx = 0
     val len = constraints.length
@@ -164,30 +164,30 @@ abstract class AbstractMPSolver {
   }
 
   /**
-   * Solve the problem.
-   *
-   * @param preSolve pre-solving mode
-   * @return status code indicating the nature of the solution
-   */
+    * Solve the problem.
+    *
+    * @param preSolve pre-solving mode
+    * @return status code indicating the nature of the solution
+    */
   def solveProblem(preSolve: PreSolve = PreSolve.DISABLE): ProblemStatus
 
   /**
-   * Release the memory of this solver
-   */
+    * Release the memory of this solver
+    */
   def release()
 
   /**
-   * Set a time limit for solver optimization. After the limit
-   * is reached the solver stops running.
-   *
-   * @param limit the time limit
-   */
+    * Set a time limit for solver optimization. After the limit
+    * is reached the solver stops running.
+    *
+    * @param limit the time limit
+    */
   def setTimeout(limit: Int)
 }
 
 /**
- * Should define the problem we are about to solve
- */
+  * Should define the problem we are about to solve
+  */
 abstract class AbstractMPProblem {
 
   protected val variables = ArrayBuffer[MPVariable]()
@@ -292,16 +292,16 @@ abstract class AbstractMPProblem {
 }
 
 /**
- * Mathematical programming unbounded variable in the problem. The domain is defined
- * (0, +inf) if the variable is unbounded or (-inf, +inf) otherwise.
- *
- * @param problem the problem in which the variable belongs
- * @param lowerBound the lower bound in the domain
- * @param upperBound the upper bound in the domain
- * @param doubleUnbounded unbounded domain (-inf, +inf)
- * @param symbol the symbol of the variable (default is ANONYMOUS)
- *
- */
+  * Mathematical programming unbounded variable in the problem. The domain is defined
+  * (0, +inf) if the variable is unbounded or (-inf, +inf) otherwise.
+  *
+  * @param problem the problem in which the variable belongs
+  * @param lowerBound the lower bound in the domain
+  * @param upperBound the upper bound in the domain
+  * @param doubleUnbounded unbounded domain (-inf, +inf)
+  * @param symbol the symbol of the variable (default is ANONYMOUS)
+  *
+  */
 class MPVariable(val problem: AbstractMPProblem, val lowerBound: Double, val upperBound: Double, doubleUnbounded: Boolean,
                          override val symbol: String = Variable.ANONYMOUS) extends Variable(symbol) {
 
@@ -318,33 +318,33 @@ class MPVariable(val problem: AbstractMPProblem, val lowerBound: Double, val upp
   protected var unbounded = doubleUnbounded
 
   /**
-   * Returns the value of the variable (integer rounded if the variable is integer)
-   */
+    * @return the value of the variable (integer rounded if the variable is integer).
+    */
   def value = problem.getValue(index)
 
   /**
-   * Return true if the variable is integer, false otherwise
-   */
+    * @return true if the variable is integer, false otherwise.
+    */
   def isInteger = integer
 
   /**
-   * @return true if the variable is a binary integer variable (e.g. 0-1)
-   */
+    * @return true if the variable is a binary integer variable (e.g. 0-1).
+    */
   def isBinary = binary
 
   /**
-   * Return true if the variable is unbounded, false otherwise
-   */
+    * @return true if the variable is unbounded, false otherwise.
+    */
   def isUnbounded = unbounded
 }
 
 /**
- * Mathematical programming constraint in the problem.
- *
- * @param problem the problem in which the constraint belongs
- * @param constraint the constraint object
- * @param index the index of the constraint in the problem
- */
+  * Mathematical programming constraint in the problem.
+  *
+  * @param problem the problem in which the constraint belongs
+  * @param constraint the constraint object
+  * @param index the index of the constraint in the problem
+  */
 class MPConstraint(val problem: AbstractMPProblem, val constraint: Constraint, val index: Int) {
 
   def check(tol: Double = 10e-6): Boolean = slack match {

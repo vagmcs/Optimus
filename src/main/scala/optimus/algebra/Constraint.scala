@@ -30,15 +30,18 @@ package optimus.algebra
 import optimus.algebra.ConstraintRelation.ConstraintRelation
 
 /**
-  * A constraint has the form (expression RELATION expression) with RELATION in {<=, ==, >=}
+  * A constraint has the form (expression RELATION expression) with RELATION in {<=, =, >=}
   */
 class Constraint(val lhs: Expression, val operator: ConstraintRelation, val rhs: Expression) {
 
   override def toString = lhs + " " + operator + " " + rhs
 
+  // Move all terms in the left hand side of the expression in order to properly check equality
   override def equals(that: Any) = that match {
     case other: Constraint =>
-      operator == other.operator && rhs == other.rhs && lhs == other.lhs
+      val (a, b) = (lhs - rhs, other.lhs - other.rhs)
+      operator == other.operator &&
+        (a == b || -a == b || a == -b || -a == -b)
     case _ => false
   }
 }

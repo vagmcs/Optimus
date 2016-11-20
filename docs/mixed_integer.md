@@ -9,7 +9,7 @@ import optimus.optimization._
 Create a linear-quadratic problem and select a solver for it:
 
 ```scala
-implicit val problem = MIProblem(SolverLib.oJalgo)
+implicit val problem = MIProblem(SolverLib.ojalgo)
 ```
 
 Ok! Let's create a couple of float and a couple of integer variables:
@@ -25,8 +25,8 @@ Then we can define our optimization problem subject to some constraints using ou
 ```scala
 maximize(x + 2*y + 3*z + t)
 subjectTo(
-          -1*x + y + z + 10*t <= 20,
-          x - 3.0*y + z <= 30,
+          -1*x + y + z + 10*t <:= 20,
+          x - 3.0*y + z <:= 30,
           y - 3.5*t := 0
          )
 ```

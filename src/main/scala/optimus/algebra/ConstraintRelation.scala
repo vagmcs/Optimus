@@ -28,7 +28,7 @@ package optimus.algebra
  */
 
 /**
-  * Constraint relations (>= <= ==).
+  * Constraint relations (>= <= =).
   */
 object ConstraintRelation extends Enumeration {
 
@@ -36,5 +36,5 @@ object ConstraintRelation extends Enumeration {
 
   val GE = Value(">=")
   val LE = Value("<=")
-  val EQ = Value("==")
+  val EQ = Value("=")
 }

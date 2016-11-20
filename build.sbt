@@ -20,7 +20,7 @@ libraryDependencies += "org.scalatest" %% "scalatest" % "2.2.6" % "test"
 libraryDependencies += "net.sf.trove4j" % "trove4j" % "3.0.3"
 
 // oj algorithms library for optimization
-libraryDependencies += "org.ojalgo" % "ojalgo" % "39.0"
+libraryDependencies += "org.ojalgo" % "ojalgo" % "40.0.0"
 
 // lp solve library for optimization
 libraryDependencies += "com.datumbox" % "lpsolve" % "5.5.2.0"

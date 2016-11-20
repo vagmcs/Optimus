@@ -37,13 +37,13 @@ import gnu.trove.procedure.TLongDoubleProcedure
 package object algebra {
 
   /**
-   * Cantor pairing function. A process to uniquely encode natural numbers
-   * into a single natural number.
-   *
-   * @param x the first number
-   * @param y the second number (default is -1 in case we want to encode only one)
-   * @return a unique number for x and y
-   */
+    * Cantor pairing function. A process to uniquely encode natural numbers
+    * into a single natural number.
+    *
+    * @param x the first number
+    * @param y the second number (default is -1 in case we want to encode only one)
+    * @return a unique number for x and y
+    */
   def encode(x: Int, y: Int = -1): Long = {
     val xm: Long = 2 * x
     val ym: Long = if(y == -1) 1 else 2 * y
@@ -52,12 +52,12 @@ package object algebra {
   }
 
   /**
-   * Cantor inverse pairing function. Uniquely decodes a number into a sequence of
-   * natural numbers they produced it.
-   *
-   * @param z the number to decode
-   * @return a pair of numbers or one number if default value was used during encoding
-   */
+    * Cantor inverse pairing function. Uniquely decodes a number into a sequence of
+    * natural numbers they produced it.
+    *
+    * @param z the number to decode
+    * @return a pair of numbers or one number if default value was used during encoding
+    */
   def decode(z: Long): Vector[Int] = {
     val w = Math.floor( (-1D + Math.sqrt(1D + 8 * z)) / 2D)
     val x = (w * (w + 3) / 2 - z) / 2

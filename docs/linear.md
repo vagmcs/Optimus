@@ -9,7 +9,7 @@ import optimus.optimization._
 Create a linear-quadratic problem and select a solver for it:
 
 ```scala
-implicit val problem = LQProblem(SolverLib.oJalgo)
+implicit val problem = LQProblem(SolverLib.ojalgo)
 ```
 
 Ok! Let's create a couple of variables:
@@ -23,7 +23,7 @@ Then we can define our optimization problem subject to a simple constraint using
 
 ```scala
 maximize(-2 * x + 5 * y)
-add(y >= -x + 200)
+add(y >:= -x + 200)
 ```
 
 At last, we can solve the problem by starting the solver and displaying the results:

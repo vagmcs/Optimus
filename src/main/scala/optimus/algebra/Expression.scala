@@ -59,9 +59,9 @@ abstract class Expression {
 
   def unary_-(): Expression = Minus(0, this)
 
-  def <=(other: Expression) = new Constraint(this, ConstraintRelation.LE, other)
+  def <:=(other: Expression) = new Constraint(this, ConstraintRelation.LE, other)
 
-  def >=(other: Expression) = new Constraint(this, ConstraintRelation.GE, other)
+  def >:=(other: Expression) = new Constraint(this, ConstraintRelation.GE, other)
 
   def :=(other: Expression) = new Constraint(this, ConstraintRelation.EQ, other)
 
@@ -104,14 +104,11 @@ abstract class Expression {
 }
 
 /**
- * Abstract variable, should be extended by any variable type in order
- * to inherit the algebraic properties.
- *
- * @param symbol the symbol of the variable
- *
- * @author Vagelis Michelioudakis
- * @author Anastasios Skarlatidis
- */
+  * Abstract variable, should be extended by any variable type in order
+  * to inherit the algebraic properties.
+  *
+  * @param symbol the symbol of the variable
+  */
 abstract class Variable(val symbol: String) extends Expression with Ordered[Variable] {
 
   // A variable alone always has a constant value 0
@@ -155,20 +152,17 @@ abstract class Variable(val symbol: String) extends Expression with Ordered[Vari
 }
 
 /**
- * Object holding the anonymous constant for variables not having a
- * specified symbol.
- */
+  * Object holding the anonymous constant for variables not having a
+  * specified symbol.
+  */
 object Variable { final val ANONYMOUS = "" }
 
 /**
- * Term is holding a coefficient and all variables which are involved
- * in the product of the term.
- *
- * coefficient * (variable_1 * ... * variable_n)
- *
- * @author Vagelis Michelioudakis
- * @author Anastasios Skarlatidis
- */
+  * Term is holding a coefficient and all variables which are involved
+  * in the product of the term.
+  *
+  * coefficient * (variable_1 * ... * variable_n)
+  */
 case class Term(coefficient: Const, variables: Vector[Variable]) extends Expression {
 
   if(variables.length > 2)
@@ -204,10 +198,10 @@ case class Term(coefficient: Const, variables: Vector[Variable]) extends Express
 }
 
 /**
- * Constant expression holding a double value.
- *
- * @param value the value held by the constraint
- */
+  * Constant expression holding a double value.
+  *
+  * @param value the value held by the constraint
+  */
 class Const(val value: Double) extends Expression {
 
   val constant = value
@@ -255,8 +249,8 @@ object Const {
 }
 
 /**
- * Zero is representing the special case of Zero constant.
- */
+  * Zero is representing the special case of Zero constant.
+  */
 case object Zero extends Const(0.0) {
 
   override def +(expression: Expression) = expression
@@ -269,8 +263,8 @@ case object Zero extends Const(0.0) {
 }
 
 /**
- * One is representing the special case of One constant.
- */
+  * One is representing the special case of One constant.
+  */
 case object One extends Const(1.0) {
 
   override def *(expression: Expression) = this
@@ -279,12 +273,12 @@ case object One extends Const(1.0) {
 }
 
 /**
- * Const product represents an expression multiplied by a constant and has
- * the form of (c * a).
- *
- * @param c the constant
- * @param a the expression
- */
+  * Const product represents an expression multiplied by a constant and has
+  * the form of (c * a).
+  *
+  * @param c the constant
+  * @param a the expression
+  */
 case class ConstProduct(c: Const, a: Expression) extends Expression {
 
   val constant = if (c == Zero) 0.0 else c.value * a.constant
@@ -298,12 +292,12 @@ case class ConstProduct(c: Const, a: Expression) extends Expression {
 // ------------------------------------- Operator Expressions -------------------------------------
 
 /**
- * Binary operator abstraction of the form (a operator b), that should be extended by any binary
- * operator expression type.
- *
- * @param a the left hand side expression
- * @param b the right had side expression
- */
+  * Binary operator abstraction of the form (a operator b), that should be extended by any binary
+  * operator expression type.
+  *
+  * @param a the left hand side expression
+  * @param b the right had side expression
+  */
 abstract class BinaryOp(val a: Expression, val b: Expression) extends Expression {
 
   val constant = op(a.constant, b.constant)
@@ -331,11 +325,11 @@ abstract class BinaryOp(val a: Expression, val b: Expression) extends Expression
 }
 
 /**
- * Binary operator for addition has the form (a + b).
- *
- * @param a the left hand side expression
- * @param b the right had side expression
- */
+  * Binary operator for addition has the form (a + b).
+  *
+  * @param a the left hand side expression
+  * @param b the right had side expression
+  */
 case class Plus(override val a: Expression, override val b: Expression) extends BinaryOp(a, b) {
 
   def op(x: Double, y: Double) = x + y
@@ -344,11 +338,11 @@ case class Plus(override val a: Expression, override val b: Expression) extends 
 }
 
 /**
- * Binary operator for subtraction has the form (a - b).
- *
- * @param a the left hand side expression
- * @param b the right had side expression
- */
+  * Binary operator for subtraction has the form (a - b).
+  *
+  * @param a the left hand side expression
+  * @param b the right had side expression
+  */
 case class Minus(override val a: Expression, override val b: Expression) extends BinaryOp(a, b) {
 
   def op(x: Double, y: Double) = x - y
@@ -357,11 +351,11 @@ case class Minus(override val a: Expression, override val b: Expression) extends
 }
 
 /**
- * Binary operator for multiplication has the form (a * b).
- *
- * @param a the left hand side expression
- * @param b the right had side expression
- */
+  * Binary operator for multiplication has the form (a * b).
+  *
+  * @param a the left hand side expression
+  * @param b the right had side expression
+  */
 case class Product(override val a: Expression, override val b: Expression) extends BinaryOp(a, b) {
 
   def op(x: Double, y: Double) = x * y

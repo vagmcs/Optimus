@@ -16,7 +16,7 @@ final class LPSolveSpecTest extends FunSpec with Matchers {
       val y = MPFloatVar("y", 80, 170)
 
       maximize(-2 * x + 5 * y)
-      add(y >= -x + 200)
+      add(y >:= -x + 200)
       start()
 
       x.value should equal(Some(100))
@@ -35,7 +35,7 @@ final class LPSolveSpecTest extends FunSpec with Matchers {
       val y = MPFloatVar("y", 80, 170)
 
       minimize(-2 * x + 5 * y)
-      add(y >= -x + 200)
+      add(y >:= -x + 200)
       start()
 
       x.value should equal(Some(200))
@@ -54,7 +54,7 @@ final class LPSolveSpecTest extends FunSpec with Matchers {
       val y = MPFloatVar("y", 80, 170)
 
       minimize(-2 * x + 5 * y)
-      add(y >= -x + 200)
+      add(y >:= -x + 200)
       start()
 
       // Solution is infeasible but some solvers consider it dual infeasible
@@ -74,8 +74,8 @@ final class LPSolveSpecTest extends FunSpec with Matchers {
 
       val z = MPFloatVar(lp, "z", 80, 170)
 
-      add(z >= 170)
-      add(y >= -x + 200)
+      add(z >:= 170)
+      add(y >:= -x + 200)
       start()
 
       x.value should equal(Some(200))
@@ -94,7 +94,7 @@ final class LPSolveSpecTest extends FunSpec with Matchers {
       val y = MPFloatVar("y", 0, 10)
 
       maximize(x + y)
-      add(x + y >= 5)
+      add(x + y >:= 5)
       start()
 
       x.value should equal(Some(10))
@@ -115,10 +115,10 @@ final class LPSolveSpecTest extends FunSpec with Matchers {
 
       maximize(x + y)
 
-      cons = cons :+ add(x + y >= 5)
-      cons = cons :+ add(x + 2 * y <= 25)
-      cons = cons :+ add(x + 2 * y <= 30)
-      cons = cons :+ add(x + y >= 17.5)
+      cons = cons :+ add(x + y >:= 5)
+      cons = cons :+ add(x + 2 * y <:= 25)
+      cons = cons :+ add(x + 2 * y <:= 30)
+      cons = cons :+ add(x + y >:= 17.5)
       cons = cons :+ add(x := 10.0)
 
       start()
@@ -157,12 +157,12 @@ final class LPSolveSpecTest extends FunSpec with Matchers {
 
       maximize(2*x + 4*y + 3*z)
 
-      cons = cons :+ add(3*x + 4*y + 2*z <= 60)
-      cons = cons :+ add(2*x + y + 2*z <= 40)
-      cons = cons :+ add(x + 3*y + 2*z <= 80)
-      cons = cons :+ add(x >= -80)
-      cons = cons :+ add(y >= -50)
-      cons = cons :+ add(z >= -0.005)
+      cons = cons :+ add(3*x + 4*y + 2*z <:= 60)
+      cons = cons :+ add(2*x + y + 2*z <:= 40)
+      cons = cons :+ add(x + 3*y + 2*z <:= 80)
+      cons = cons :+ add(x >:= -80)
+      cons = cons :+ add(y >:= -50)
+      cons = cons :+ add(z >:= -0.005)
 
       start()
 
@@ -204,8 +204,8 @@ final class LPSolveSpecTest extends FunSpec with Matchers {
 
       maximize(3*w - 8*w + 10*w + 0.001*x - (-0.999*x) - 0.3*10*(-y) - 4*0.0006*0*(w-x-z) + 2*z - 2*z + 4*z)
 
-      cons = cons :+ add(w + x + y + z <= 40)
-      cons = cons :+ add(2*w + x - y - z >= 10)
+      cons = cons :+ add(w + x + y + z <:= 40)
+      cons = cons :+ add(2*w + x - y - z >:= 10)
 
       start()
 
@@ -221,9 +221,9 @@ final class LPSolveSpecTest extends FunSpec with Matchers {
       status should equal(ProblemStatus.OPTIMAL)
       checkConstraints() shouldBe true
 
-      // TODO: Constraint of the form y >= w doesn't work. Seen as boolean.
-      cons = cons :+ add(y - w >= 0)
-      cons = cons :+ add(x >= 15)
+      // TODO: Constraint of the form y >:= w doesn't work. Seen as boolean.
+      cons = cons :+ add(y - w >:= 0)
+      cons = cons :+ add(x >:= 15)
       start()
 
       w.value.get should equal (12.5 +- 1.0e-6)   //  6.66666667
@@ -240,8 +240,8 @@ final class LPSolveSpecTest extends FunSpec with Matchers {
       status should equal(ProblemStatus.OPTIMAL)
       checkConstraints() shouldBe true
 
-      // Constraint: w - 2x + 4y + 3z >= 40
-      cons = cons :+ add(-(-w) - 2*x + 4*y + 3*0.5*2*z >= 40 - 3 + 2.7 + 0.3)
+      // Constraint: w - 2x + 4y + 3z >:= 40
+      cons = cons :+ add(-(-w) - 2*x + 4*y + 3*0.5*2*z >:= 40 - 3 + 2.7 + 0.3)
       start()
 
       w.value.get should equal (6.66666667 +- 1.0e-6)
@@ -274,8 +274,8 @@ final class LPSolveSpecTest extends FunSpec with Matchers {
 
       maximize(x0 + 2*x1 + 3*x2 + x3)
       subjectTo(
-        -1*x0 + x1 + x2 + 10*x3 <= 20,
-        x0 - 3.0*x1 + x2 <= 30,
+        -1*x0 + x1 + x2 + 10*x3 <:= 20,
+        x0 - 3.0*x1 + x2 <:= 30,
         x1 - 3.5*x3 := 0
       )
 
@@ -299,8 +299,8 @@ final class LPSolveSpecTest extends FunSpec with Matchers {
       val y = MPIntVar("y", 0 to 100)
 
       maximize(8 * x + 12 * y)
-      add(10 * x + 20 * y <= 140)
-      add(6 * x + 8 * y <= 72)
+      add(10 * x + 20 * y <:= 140)
+      add(6 * x + 8 * y <:= 72)
       start()
 
       status should equal(ProblemStatus.OPTIMAL)
@@ -316,9 +316,9 @@ final class LPSolveSpecTest extends FunSpec with Matchers {
       val x = Array.tabulate(6)(j => MPIntVar(s"x$j", 0 to 1))
       val z = 3 * x(0) + 5 * x(1) + 6 * x(2) + 9 * x(3) + 10 * x(4) + 10 * x(5)
       minimize(z)
-      add(-2 * x(0) + 6 * x(1) - 3 * x(2) + 4 * x(3) + x(4) - 2 * x(5) >= 2)
-      add(-5 * x(0) - 3 * x(1) + x(2) + 3 * x(3) - 2 * x(4) + x(5) >= -2)
-      add(5 * x(0) - x(1) + 4 * x(2) -2 * x(3) + 2 * x(4) - x(5) >= 3)
+      add(-2 * x(0) + 6 * x(1) - 3 * x(2) + 4 * x(3) + x(4) - 2 * x(5) >:= 2)
+      add(-5 * x(0) - 3 * x(1) + x(2) + 3 * x(3) - 2 * x(4) + x(5) >:= -2)
+      add(5 * x(0) - x(1) + 4 * x(2) -2 * x(3) + 2 * x(4) - x(5) >:= 3)
 
       x.foreach(_.isBinary shouldBe true)
 
