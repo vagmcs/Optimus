@@ -1,8 +1,15 @@
 import sbt.Keys._
 
+sonatypeProfileName := "com.github.vagmcs"
+
+lazy val root = project.in(file(".")).
+  aggregate(core, oj, lpsolve, gurobi).
+  settings (publish := { })
+
+publishArtifact in root := false
+
 // Build settings for Optimus core
 lazy val core = project.in(file("core"))
-  .enablePlugins(JavaAppPackaging)
   .settings(OptimusBuild.settings)
   .enablePlugins(JavaAppPackaging)
   .settings(Seq(

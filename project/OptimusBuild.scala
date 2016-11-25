@@ -57,39 +57,31 @@ object OptimusBuild {
     },
 
     // Information required in order to sync in Maven Central
-    pomExtra in Global := {
-
-      <url>https://github.com/vagmcs/Optimus</url>
-
-        // Optimus License
-        <licenses>
-          <license>
-            <name>GNU Lesser General Public License v3.0</name>
-            <url>https://www.gnu.org/licenses/lgpl-3.0.en.html</url>
-          </license>
-        </licenses>
-
-        // SCM information
-        <scm>
-          <connection>scm:git:github.com/vagmcs/Optimus.git</connection>
-          <developerConnection>scm:git:git@github.com:vagmcs/Optimus.git</developerConnection>
-          <url>github.com/vagmcs/Optimus</url>
-        </scm>
-
-        // Developer contact information
-        <developers>
-          <developer>
-            <id>vagmcs</id>
-            <name>Evangelos Michelioudakis</name>
-            <url>http://users.iit.demokritos.gr/~vagmcs/</url>
-          </developer>
-          <developer>
-            <id>anskarl</id>
-            <name>Anastasios Skarlatidis</name>
-            <url>http://users.iit.demokritos.gr/~anskarl/</url>
-          </developer>
-        </developers>
-    }
+    pomExtra :=
+      <url>https://github.com/vagmcs</url>
+      <licenses>
+        <license>
+          <name>GNU Lesser General Public License v3.0</name>
+          <url>https://www.gnu.org/licenses/lgpl-3.0.en.html</url>
+        </license>
+      </licenses>
+      <scm>
+        <connection>scm:git:github.com/vagmcs/Optimus.git</connection>
+        <developerConnection>scm:git:git@github.com:vagmcs/Optimus.git</developerConnection>
+        <url>github.com/vagmcs/Optimus</url>
+      </scm>
+      <developers>
+        <developer>
+          <id>vagmcs</id>
+          <name>Evangelos Michelioudakis</name>
+          <url>http://users.iit.demokritos.gr/~vagmcs/</url>
+        </developer>
+        <developer>
+          <id>anskarl</id>
+          <name>Anastasios Skarlatidis</name>
+          <url>http://users.iit.demokritos.gr/~anskarl/</url>
+        </developer>
+      </developers>
   )
 
   private lazy val jdkSettings: Seq[Setting[_]] = Seq(
