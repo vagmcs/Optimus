@@ -42,6 +42,8 @@ object OptimusBuild {
     // add a JVM option to use when forking a JVM for 'run'
     javaOptions += "-Xmx2G",
 
+    unmanagedJars in Compile += file("lib/gurobi.jar"),
+
     resolvers ++= Seq(
       "typesafe" at "http://repo.typesafe.com/typesafe/releases/",
       "sonatype-oss-public" at "https://oss.sonatype.org/content/groups/public/"),
