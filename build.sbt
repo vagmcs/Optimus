@@ -4,7 +4,11 @@ sonatypeProfileName := "com.github.vagmcs"
 
 lazy val root = project.in(file(".")).
   aggregate(core, oj, lpsolve, gurobi).
-  settings (publish := { })
+  settings(Seq(
+    name := "optimus-assembly",
+    publish := { },
+    publishLocal := { }
+  ))
 
 publishArtifact in root := false
 
@@ -42,11 +46,27 @@ lazy val lpsolve = project.in(file("solver-lp"))
   ))
 
 // Build settings for Optimus gurobi solver
-lazy val gurobi = project.in(file("solver-gurobi"))
-  .dependsOn(core % "compile->compile ; test->test")
-  .settings(OptimusBuild.settings)
-  .enablePlugins(JavaAppPackaging)
-  .settings(Seq(
-    name := "optimus-solver-gurobi",
-    libraryDependencies += Dependencies.scalaTest
-  ))
+lazy val gurobi =
+if(file("lib/gurobi.jar").exists)
+  project.in(file("solver-gurobi"))
+    .dependsOn(core % "compile->compile ; test->test")
+    .settings(OptimusBuild.settings)
+    .enablePlugins(JavaAppPackaging)
+    .settings(Seq(
+      name := "optimus-solver-gurobi",
+      unmanagedJars in Compile += file("lib/gurobi.jar"),
+      libraryDependencies += Dependencies.scalaTest
+    ))
+else {
+  project.in(file("solver-gurobi"))
+    .settings({
+    println(s"[warn] Building without the support of Gurobi solver " +
+      s"('gurobi.jar' is missing from 'lib' directory)")
+
+    Seq(
+      name := "optimus-solver-gurobi",
+      publish := { },
+      publishLocal := { }
+    )
+  })
+}
