@@ -13,7 +13,7 @@ final class AlgebraSpecTest extends FunSpec with Matchers {
   // Definition of float variables
   val x = MPFloatVar("x", 0.0, 1.0)
   val y = MPFloatVar("y", 3.5, 100)
-  val z = MPFloatVar("z", true)
+  val z = MPFloatVar("z", unbounded = true)
   val t = MPFloatVar("t")
 
   // Definition of integer variables

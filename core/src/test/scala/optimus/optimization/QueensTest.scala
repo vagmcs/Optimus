@@ -1,14 +1,17 @@
 package optimus.optimization
 
-import org.scalatest.{Matchers, FunSpec}
+import org.scalatest.{FunSpec, Matchers}
 import optimus.algebra._
+import optimus.optimization.SolverLib.SolverLib
 
 /**
   * N-Queens puzzle: Place n chess queens on an n×n chessboard so that no two
   * queens threaten each other. Thus, a solution requires that no two queens
   * share the same row, column, or diagonal.
   */
-final class QueensTest extends FunSpec with Matchers {
+trait QueensTest extends FunSpec with Matchers {
+
+  def solver: SolverLib
 
   val n = 8
   val Lines = 0 until n

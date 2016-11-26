@@ -2,6 +2,8 @@ package optimus.optimization
 
 import org.scalatest.{FunSpec, Matchers}
 import optimus.algebra._
+import optimus.optimization.SolverLib.SolverLib
+
 import scala.util.Random
 
 /**
@@ -12,7 +14,9 @@ import scala.util.Random
   * constrained by a fixed-size knapsack and must fill it with the most
   * valuable items.
   */
-final class KnapsackTest extends FunSpec with Matchers {
+trait KnapsackTest extends FunSpec with Matchers {
+
+  def solver: SolverLib
 
   case class Item(weight: Int, utility: Int, x: MPIntVar)
 
