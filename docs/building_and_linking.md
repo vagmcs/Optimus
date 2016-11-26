@@ -1,6 +1,6 @@
 # Building and Linking Optimus
 
-In order to build Optimus from source you need to have Java SE version 8 or higher and [SBT](http://www.scala-sbt.org/)(v0.13.x) installed in your system. Optimus build optionally depends on [Gurobi](http://www.gurobi.com/) solver. In case the dependencies for Gurobi are not included, Optimus would build a minimal version having only lpsolve and ojAlgo.
+In order to build Optimus modules (`core`, `solver-oj`, `solver-lp`, `solver-gurobi`) from source you need to have Java SE version 8 or higher and [SBT](http://www.scala-sbt.org/) (v0.13.x) installed in your system. Optimus build optionally depends on [Gurobi](http://www.gurobi.com/) solver. In case the dependencies for Gurobi are not included, Optimus would build a minimal version having only lp solve and oj solver.
 
 ## Instructions to build Optimus from source
 
@@ -10,14 +10,14 @@ lib/
 |-- gurobi.jar
 ```
 
-**Step 2.** In order to use Gurobi or lpsolve you must also set the environment variables of your system to include the solver native executables. Detailed instructions can be found in Sections [LPSolve Installation](#optional-lpsolve-installation) and [Gurobi Installation](#optional-gurobi-installation).
+**Step 2.** In order to use Gurobi or lp solve you must also set the environment variables of your system to include the solver native executables. Detailed instructions can be found in Sections [LPSolve Installation](#optional-lpsolve-installation) and [Gurobi Installation](#optional-gurobi-installation).
 
 **Step 3.** To build the Optimus distribution type the following command:
 ```
 $ sbt dist
 ```
 
-After a successful compilation, the distribution is located inside the `./target/universal/optimus-<version>.zip` archive. The distribution contains all library dependencies and requires only Java 8 (or higher). Sources, documentation and the compiled library (without dependencies) are archived as jar files into the `./target/scala-2.11/` directory.
+After a successful compilation, the distribution modules (`core`, `solver-oj`, `solver-lp`, `solver-gurobi`) are located inside the `./target/universal/optimus-*.zip` archive of each module folder. The distribution contains all library dependencies and requires only Java 8 (or higher). Sources, documentation and the compiled library (without dependencies) are archived as jar files into the `./target/scala-2.11/` directory.
 
 ## Optional LPSolve Installation
 
@@ -86,24 +86,49 @@ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$HOME/lib/lpsolve55
 Please follow the installation instructions from the [Gurobi website](http://www.gurobi.com).
 
 ## Local publish Optimus
-Follow **steps 1 and 2** of Section [Instructions to build Optimus from source](#instructions-to-build-optimus-from-source) to build Optimus and then publish locally Optimus to your Apache Ivy directory (e.g., inside ~/.ivy2/local/):
+Follow **steps 1 and 2** of Section [Instructions to build Optimus from source](#instructions-to-build-optimus-from-source) to build Optimus and then publish locally Optimus modules to your Apache Ivy directory (e.g., inside ~/.ivy2/local/):
 
 ```bash
 $ sbt publishLocal
 ```
 
-In order to link Optimus (e.g., version 1.2.2) to your [SBT](http://www.scala-sbt.org/) project, add the following dependency:
+## Usage of Optimus through Maven Central
+
+Optimus is published into the Maven Central. In order to link Optimus `core` module (e.g., version 2.0.0) to your [SBT](http://www.scala-sbt.org/) project, add the following dependency:
 
 ```sbt
-libraryDependencies += "com.github.vagm" %% "optimus" % "1.2.2"
+libraryDependencies += "com.github.vagm" %% "optimus" % "2.0.0"
+```
+
+Moreover you can link your project to each solver module that you additionally require by adding some or all of the following dependencies:
+
+```sbt
+libraryDependencies += "com.github.vagm" %% "optimus-solver-oj" % "2.0.0"
+libraryDependencies += "com.github.vagm" %% "optimus-solver-lp" % "2.0.0"
+libraryDependencies += "com.github.vagm" %% "optimus-solver-gurobi" % "2.0.0"
 ```
 
 Likewise in an [Apache Maven](https://maven.apache.org/) pom xml file add:
 
 ```xml
 <dependency>
-    <groupId>com.github.vagm</groupId>
-    <artifactId>optimus_2.11</artifactId>
-    <version>1.2.2</version>
+  <groupId>com.github.vagm</groupId>
+  <artifactId>optimus_2.11</artifactId>
+  <version>2.0.0</version>
+</dependency>
+<dependency>
+  <groupId>com.github.vagmcs</groupId>
+  <artifactId>optimus-solver-oj_2.11</artifactId>
+  <version>2.0.0</version>
+</dependency>
+<dependency>
+  <groupId>com.github.vagmcs</groupId>
+  <artifactId>optimus-solver-lp_2.11</artifactId>
+  <version>2.0.0</version>
+</dependency>
+<dependency>
+  <groupId>com.github.vagmcs</groupId>
+  <artifactId>optimus-solver-gurobi_2.11</artifactId>
+  <version>2.0.0</version>
 </dependency>
 ```
