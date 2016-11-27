@@ -112,7 +112,7 @@ Likewise in an [Apache Maven](https://maven.apache.org/) pom xml file add:
 
 ```xml
 <dependency>
-  <groupId>com.github.vagm</groupId>
+  <groupId>com.github.vagmcs</groupId>
   <artifactId>optimus_2.11</artifactId>
   <version>2.0.0</version>
 </dependency>
