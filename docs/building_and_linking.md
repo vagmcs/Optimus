@@ -97,15 +97,15 @@ $ sbt publishLocal
 Optimus is published into the Maven Central. In order to link Optimus `core` module (e.g., version 2.0.0) to your [SBT](http://www.scala-sbt.org/) project, add the following dependency:
 
 ```sbt
-libraryDependencies += "com.github.vagm" %% "optimus" % "2.0.0"
+libraryDependencies += "com.github.vagmcs" %% "optimus" % "2.0.0"
 ```
 
 Moreover you can link your project to each solver module that you additionally require by adding some or all of the following dependencies:
 
 ```sbt
-libraryDependencies += "com.github.vagm" %% "optimus-solver-oj" % "2.0.0"
-libraryDependencies += "com.github.vagm" %% "optimus-solver-lp" % "2.0.0"
-libraryDependencies += "com.github.vagm" %% "optimus-solver-gurobi" % "2.0.0"
+libraryDependencies += "com.github.vagmcs" %% "optimus-solver-oj" % "2.0.0"
+libraryDependencies += "com.github.vagmcs" %% "optimus-solver-lp" % "2.0.0"
+libraryDependencies += "com.github.vagmcs" %% "optimus-solver-gurobi" % "2.0.0"
 ```
 
 Likewise in an [Apache Maven](https://maven.apache.org/) pom xml file add:
