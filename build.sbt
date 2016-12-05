@@ -3,7 +3,7 @@ import sbt.Keys._
 sonatypeProfileName := "com.github.vagmcs"
 
 lazy val root = project.in(file(".")).
-  aggregate(core, oj, lpsolve, gurobi).
+  aggregate(core, oj, lpsolve, gurobi, mosek).
   settings(Seq(
     name := "optimus-assembly",
     publish := { },
@@ -70,3 +70,29 @@ else {
     )
   })
 }
+
+// Build settings for Optimus mosek solver
+lazy val mosek =
+  if(file("lib/mosek.jar").exists)
+    project.in(file("solver-mosek"))
+      .dependsOn(core % "compile->compile ; test->test")
+      .settings(OptimusBuild.settings)
+      .enablePlugins(JavaAppPackaging)
+      .settings(Seq(
+        name := "optimus-solver-mosek",
+        unmanagedJars in Compile += file("lib/mosek.jar"),
+        libraryDependencies += Dependencies.scalaTest
+      ))
+  else {
+    project.in(file("solver-mosek"))
+      .settings({
+        println(s"[warn] Building without the support of Mosek solver " +
+          s"('mosek.jar' is missing from 'lib' directory)")
+
+        Seq(
+          name := "optimus-solver-mosek",
+          publish := { },
+          publishLocal := { }
+        )
+      })
+  }

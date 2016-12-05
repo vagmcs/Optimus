@@ -39,6 +39,12 @@ object SolverFactory {
         case _ => sys.error("Gurobi dependency is missing.")
       }
 
+    case SolverLib.mosek =>
+      Try(Class.forName("optimus.optimization.Mosek")) match {
+        case Success(c) => c.newInstance().asInstanceOf[AbstractMPSolver]
+        case _ => sys.error("Mosek dependency is missing.")
+      }
+
     case SolverLib.lp_solve => 
       Try(Class.forName("optimus.optimization.LPSolve")) match {
         case Success(c) => c.newInstance().asInstanceOf[AbstractMPSolver]
@@ -55,7 +61,7 @@ object SolverFactory {
 
 /**
   * A Linear-Quadratic problem. Can be solved using one of the supported
-  * solvers (LPSolve, ojalgo or Gurobi).
+  * solvers (LPSolve, ojalgo, Gurobi or Mosek).
   *
   * @param solverLib solver library type
   */
@@ -70,7 +76,7 @@ object LQProblem {
 
 /**
   * A Mixed-Integer problem. Can be solved using one of the supported
-  * solvers (LPSolve, ojalgo or Gurobi).
+  * solvers (LPSolve, ojalgo, Gurobi or Mosek).
   *
   * @param solverLib solver library type
   */

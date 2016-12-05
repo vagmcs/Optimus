@@ -42,6 +42,7 @@ package object optimization {
     val lp_solve = Value("lp_solve")
     val gurobi = Value("gurobi")
     val ojalgo = Value("ojalgo")
+    val mosek = Value("mosek")
   }
 
   // Used for testing multiple solvers at once
