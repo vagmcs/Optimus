@@ -1,103 +1,68 @@
 import sbt.Keys._
 
+addCommandAlias("build", ";compile;test;package")
+addCommandAlias("rebuild", ";clean;build")
+
 val logger = ConsoleLogger()
 
 sonatypeProfileName := "com.github.vagmcs"
 
 useGpg := true
 
-lazy val root = project.in(file(".")).
-  aggregate(core, oj, lpsolve, gurobi, mosek).
-  settings(Seq(
-    name := "optimus-assembly",
-    publish := { },
-    publishLocal := { }
-  ))
+lazy val root = project.in(file("."))
+  .aggregate(core, oj, lpsolve, gurobi, mosek)
+  .settings(publish := { }, publishLocal := { })
 
 publishArtifact in root := false
 
 // Build settings for Optimus core
 lazy val core = project.in(file("core"))
-  //.settings(OptimusBuild.settings)
-  .enablePlugins(JavaAppPackaging)
+  .settings(logLevel in Test := Level.Info)
+  .settings(logLevel in Compile := Level.Error)
+  .settings(name := "optimus")
   .settings(Seq(
-    name := "optimus",
-    libraryDependencies += Dependencies.scalaTest,
-    libraryDependencies += Dependencies.trove4j,
-    libraryDependencies += Dependencies.scalaXml
+    libraryDependencies ++= Dependencies.Logging,
+    libraryDependencies += Dependencies.ScalaTest,
+    libraryDependencies += Dependencies.ScalaXML,
+    libraryDependencies += Dependencies.Trove
   ))
 
 // Build settings for Optimus oj solver
-lazy val oj = project.in(file("solver-oj"))
+lazy val oj = Project("solver-oj", file("solver-oj"))
   .dependsOn(core % "compile->compile ; test->test")
-  //.settings(OptimusBuild.settings)
-  .enablePlugins(JavaAppPackaging)
-  .settings(Seq(
-    name := "optimus-solver-oj",
-    libraryDependencies += Dependencies.ojalgo,
-    libraryDependencies += Dependencies.scalaTest
-  ))
+  .settings(name := "optimus-solver-oj")
+  .settings(libraryDependencies += Dependencies.ojAlgorithms)
 
 // Build settings for Optimus lp solver
-lazy val lpsolve = project.in(file("solver-lp"))
+lazy val lpsolve = Project("solver-lp", file("solver-lp"))
   .dependsOn(core % "compile->compile ; test->test")
-  //.settings(OptimusBuild.settings)
-  .enablePlugins(JavaAppPackaging)
-  .settings(Seq(
-    name := "optimus-solver-lp",
-    libraryDependencies += Dependencies.lpSolve,
-    libraryDependencies += Dependencies.scalaTest
-  ))
+  .settings(name := "optimus-solver-lp")
+  .settings(libraryDependencies += Dependencies.LpSolve)
 
 // Build settings for Optimus gurobi solver
-lazy val gurobi = {
-  if (file("lib/gurobi.jar").exists) {
-    project.in(file("solver-gurobi"))
-      .dependsOn(core % "compile->compile ; test->test")
-      //.settings(OptimusBuild.settings)
-      .enablePlugins(JavaAppPackaging)
-      .settings(Seq(
-        name := "optimus-solver-gurobi",
-        unmanagedJars in Compile += file("lib/gurobi.jar"),
-        libraryDependencies += Dependencies.scalaTest
-      ))
-  }
-  else {
-    project.in(file("solver-gurobi"))
-      .settings({
-        logger.warn("Building without the support of Gurobi solver ('gurobi.jar' is missing from 'lib' directory)")
-        Seq(
-          name := "optimus-solver-gurobi",
-          publish := {},
-          publishLocal := {}
-        )
-      })
-  }
-}
+lazy val gurobi = if (file("lib/gurobi.jar").exists)
+  Project("solver-gurobi", file("solver-gurobi"))
+    .dependsOn(core % "compile->compile ; test->test")
+    .settings(name := "optimus-solver-gurobi")
+    .settings(unmanagedJars in Compile += file("lib/gurobi.jar"))
+else
+  Project("solver-gurobi", file("solver-gurobi"))
+    .settings({
+      logger.warn {
+        "Building in the absence of support for the Gurobi solver [ 'gurobi.jar' not found in 'lib' directory ]."}
+      Seq(name := "optimus-solver-gurobi", publish := { }, publishLocal := { })
+    })
 
 // Build settings for Optimus mosek solver
-lazy val mosek = {
-  if (file("lib/mosek.jar").exists) {
-    project.in(file("solver-mosek"))
+lazy val mosek = if (file("lib/mosek.jar").exists)
+    Project("solver-mosek", file("solver-mosek"))
       .dependsOn(core % "compile->compile ; test->test")
-      //.settings(OptimusBuild.settings)
-      .enablePlugins(JavaAppPackaging)
-      .settings(Seq(
-        name := "optimus-solver-mosek",
-        unmanagedJars in Compile += file("lib/mosek.jar"),
-        libraryDependencies += Dependencies.scalaTest
-      ))
-  }
-  else {
-    project.in(file("solver-mosek"))
-      .settings({
-        logger.warn("Building without the support of Mosek solver ('mosek.jar' is missing from 'lib' directory)")
-
-        Seq(
-          name := "optimus-solver-mosek",
-          publish := {},
-          publishLocal := {}
-        )
-      })
-  }
-}
+      .settings(name := "optimus-solver-mosek")
+      .settings(unmanagedJars in Compile += file("lib/mosek.jar"))
+else
+  Project("solver-mosek", file("solver-mosek"))
+    .settings({
+      logger.warn {
+        "Building in the absence of support for the Mosek solver [ 'mosek.jar' not found in 'lib' directory ]."}
+      Seq(name := "optimus-solver-mosek", publish := { }, publishLocal := { })
+    })
