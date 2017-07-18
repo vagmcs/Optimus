@@ -22,7 +22,7 @@ lazy val core = project.in(file("core"))
   .settings(name := "optimus")
   .settings(Seq(
     libraryDependencies ++= Dependencies.Logging,
-    libraryDependencies += Dependencies.ScalaTest,
+    libraryDependencies ++= Dependencies.ScalaTest,
     libraryDependencies += Dependencies.ScalaXML,
     libraryDependencies += Dependencies.Trove
   ))

@@ -33,6 +33,7 @@ object Dependencies {
   final val SLF4JVersion = "1.7.21"
   final val ScalaLogging = "3.5.0"
   final val ScalaTestVersion = "3.0.4"
+  final val ScalaCheckVersion = "1.13.4"
   final val LpSolveVersion = "5.5.2.0"
   final val ojAlgorithmsVersion = "44.0.0"
   final val troveVersion = "3.0.3"
@@ -46,10 +47,13 @@ object Dependencies {
     "com.typesafe.scala-logging" %% "scala-logging" % ScalaLogging
   )
 
-  lazy val ScalaXML: ModuleID = "org.scala-lang.modules" %% "scala-xml" % scalaXML
+  // ScalaTest and ScalaCheck for UNIT testing
+  lazy val ScalaTest = Seq(
+    "org.scalatest" %% "scalatest" % ScalaTestVersion % "test",
+    "org.scalacheck" %% "scalacheck" % ScalaCheckVersion % "test"
+  )
 
-  // ScalaTest for UNIT testing (only for compile and test, exclude from publishing)
-  lazy val ScalaTest: ModuleID = "org.scalatest" %% "scalatest" % ScalaTestVersion % "test"
+  lazy val ScalaXML: ModuleID = "org.scala-lang.modules" %% "scala-xml" % scalaXML
 
   // GNU Trove collections for high performance and memory efficient data structures
   lazy val Trove: ModuleID = "net.sf.trove4j" % "trove4j" % troveVersion
