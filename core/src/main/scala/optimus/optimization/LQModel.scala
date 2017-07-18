@@ -27,8 +27,9 @@ package optimus.optimization
  * along with this program. If not, see <http://www.gnu.org/licenses/lgpl-3.0.en.html>.
  */
 
-import optimus.algebra.Variable
+import optimus.algebra._
 import optimus.optimization.SolverLib._
+
 import scala.util.{Success, Try}
 
 object SolverFactory {
@@ -106,7 +107,7 @@ object MIProblem {
   *               then the variable is binary.
   * @param symbol the symbol of the variable (default is anonymous)
   */
-final class MPIntVar private(problem: AbstractMPProblem, domain: Range, override val symbol: String = Variable.ANONYMOUS)
+final class MPIntVar private(problem: AbstractMPProblem, domain: Range, override val symbol: String = ANONYMOUS)
   extends MPVariable(problem, domain.min, domain.max, false, symbol) {
   
   this.integer = true
@@ -133,7 +134,7 @@ object MPIntVar {
   * @param symbol the symbol of the variable (default is anonymous)
   */
 final class MPFloatVar private(problem: AbstractMPProblem, val lBound: Double = 0.0, val uBound: Double = Double.PositiveInfinity,
-                               override val symbol: String = Variable.ANONYMOUS) extends MPVariable(problem, lBound, uBound, false, symbol) {
+                               override val symbol: String = ANONYMOUS) extends MPVariable(problem, lBound, uBound, false, symbol) {
 
   def this(problem: AbstractMPProblem, unbounded: Boolean) = {
     this(problem, if (unbounded) Double.PositiveInfinity else 0.0, Double.PositiveInfinity)

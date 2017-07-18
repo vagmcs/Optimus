@@ -305,7 +305,7 @@ abstract class AbstractMPProblem {
   *
   */
 class MPVariable(val problem: AbstractMPProblem, val lowerBound: Double, val upperBound: Double, doubleUnbounded: Boolean,
-                         override val symbol: String = Variable.ANONYMOUS) extends Variable(symbol) {
+                         override val symbol: String = ANONYMOUS) extends Var(symbol) {
 
   val index = problem.register(this)
 

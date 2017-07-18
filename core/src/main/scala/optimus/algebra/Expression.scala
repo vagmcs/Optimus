@@ -1,9 +1,3 @@
-package optimus.algebra
-
-import gnu.trove.map.hash.TLongDoubleHashMap
-import gnu.trove.procedure.TLongDoubleProcedure
-import optimus.algebra.ExpressionOrder.ExpressionOrder
-
 /*
  *    /\\\\\
  *   /\\\///\\\
@@ -31,15 +25,23 @@ import optimus.algebra.ExpressionOrder.ExpressionOrder
  * along with this program. If not, see <http://www.gnu.org/licenses/lgpl-3.0.en.html>.
  */
 
+package optimus.algebra
+
+import gnu.trove.map.hash.TLongDoubleHashMap
+import optimus.algebra.ExpressionOrder.ExpressionOrder
+
 /**
   * Expression abstraction, should be extended by anything that is
   * an expression type.
   */
 abstract class Expression {
 
-  // keep the variables and their corresponding coefficients and the constant term of the expression
+  /*
+   * Store the variables, the corresponding scalars and
+   * the constant term of the expression.
+   */
   val constant: Double
-  val terms: TLongDoubleHashMap
+  val terms: LongDoubleMap
 
   def +(other: Expression): Expression = other match {
     case Zero => this
@@ -109,7 +111,7 @@ abstract class Expression {
   *
   * @param symbol the symbol of the variable
   */
-abstract class Variable(val symbol: String) extends Expression with Ordered[Variable] {
+abstract class Var(val symbol: String) extends Expression {
 
   // A variable alone always has a constant value 0
   val constant = 0.0
@@ -124,7 +126,7 @@ abstract class Variable(val symbol: String) extends Expression with Ordered[Vari
 
     case c: Const => Term(c, Vector(this))
 
-    case variable: Variable => Term(One, Vector(this, variable))
+    case variable: Var => Term(One, Vector(this, variable))
 
     case term: Term => Term(term.coefficient, term.variables :+ this)
 
@@ -140,22 +142,14 @@ abstract class Variable(val symbol: String) extends Expression with Ordered[Vari
       case _ => Term(One, Vector.fill(power)(this))
     }
   }
-  
-  def compare(that: Variable) = index - that.index
 
   override def toString = symbol
 
   override def equals(that: Any) = that match {
-    case other: Variable => index == other.index
+    case other: Var => index == other.index
     case _ => false
   }
 }
-
-/**
-  * Object holding the anonymous constant for variables not having a
-  * specified symbol.
-  */
-object Variable { final val ANONYMOUS = "" }
 
 /**
   * Term is holding a coefficient and all variables which are involved
@@ -163,19 +157,13 @@ object Variable { final val ANONYMOUS = "" }
   *
   * coefficient * (variable_1 * ... * variable_n)
   */
-case class Term(coefficient: Const, variables: Vector[Variable]) extends Expression {
+case class Term(coefficient: Const, variables: Vector[Var]) extends Expression {
 
   if(variables.length > 2)
     throw new IllegalArgumentException("Algebra cannot handle expressions of higher order!")
 
   val constant = 0.0
-  val terms = new TLongDoubleHashMap()
-
-  if(variables.length == 1) terms.put(encode(variables.head.index), coefficient.value)
-  else {
-    val sorted = variables.sorted
-    terms.put(encode(sorted.head.index, sorted(1).index), coefficient.value)
-  }
+  val terms = LongDoubleMap(coefficient, variables)
 
   override def *(other: Expression) = other match {
 
@@ -185,7 +173,7 @@ case class Term(coefficient: Const, variables: Vector[Variable]) extends Express
 
     case c: Const => Term(Const(coefficient.value * c.value), variables)
 
-    case v: Variable => Term(coefficient, variables :+ v)
+    case v: Var => Term(coefficient, variables :+ v)
 
     case term: Term => Term(coefficient * term.coefficient, variables ++ term.variables)
 
@@ -204,8 +192,8 @@ case class Term(coefficient: Const, variables: Vector[Variable]) extends Express
   */
 class Const(val value: Double) extends Expression {
 
-  val constant = value
-  val terms = new TLongDoubleHashMap()
+  val constant: Double = value
+  val terms: LongDoubleMap = LongDoubleMap.empty
 
   def +(other: Const) = other match {
     case Zero => this
@@ -223,7 +211,7 @@ class Const(val value: Double) extends Expression {
     case _ => Const(value * other.value)
   }
 
-  def *(x: Variable) = Term(this, Vector(x))
+  def *(x: Var) = Term(this, Vector(x))
 
   def *(term: Term): Term = Term(this * term.coefficient, term.variables)
 
@@ -281,10 +269,10 @@ case object One extends Const(1.0) {
   */
 case class ConstProduct(c: Const, a: Expression) extends Expression {
 
-  val constant = if (c == Zero) 0.0 else c.value * a.constant
+  val constant: Double = if (c == Zero) 0.0 else c.value * a.constant
 
-  val terms = if (c == Zero) new TLongDoubleHashMap()
-              else new TLongDoubleHashMap(a.terms.keys, a.terms.values.map(value => c.value * value))
+  val terms: LongDoubleMap = if (c == Zero) LongDoubleMap.empty
+              else LongDoubleMap(a.terms.keys, a.terms.values.map(value => c.value * value))
 
   override def unary_-(): Expression = ConstProduct(Const(-c.value), a)
 }
@@ -300,12 +288,12 @@ case class ConstProduct(c: Const, a: Expression) extends Expression {
   */
 abstract class BinaryOp(val a: Expression, val b: Expression) extends Expression {
 
-  val constant = op(a.constant, b.constant)
-  val terms = merge
+  val constant: Double = op(a.constant, b.constant)
+  val terms: LongDoubleMap = merge
 
   def op(x: Double, y: Double): Double
 
-  def merge: TLongDoubleHashMap = {
+  def merge: LongDoubleMap = {
 
     // 1. Add all terms of expression A to the result
     val temporal = new TLongDoubleHashMap(a.terms)
@@ -319,7 +307,7 @@ abstract class BinaryOp(val a: Expression, val b: Expression) extends Expression
     }
 
     // 3. Filter out zero terms (very slow)
-    temporal.retainEntries(new TLongDoubleProcedure { override def execute(l: Long, v: Double): Boolean = v != 0.0 })
+    temporal.retainEntries((l: Long, v: Double) => v != 0.0)
     temporal
   }
 }
@@ -360,8 +348,8 @@ case class Product(override val a: Expression, override val b: Expression) exten
 
   def op(x: Double, y: Double) = x * y
 
-  override def merge: TLongDoubleHashMap = {
-    val temporal = new TLongDoubleHashMap()
+  override def merge: LongDoubleMap = {
+    val temporal = LongDoubleMap.empty
 
     val iteratorA = a.terms.iterator
     while(iteratorA.hasNext) {
@@ -379,7 +367,7 @@ case class Product(override val a: Expression, override val b: Expression) exten
         val cB = iteratorB.value
 
         // 2. Calculate products involving terms from both A and B expressions
-        val variablesProduct = (decode(variablesA) ++ decode(variablesB)).sorted
+        val variablesProduct = decode(variablesA) ++ decode(variablesB)
         assert(variablesProduct.length <= 2, "Algebra cannot handle expressions of higher order!")
 
         val variables = encode(variablesProduct.head, variablesProduct(1))
@@ -391,7 +379,7 @@ case class Product(override val a: Expression, override val b: Expression) exten
     }
 
     // 4. Filter out zero terms (very slow)
-    temporal.retainEntries(new TLongDoubleProcedure { override def execute(l: Long, v: Double): Boolean = v != 0.0 })
+    temporal.retainEntries((l: Long, v: Double) => v != 0.0)
     temporal
   }
 }
