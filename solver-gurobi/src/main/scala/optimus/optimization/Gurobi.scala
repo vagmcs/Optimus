@@ -214,7 +214,7 @@ final class Gurobi extends AbstractMPSolver {
         }
         model.addQConstr(QExpression, GRBOperator, rhs, "")
 
-      case ExpressionOrder.LINEAR =>
+      case ExpressionOrder.LINEAR | ExpressionOrder.CONSTANT =>
         val LExpression = new GRBLinExpr
         val iterator = lhs.terms.iterator
         while(iterator.hasNext) {
