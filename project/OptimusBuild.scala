@@ -1,13 +1,26 @@
 import sbt.Keys._
 import sbt._
+import sbt.plugins.JvmPlugin
 
-object OptimusBuild {
+object OptimusBuild extends AutoPlugin {
 
-  val javaVersion = sys.props("java.specification.version").toDouble
+  private val logger = ConsoleLogger()
+
+  override def requires = JvmPlugin
+
+  /**
+    * Allow the plug-in to be included automatically
+    */
+  override def trigger: PluginTrigger = allRequirements
+
+  override def projectSettings: Seq[Setting[_]] = settings
+
+  private val javaVersion: Double = sys.props("java.specification.version").toDouble
 
   lazy val settings: Seq[Setting[_]] = {
 
-    println(s"[info] Loading settings for Java $javaVersion or higher.")
+    logger.info(s"Loading settings for Java $javaVersion or higher.")
+
     commonSettings ++ jdkSettings
   }
 
@@ -15,13 +28,13 @@ object OptimusBuild {
 
     name := "Optimus",
 
-    version := "2.0.1",
-
     organization := "com.github.vagmcs",
 
     description := "Optimus is a mathematical programming library for Scala",
 
-    scalaVersion := "2.11.8",
+    scalaVersion := "2.12.4",
+
+    crossScalaVersions := Seq("2.12.4", "2.11.12"),
 
     autoScalaLibrary := true,
 
@@ -34,10 +47,10 @@ object OptimusBuild {
     pomIncludeRepository := { _ => false },
 
     // fork a new JVM for 'run' and 'test:run'
-    fork := true,
+    //fork := true,
 
     // fork a new JVM for 'test:run', but not 'run'
-    fork in Test := true,
+    //fork in Test := true,
 
     // add a JVM option to use when forking a JVM for 'run'
     javaOptions += "-Xmx2G",
@@ -87,14 +100,34 @@ object OptimusBuild {
 
     javacOptions ++= Seq("-source", "1.8", "-target", "1.8", "-Xlint:unchecked", "-Xlint:deprecation"),
 
-    scalacOptions ++= Seq(
-      "-Yclosure-elim",
-      "-Yinline",
-      "-feature",
-      "-target:jvm-1.8",
-      "-language:implicitConversions",
-      "-Ybackend:GenBCode"
-    )
+    scalacOptions := {
+      scalaBinaryVersion.value match {
+
+        case "2.11" =>
+          // Scala compiler settings for Scala 2.11.x
+          Seq(
+            "-deprecation",       // Emit warning and location for usages of deprecated APIs.
+            "-unchecked",         // Enable additional warnings where generated code depends on assumptions.
+            "-feature",           // Emit warning and location for usages of features that should be imported explicitly.
+            "-target:jvm-1.8",    // Target JVM version 1.8
+            "-Ywarn-dead-code",   // Warn when dead code is identified.
+            "-Yinline-warnings",  // Emit inlining warnings
+            "-Yclosure-elim",     // Perform closure elimination
+            "-Ybackend:GenBCode"  // Use the new optimisation level
+          )
+
+        case "2.12" =>
+          // Scala compiler settings for Scala 2.12.x+
+          Seq(
+            "-deprecation",       // Emit warning and location for usages of deprecated APIs.
+            "-unchecked",         // Enable additional warnings where generated code depends on assumptions.
+            "-feature",           // Emit warning and location for usages of features that should be imported explicitly.
+            "-target:jvm-1.8",    // Target JVM version 1.8
+            "-Ywarn-dead-code"    // Warn when dead code is identified.
+          )
+        case _ => sys.error(s"Unsupported version of Scala '${scalaBinaryVersion.value}'")
+      }
+    }
   )
 
 }
