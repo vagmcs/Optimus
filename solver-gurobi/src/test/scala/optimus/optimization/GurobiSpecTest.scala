@@ -334,7 +334,7 @@ final class GurobiSpecTest extends FunSpec with Matchers {
       start()
 
       x.value.get should equal (0.4682428458167764 +- 0.0001)
-      y.value.get should equal (0.012630817746014237 +- 0.0001)
+      y.value.get should equal (0.012630817746014237 +- 0.001)
       objectiveValue shouldBe 0.4161924543450218 +- 0.0001
       status should equal(ProblemStatus.OPTIMAL)
 

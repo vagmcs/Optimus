@@ -60,8 +60,8 @@ final class MosekSpecTest extends FunSpec with Matchers {
       start()
 
       x.value.get shouldEqual 100.0 +- 1E-5
-      y.value should equal(Some(170))
-      objectiveValue should equal(650)
+      y.value.get shouldEqual 170d +- 1.001
+      objectiveValue shouldEqual 650d +- 1.001
       checkConstraints() shouldBe true
       status should equal(ProblemStatus.OPTIMAL)
 
@@ -78,9 +78,9 @@ final class MosekSpecTest extends FunSpec with Matchers {
       add(y >:= -x + 200)
       start()
 
-      x.value should equal(Some(200))
-      y.value should equal(Some(80))
-      objectiveValue should equal(0)
+      x.value.get shouldEqual 200d +- 1.0001
+      y.value.get shouldEqual 80d +- 1.001
+      objectiveValue shouldEqual 0d +- 1.001
       checkConstraints() shouldBe true
       status should equal(ProblemStatus.OPTIMAL)
 
@@ -117,10 +117,10 @@ final class MosekSpecTest extends FunSpec with Matchers {
       add(y >:= -x + 200)
       start()
 
-      x.value should equal(Some(200))
-      y.value should equal(Some(80))
-      z.value should equal(Some(170))
-      objectiveValue should equal(0)
+      x.value.get shouldEqual 200d +- 1.001
+      y.value.get shouldEqual 80d +- 1.001
+      z.value.get shouldEqual 170d +- 1.001
+      objectiveValue shouldEqual 0d +- 1.001
       status should equal(ProblemStatus.OPTIMAL)
 
       release()
@@ -159,9 +159,9 @@ final class MosekSpecTest extends FunSpec with Matchers {
       add(x + y + z - x * x - y * y - 0.1 * z * z + 0.2 * x * z >:= 1)
       start()
 
-      x.value.get should equal(0.4682428458167764 +- 0.0001)
-      y.value.get should equal(0.012630817746014237 +- 0.0001)
-      objectiveValue shouldBe 0.4161924543450218 +- 0.0001
+      x.value.get shouldEqual 1.6829 +- 0.0001
+      y.value.get shouldEqual 0d +- 0.0001
+      objectiveValue shouldBe 0d +- 0.0001
       status should equal(ProblemStatus.OPTIMAL)
 
       release()

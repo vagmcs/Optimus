@@ -26,45 +26,42 @@ trait KnapsackTest extends FunSpec with Matchers {
     val utility = Array(40, 35, 18, 4, 10, 2)
     val capacity = 100
 
-    for (lib <- solvers) {
+    implicit val knapsackProblem = MIProblem(solver)
 
-      implicit val knapsackProblem = MIProblem(lib)
-
-      val items = Array.tabulate(weights.length) { i =>
-        Item(weights(i), utility(i), MPIntVar(s"x$i", 0 to 1))
-      }
-
-      // Maximize the total utility
-      maximize(sum(items)(item => item.x * item.utility))
-
-      // Given the limited capacity of the pack
-      subjectTo {
-        sum(items)(item => item.x * item.weight) <:= capacity
-      }
-
-      start()
-
-      val selected = items.filter(item => item.x.value.get == 1)
-      val totalWeight = selected.map(item => item.weight).sum
-
-      it(s"$lib solution should be optimal") {
-        status shouldBe ProblemStatus.OPTIMAL
-      }
-
-      it(s"$lib total utility should be 55") {
-        objectiveValue shouldEqual 55.0
-      }
-
-      it(s"$lib total weight should be 100") {
-        totalWeight shouldEqual capacity
-      }
-
-      it(s"$lib constraints should be satisfied") {
-        checkConstraints() shouldBe true
-      }
-
-      release()
+    val items = Array.tabulate(weights.length) { i =>
+      Item(weights(i), utility(i), MPIntVar(s"x$i", 0 to 1))
     }
+
+    // Maximize the total utility
+    maximize(sum(items)(item => item.x * item.utility))
+
+    // Given the limited capacity of the pack
+    subjectTo {
+      sum(items)(item => item.x * item.weight) <:= capacity
+    }
+
+    start()
+
+    val selected = items.filter(item => item.x.value.get == 1)
+    val totalWeight = selected.map(item => item.weight).sum
+
+    it(s"$solver solution should be optimal") {
+      status shouldBe ProblemStatus.OPTIMAL
+    }
+
+    it(s"$solver total utility should be 55") {
+      objectiveValue shouldEqual 55.0
+    }
+
+    it(s"$solver total weight should be 100") {
+      totalWeight shouldEqual capacity
+    }
+
+    it(s"$solver constraints should be satisfied") {
+      checkConstraints() shouldBe true
+    }
+
+    release()
   }
 
   describe("Knapsack having several random generated items") {
@@ -74,40 +71,37 @@ trait KnapsackTest extends FunSpec with Matchers {
     val utility = Array.tabulate(numOfItems)(i => Random.nextInt(50))
     val capacity = 100
 
-    for (lib <- solvers) {
+    implicit val knapsackProblem = MIProblem(solver)
 
-      implicit val knapsackProblem = MIProblem(lib)
-
-      val items = Array.tabulate(weights.length) { i =>
-        Item(weights(i), utility(i), MPIntVar(s"x$i", 0 to 1))
-      }
-
-      // Maximize the total utility
-      maximize(sum(items)(item => item.x * item.utility))
-
-      // Given the limited capacity of the pack
-      subjectTo {
-        sum(items)(item => item.x * item.weight) <:= capacity
-      }
-
-      start()
-
-      val selected = items.filter(item => item.x.value.get == 1)
-      val totalWeight = selected.map(item => item.weight).sum
-
-      it(s"$lib solution should be optimal") {
-        status shouldBe ProblemStatus.OPTIMAL
-      }
-
-      info(s"$lib total utility is $objectiveValue")
-
-      info(s"$lib total weight is $totalWeight")
-
-      it(s"$lib constraints should be satisfied") {
-        checkConstraints() shouldBe true
-      }
-
-      release()
+    val items = Array.tabulate(weights.length) { i =>
+      Item(weights(i), utility(i), MPIntVar(s"x$i", 0 to 1))
     }
+
+    // Maximize the total utility
+    maximize(sum(items)(item => item.x * item.utility))
+
+    // Given the limited capacity of the pack
+    subjectTo {
+      sum(items)(item => item.x * item.weight) <:= capacity
+    }
+
+    start()
+
+    val selected = items.filter(item => item.x.value.get == 1)
+    val totalWeight = selected.map(item => item.weight).sum
+
+    it(s"$solver solution should be optimal") {
+      status shouldBe ProblemStatus.OPTIMAL
+    }
+
+    info(s"$solver total utility is $objectiveValue")
+
+    info(s"$solver total weight is $totalWeight")
+
+    it(s"$solver constraints should be satisfied") {
+      checkConstraints() shouldBe true
+    }
+
+    release()
   }
 }

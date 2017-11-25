@@ -5,6 +5,8 @@ import optimus.algebra._
 import optimus.optimization.PreSolve.PreSolve
 import optimus.optimization.ProblemStatus.ProblemStatus
 
+import scala.util.{Failure, Success, Try}
+
 final class Mosek extends AbstractMPSolver {
 
   var tempRow = 0
@@ -89,19 +91,18 @@ final class Mosek extends AbstractMPSolver {
 
     optimizationStatus match {
       case rescode.ok =>
-
         val solutionStatus = new Array[solsta](1)
         task.getsolsta(soltype.itr, solutionStatus)
 
         solutionStatus.head match {
           case solsta.optimal =>
             task.getxx(soltype.itr, solution)
-            objectiveValue = task.getprimalobj(soltype.bas)
+            objectiveValue = task.getprimalobj(soltype.itr)
             ProblemStatus.OPTIMAL
 
           case solsta.near_optimal =>
-            task.getxx(soltype.bas, solution)
-            objectiveValue = task.getprimalobj(soltype.bas)
+            task.getxx(soltype.itr, solution)
+            objectiveValue = task.getprimalobj(soltype.itr)
             ProblemStatus.SUBOPTIMAL
 
           case solsta.dual_infeas_cer |

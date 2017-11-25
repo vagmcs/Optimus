@@ -46,7 +46,7 @@ package object optimization {
   }
 
   // Used for testing multiple solvers at once
-  lazy val solvers = List(SolverLib.lp_solve, SolverLib.gurobi, SolverLib.ojalgo).filter(canInstantiateSolver)
+  lazy val solvers = List(SolverLib.lp_solve, SolverLib.gurobi, SolverLib.ojalgo, SolverLib.mosek).filter(canInstantiateSolver)
 
   // Checks if the given solver can be ran on this system
   private def canInstantiateSolver(s: SolverLib.Value): Boolean = {
