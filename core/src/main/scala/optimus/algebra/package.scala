@@ -2,6 +2,7 @@ package optimus
 
 import gnu.trove.map.hash.TLongDoubleHashMap
 import gnu.trove.procedure.TLongDoubleProcedure
+import scala.language.implicitConversions
 
 /*
  *    /\\\\\
