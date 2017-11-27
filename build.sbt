@@ -4,6 +4,8 @@ val logger = ConsoleLogger()
 
 sonatypeProfileName := "com.github.vagmcs"
 
+useGpg := true
+
 lazy val root = project.in(file(".")).
   aggregate(core, oj, lpsolve, gurobi, mosek).
   settings(Seq(
