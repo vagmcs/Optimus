@@ -23,16 +23,7 @@ This program comes with ABSOLUTELY NO WARRANTY. This is free software, and you a
   * Open source [lpsolve](http://sourceforge.net/projects/lpsolve/) can be used for LP and MIP
   * Open source [ojAlgo](http://ojalgo.org/) can be used for LP, QP and MIP
   * Proprietary solver [Gurobi](http://www.gurobi.com/) can be used for efficiently solving LP, QP, QCQP and MIP
-
-## Reference in Scientific Publications
-Please use the following BibTeX entry when you cite Optimus in your papers:
-```
-@misc{Optimus,
-      author = {Evangelos Michelioudakis},
-      title = {Optimus: an open-source mathematical optimization library},
-      url = {https://github.com/vagm/Optimus}
-}
-```
+  * Proprietary solver [Mosek](https://www.mosek.com/) (experimental)
 
 ## Building
 
@@ -43,6 +34,17 @@ See [Building and Linking](docs/building_and_linking.md)
 - [Quadratic Programming](docs/quadratic.md)
 - [Mixed Integer Programming](docs/mixed_integer.md)
 
-## The development of Optimus is powered by:
+## Contributions
 
-[![Intellij IDEA](https://www.jetbrains.com/img/logos/logo_intellij_idea.png)](https://www.jetbrains.com/idea/)
+Contributions are welcome, for details see [CONTRIBUTING.md](CONTRIBUTING.md).
+
+## Reference in Scientific Publications
+Please use the following BibTeX entry when you cite Optimus in your papers:
+
+```
+@misc{Optimus,
+      author = {Evangelos Michelioudakis and Anastasios Skarlatidis},
+      title = {Optimus: an open-source mathematical optimization library},
+      url = {https://github.com/vagmcs/Optimus}
+}
+```
