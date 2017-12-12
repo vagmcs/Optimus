@@ -29,6 +29,7 @@ package optimus.algebra
 
 import org.scalatest.{FunSpec, Matchers}
 import optimus.optimization.{LQProblem, MPFloatVar, MPIntVar}
+import optimus.algebra.AlgebraOps._
 
 /**
   * Specification test for algebra.

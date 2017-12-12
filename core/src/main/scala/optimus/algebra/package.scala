@@ -151,54 +151,14 @@ package object algebra {
     Vector(l.toInt - 1, q.toInt - 1).filter(_ > -1)
   }
 
-  // Functions over iterable data structures of expressions
-
-  def sum(expressions: Iterable[Expression]) : Expression = {
-
-    val temporal = LongDoubleMap.empty
-    var tConstant = 0.0
-
-    for (expr <- expressions) {
-      tConstant += expr.constant
-      val iterator = expr.terms.iterator
-      while(iterator.hasNext) {
-        iterator.advance()
-        val coefficient = iterator.value
-        temporal.adjustOrPutValue(iterator.key, coefficient, coefficient)
-      }
-    }
-    temporal.retainEntries((_: Long, v: Double) => v != 0.0)
-
-    new Expression {
-      val constant = tConstant
-      val terms = temporal
-    }
-  }
-
-  // These functions produce mathematical expressions over joint iterable and then summing out the results
-
-  def sum[A](indexes: Iterable[A])(f: A => Expression): Expression = sum(indexes map f)
-
-  def sum[A, B](indexesA: Iterable[A],
-                indexesB: Iterable[B])(f: (A, B) => Expression): Expression = {
-    sum( for(a <- indexesA; b <- indexesB) yield f(a, b) )
-  }
-
-  def sum[A, B, C](indexesA: Iterable[A], indexesB: Iterable[B],
-                   indexesC: Iterable[C])(f: (A, B, C) => Expression): Expression = {
-    sum( for(a <- indexesA; b <- indexesB; c <- indexesC) yield f(a, b, c) )
-  }
-
-  def sum[A, B, C, D](indexesA: Iterable[A], indexesB: Iterable[B],
-                      indexesC: Iterable[C], indexesD: Iterable[D])(f: (A, B, C, D) => Expression): Expression = {
-    sum( for(a <- indexesA; b <- indexesB; c <- indexesC; d <- indexesD) yield f(a, b, c, d) )
-  }
-
   // Algebra implicit conversions
 
   implicit def Int2Const(value: Int): Const =
-    if(value == 0) Zero else Const(value.toDouble)
+    if (value == 0) Zero else Const(value.toDouble)
+
+  implicit def Long2Const(value: Long): Const =
+    if (value == 0) Zero else Const(value.toDouble)
 
   implicit def Double2Const(value: Double): Const =
-    if(value == 0.0) Zero else Const(value)
+    if (value == 0.0) Zero else Const(value)
 }

@@ -1,7 +1,7 @@
 package optimus.optimization
 
 import org.scalatest.{FunSpec, Matchers}
-import optimus.algebra._
+import optimus.algebra.AlgebraOps._
 import optimus.optimization.SolverLib.SolverLib
 
 /**
