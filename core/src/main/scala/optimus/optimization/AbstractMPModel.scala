@@ -27,7 +27,6 @@ package optimus.optimization
  * along with this program. If not, see <http://www.gnu.org/licenses/lgpl-3.0.en.html>.
  */
 
-import gnu.trove.map.hash.TLongDoubleHashMap
 import optimus.algebra._
 import optimus.optimization.PreSolve.PreSolve
 import optimus.optimization.ProblemStatus.ProblemStatus
@@ -310,8 +309,7 @@ class MPVariable(val problem: AbstractMPProblem, val lowerBound: Double, val upp
   val index = problem.register(this)
 
   // A variable alone has a coefficient value of 1 in front of her
-  val terms = new TLongDoubleHashMap()
-  terms.put(encode(index), 1.0)
+  override val terms = LongDoubleMap(this)
 
   protected var integer = false
 
