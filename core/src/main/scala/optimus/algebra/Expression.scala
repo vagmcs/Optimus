@@ -28,7 +28,6 @@
 package optimus.algebra
 
 import gnu.trove.map.hash.TLongDoubleHashMap
-import optimus.algebra.ExpressionOrder.ExpressionOrder
 
 /**
   * Expression abstraction, should be extended by anything that is
@@ -82,7 +81,7 @@ abstract class Expression {
     case 0 => ExpressionOrder.CONSTANT
     case 1 => ExpressionOrder.LINEAR
     case 2 => ExpressionOrder.QUADRATIC
-    case _ => ExpressionOrder.HIGHER
+    case _ => ExpressionOrder.GENERIC
   }
 
   override def toString =

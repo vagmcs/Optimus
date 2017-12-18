@@ -1,5 +1,3 @@
-package optimus.algebra
-
 /*
  *    /\\\\\
  *   /\\\///\\\
@@ -27,14 +25,18 @@ package optimus.algebra
  * along with this program. If not, see <http://www.gnu.org/licenses/lgpl-3.0.en.html>.
  */
 
-/**
-  * Constraint relations (>= <= =).
-  */
-object ConstraintRelation extends Enumeration {
+package optimus.algebra
 
-  type ConstraintRelation = Value
+import enumeratum._
+import scala.collection.immutable._
 
-  val GE = Value(">=")
-  val LE = Value("<=")
-  val EQ = Value("=")
+sealed abstract class ConstraintRelation(override val entryName: String) extends EnumEntry
+
+object ConstraintRelation extends Enum[ConstraintRelation] {
+
+  val values: IndexedSeq[ConstraintRelation] = findValues
+
+  case object GE  extends ConstraintRelation(">=")
+  case object LE  extends ConstraintRelation("<=")
+  case object EQ  extends ConstraintRelation("=")
 }

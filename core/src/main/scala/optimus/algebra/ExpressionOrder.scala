@@ -1,5 +1,3 @@
-package optimus.algebra
-
 /*
  *    /\\\\\
  *   /\\\///\\\
@@ -27,15 +25,19 @@ package optimus.algebra
  * along with this program. If not, see <http://www.gnu.org/licenses/lgpl-3.0.en.html>.
  */
 
-/**
-  * Expression order may be constant, linear, quadratic or higher order.
-  */
-object ExpressionOrder extends Enumeration {
+package optimus.algebra
 
-  type ExpressionOrder = Value
+import enumeratum._
+import scala.collection.immutable._
 
-  val CONSTANT = Value("Constant")
-  val LINEAR = Value("Linear")
-  val QUADRATIC = Value("Quadratic")
-  val HIGHER = Value("Higher")
+sealed trait ExpressionOrder extends EnumEntry
+
+object ExpressionOrder extends Enum[ExpressionOrder] {
+
+  val values: IndexedSeq[ExpressionOrder] = findValues
+
+  case object CONSTANT    extends ExpressionOrder
+  case object LINEAR      extends ExpressionOrder
+  case object QUADRATIC   extends ExpressionOrder
+  case object GENERIC     extends ExpressionOrder
 }

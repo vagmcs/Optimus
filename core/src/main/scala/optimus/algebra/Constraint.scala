@@ -27,7 +27,7 @@ package optimus.algebra
  * along with this program. If not, see <http://www.gnu.org/licenses/lgpl-3.0.en.html>.
  */
 
-import optimus.algebra.ConstraintRelation.ConstraintRelation
+//import optimus.algebra.ConstraintRelation.ConstraintRelation
 
 /**
   * A constraint has the form (expression RELATION expression) with RELATION in {<=, =, >=}

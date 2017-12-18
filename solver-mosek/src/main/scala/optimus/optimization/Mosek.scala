@@ -130,7 +130,7 @@ final class Mosek extends AbstractMPSolver {
   override def addObjective(objective: Expression, minimize: Boolean) = {
 
     objective.getOrder match {
-      case ExpressionOrder.HIGHER => throw new IllegalArgumentException("Higher than quadratic: " + objective)
+      case ExpressionOrder.GENERIC => throw new IllegalArgumentException("Higher than quadratic: " + objective)
 
       case ExpressionOrder.QUADRATIC =>
         val iterator = objective.terms.iterator
@@ -164,7 +164,7 @@ final class Mosek extends AbstractMPSolver {
     val operator = mpConstraint.constraint.operator
 
     lhs.getOrder match {
-      case ExpressionOrder.HIGHER => throw new IllegalArgumentException("Higher than quadratic: " + lhs)
+      case ExpressionOrder.GENERIC => throw new IllegalArgumentException("Higher than quadratic: " + lhs)
 
       case ExpressionOrder.QUADRATIC =>
         var linearIndexes = Array.emptyIntArray
