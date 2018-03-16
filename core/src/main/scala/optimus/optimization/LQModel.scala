@@ -65,13 +65,13 @@ object SolverFactory {
   *
   * @param solverLib solver library type
   */
-class LQProblem private[optimization](solverLib: SolverLib = SolverLib.ojalgo) extends AbstractMPProblem {
+class LQProblem private[optimization](solverLib: SolverLib = SolverLib.ojalgo, quiet: Boolean = false) extends AbstractMPProblem {
 
   override protected def instantiateSolver(): AbstractMPSolver = SolverFactory.instantiate(solverLib)
 }
 
 object LQProblem {
-  def apply(solverLib: SolverLib = SolverLib.ojalgo): LQProblem = new LQProblem(solverLib)
+  def apply(solverLib: SolverLib = SolverLib.ojalgo, quiet: Boolean = false): LQProblem = new LQProblem(solverLib, quiet)
 }
 
 /**

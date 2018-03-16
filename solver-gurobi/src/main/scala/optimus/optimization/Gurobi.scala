@@ -52,18 +52,21 @@ final class Gurobi extends AbstractMPSolver {
    *
    * @param nbRows rows in the model
    * @param nbCols number of variables in the model
+   * @param quiet if true, not verbose
    */
-  def buildProblem(nbRows: Int, nbCols: Int) {
+  def buildProblem(nbRows: Int, nbCols: Int, quiet: Boolean) {
 
-    println {
+    if(!quiet) {
+      println {
         """    _________                   ______ _____  """ + "\n" +
-        """    __  ____/___  _________________  /____(_) """ + "\n" +
-        """    _  / __ _  / / /_  ___/  __ \_  __ \_  /  """ + "\n" +
-        """    / /_/ / / /_/ /_  /   / /_/ /  /_/ /  /   """ + "\n" +
-        """    \____/  \__._/ /_/    \____//_____//_/    """ + "\n"
-    }
+          """    __  ____/___  _________________  /____(_) """ + "\n" +
+          """    _  / __ _  / / /_  ___/  __ \_  __ \_  /  """ + "\n" +
+          """    / /_/ / / /_/ /_  /   / /_/ /  /_/ /  /   """ + "\n" +
+          """    \____/  \__._/ /_/    \____//_____//_/    """ + "\n"
+      }
 
-    println("Model gurobi: " + nbRows + "x" + nbCols)
+      println("Model gurobi: " + nbRows + "x" + nbCols)
+    }
 
     model.getEnv.set(GRB.IntParam.OutputFlag, 0)
 

@@ -25,18 +25,21 @@ final class Mosek extends AbstractMPSolver {
     *
     * @param nbRows rows in the model
     * @param nbCols number of variables in the model
+    * @param quiet if true, not verbose
     */
-  override def buildProblem(nbRows: Int, nbCols: Int) = {
+  override def buildProblem(nbRows: Int, nbCols: Int, quiet: Boolean) = {
 
-    println {
-      """     __  ___                __   """ + "\n" +
-      """    /  |/  /___  ________  / /__ """ + "\n" +
-      """   / /|_/ / __ \/ ___/ _ \/ //_/ """ + "\n" +
-      """  / /  / / /_/ (__  )  __/ ,<    """ + "\n" +
-      """ /_/  /_/\____/____/\___/_/|_|   """ + "\n"
+    if(!quiet) {
+      println {
+        """     __  ___                __   """ + "\n" +
+          """    /  |/  /___  ________  / /__ """ + "\n" +
+          """   / /|_/ / __ \/ ___/ _ \/ //_/ """ + "\n" +
+          """  / /  / / /_/ (__  )  __/ ,<    """ + "\n" +
+          """ /_/  /_/\____/____/\___/_/|_|   """ + "\n"
+      }
+
+      println("Model mosek: " + nbRows + "x" + nbCols)
     }
-
-    println("Model mosek: " + nbRows + "x" + nbCols)
 
     this.nbRows = 0
     this.nbCols = nbCols

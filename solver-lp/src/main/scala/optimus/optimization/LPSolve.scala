@@ -50,18 +50,21 @@ final class LPSolve extends AbstractMPSolver {
    *
    * @param nbRows rows in the model
    * @param nbCols number of variables in the model
+   * @param quiet if true, not verbose
    */
-  def buildProblem(nbRows: Int, nbCols: Int) = {
+  def buildProblem(nbRows: Int, nbCols: Int, quiet: Boolean) = {
 
-    println {
+    if(!quiet) {
+      println {
         """  ______________________     ______            """ + "\n" +
-        """  ___  /___  __ \_  ___/________  /__   ______ """ + "\n" +
-        """  __  / __  /_/ /____ \_  __ \_  /__ | / /  _ \""" + "\n" +
-        """  _  /___  ____/____/ // /_/ /  / __ |/ //  __/""" + "\n" +
-        """  /_____/_/     /____/ \____//_/  _____/ \___/ """ + "\n"
-    }
+          """  ___  /___  __ \_  ___/________  /__   ______ """ + "\n" +
+          """  __  / __  /_/ /____ \_  __ \_  /__ | / /  _ \""" + "\n" +
+          """  _  /___  ____/____/ // /_/ /  / __ |/ //  __/""" + "\n" +
+          """  /_____/_/     /____/ \____//_/  _____/ \___/ """ + "\n"
+      }
 
-    println("Model lpSolve: " + nbRows + "x" + nbCols)
+      println("Model lpSolve: " + nbRows + "x" + nbCols)
+    }
 
     this.nbRows = 0
     this.nbCols = nbCols

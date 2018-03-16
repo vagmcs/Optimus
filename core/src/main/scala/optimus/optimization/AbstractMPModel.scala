@@ -77,8 +77,9 @@ abstract class AbstractMPSolver {
     *
     * @param nbRows rows in the model
     * @param nbCols number of variables in the model
+    * @param quiet if true, not verbose
     */
-  def buildProblem(nbRows: Int, nbCols: Int)
+  def buildProblem(nbRows: Int, nbCols: Int, quiet: Boolean = false)
 
   /**
     * Get value of the variable in the specified position. Solution
@@ -153,14 +154,16 @@ abstract class AbstractMPSolver {
     *
     * @param constraints array buffer containing the constraints
     */
-  def addAllConstraints(constraints: ArrayBuffer[MPConstraint]) {
+  def addAllConstraints(constraints: ArrayBuffer[MPConstraint], quiet: Boolean) {
     var idx = 0
     val len = constraints.length
     while(idx < len) {
       addConstraint(constraints(idx))
       idx += 1
     }
-    print("Added " + len + " constraints")
+
+    if(!quiet)
+      print("Added " + len + " constraints")
   }
 
   /**
@@ -231,8 +234,8 @@ abstract class AbstractMPProblem {
     constraintToAdd
   }
 
-  protected def addAllConstraints() = {
-    solver.addAllConstraints(constraints)
+  protected def addAllConstraints(quiet: Boolean) = {
+    solver.addAllConstraints(constraints, quiet)
   }
 
   def objectiveValue() = solver.objectiveValue
@@ -250,40 +253,48 @@ abstract class AbstractMPProblem {
 
   def maximize(expression: Expression): AbstractMPProblem = optimize(expression, minimize = false)
 
-  def start(timeLimit: Int = Int.MaxValue, preSolve: PreSolve = PreSolve.DISABLE): Boolean = {
+  def start(timeLimit: Int = Int.MaxValue, preSolve: PreSolve = PreSolve.DISABLE, quiet: Boolean = false): Boolean = {
 
     if(!reOptimize) {
-      solver.buildProblem(constraints.size, variables.size)
+      solver.buildProblem(constraints.size, variables.size, quiet)
 
-      println("Configuring variable bounds...")
+      if(!quiet)
+        println("Configuring variable bounds...")
       setVariableProperties()
 
-      println("Adding objective function...")
+      if(!quiet)
+        println("Adding objective function...")
       solver.addObjective(objective, minimize)
 
-      print("Creating constraints: ")
-      val start = System.currentTimeMillis()
-      addAllConstraints()
-      println(" in " + (System.currentTimeMillis() - start) + "ms")
+      if(!quiet) {
+        print("Creating constraints: ")
+        val start = System.currentTimeMillis()
+        addAllConstraints(false)
+        println(" in " + (System.currentTimeMillis() - start) + "ms")
+      }
+      else
+        addAllConstraints(true)
 
       reOptimize = true
     }
-    else println("Re-optimize")
+    else if(!quiet) println("Re-optimize")
 
     if (timeLimit < Int.MaxValue)
       solver.setTimeout(timeLimit)
 
-    solveProblem(preSolve)
+    solveProblem(preSolve, quiet)
     (status == ProblemStatus.OPTIMAL) || (status == ProblemStatus.SUBOPTIMAL)
   }
 
-  def solveProblem(preSolve: PreSolve) {
-    println("Solving...")
+  def solveProblem(preSolve: PreSolve, quiet: Boolean) {
+    if(!quiet)
+      println("Solving...")
     status = solver.solveProblem(preSolve)
     if ( (status == ProblemStatus.OPTIMAL) || (status == ProblemStatus.SUBOPTIMAL) )
       variables.indices foreach { i => solution(i) = solver.getValue(i) }
 
-    println("Solution status is " + status)
+    if(!quiet)
+      println("Solution status is " + status)
   }
 
   def checkConstraints(tol: Double = 10e-6): Boolean = constraints.forall(_.check(tol))

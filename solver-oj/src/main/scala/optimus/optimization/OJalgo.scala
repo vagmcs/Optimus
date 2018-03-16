@@ -56,19 +56,22 @@ final class OJalgo extends AbstractMPSolver {
    *
    * @param nbRows rows in the model
    * @param nbCols number of variables in the model
+   * @param quiet if true, not verbose
    */
-  def buildProblem(nbRows: Int, nbCols: Int) = {
+  def buildProblem(nbRows: Int, nbCols: Int, quiet: Boolean) = {
 
-    println {
-      """        _________      ______               """ + "\n" +
-      """  ____________  /_____ ___  /______ ______  """ + "\n" +
-      """  _  __ \__ _  /_  __  /_  /__  __  /  __ \ """ + "\n" +
-      """  / /_/ / /_/ / / /_/ /_  / _  /_/ // /_/ / """ + "\n" +
-      """  \____/\____/  \__._/ /_/  _\__. / \____/  """ + "\n" +
-      """                            /____/          """ + "\n"
+    if(!quiet) {
+      println {
+        """        _________      ______               """ + "\n" +
+        """  ____________  /_____ ___  /______ ______  """ + "\n" +
+        """  _  __ \__ _  /_  __  /_  /__  __  /  __ \ """ + "\n" +
+        """  / /_/ / /_/ / / /_/ /_  / _  /_/ // /_/ / """ + "\n" +
+        """  \____/\____/  \__._/ /_/  _\__. / \____/  """ + "\n" +
+        """                            /____/          """ + "\n"
+      }
+
+      println("Model oJalgo: " + nbRows + "x" + nbCols)
     }
-
-    println("Model oJalgo: " + nbRows + "x" + nbCols)
 
     this.nbRows = nbRows
     this.nbCols = nbCols
