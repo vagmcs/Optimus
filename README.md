@@ -8,7 +8,7 @@ Optimus is a library for Linear and Quadratic mathematical optimization written 
 
 This program comes with ABSOLUTELY NO WARRANTY. This is free software, and you are welcome to redistribute it under certain conditions; See the [GNU Lesser General Public License v3 for more details](http://www.gnu.org/licenses/lgpl-3.0.en.html).
 
-#### Features:
+## Features:
 1. High level mathematical modeling in Scala using algebraic expressions
   * Linear and quadratic objective and constraint expressions
   * Higher order expressions cannot be defined or handled by the solvers yet
