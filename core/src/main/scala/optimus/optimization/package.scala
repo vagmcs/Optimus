@@ -27,13 +27,14 @@ package optimus
  * along with this program. If not, see <http://www.gnu.org/licenses/lgpl-3.0.en.html>.
  */
 
-import optimus.algebra.{Expression, Constraint}
+import com.typesafe.scalalogging.StrictLogging
+import optimus.algebra.{Constraint, Expression}
 import optimus.optimization.PreSolve.PreSolve
 
 /**
   * Helper functions for linear-quadratic optimization
   */
-package object optimization {
+package object optimization extends StrictLogging{
 
   object SolverLib extends Enumeration {
 
@@ -52,7 +53,7 @@ package object optimization {
   private def canInstantiateSolver(s: SolverLib.Value): Boolean = {
     try SolverFactory.instantiate(s)
     catch {
-      case e: Exception => println(e.getMessage); return false
+      case e: Exception => logger.error(e.getMessage); return false
     }
     true
   }

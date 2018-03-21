@@ -59,7 +59,7 @@ final class OJalgo extends AbstractMPSolver {
    */
   def buildProblem(nbRows: Int, nbCols: Int) = {
 
-    println {
+    logger.info {
       """        _________      ______               """ + "\n" +
       """  ____________  /_____ ___  /______ ______  """ + "\n" +
       """  _  __ \__ _  /_  __  /_  /__  __  /  __ \ """ + "\n" +
@@ -68,7 +68,7 @@ final class OJalgo extends AbstractMPSolver {
       """                            /____/          """ + "\n"
     }
 
-    println("Model oJalgo: " + nbRows + "x" + nbCols)
+    logger.info("Model oJalgo: " + nbRows + "x" + nbCols)
 
     this.nbRows = nbRows
     this.nbCols = nbCols
@@ -204,7 +204,7 @@ final class OJalgo extends AbstractMPSolver {
    */
   def solveProblem(preSolve: PreSolve = PreSolve.DISABLE): ProblemStatus = {
 
-    if(preSolve != PreSolve.DISABLE) println("oJalgo does not support pre-solving!")
+    if(preSolve != PreSolve.DISABLE) logger.info("oJalgo does not support pre-solving!")
     
     val result = if(this.minimize) model.minimise() else model.maximise()
 

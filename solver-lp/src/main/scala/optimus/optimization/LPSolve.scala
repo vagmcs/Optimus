@@ -53,7 +53,7 @@ final class LPSolve extends AbstractMPSolver {
    */
   def buildProblem(nbRows: Int, nbCols: Int) = {
 
-    println {
+    logger.info {
         """  ______________________     ______            """ + "\n" +
         """  ___  /___  __ \_  ___/________  /__   ______ """ + "\n" +
         """  __  / __  /_/ /____ \_  __ \_  /__ | / /  _ \""" + "\n" +
@@ -61,7 +61,7 @@ final class LPSolve extends AbstractMPSolver {
         """  /_____/_/     /____/ \____//_/  _____/ \___/ """ + "\n"
     }
 
-    println("Model lpSolve: " + nbRows + "x" + nbCols)
+    logger.info("Model lpSolve: " + nbRows + "x" + nbCols)
 
     this.nbRows = 0
     this.nbCols = nbCols
@@ -211,11 +211,11 @@ final class LPSolve extends AbstractMPSolver {
         ProblemStatus.UNBOUNDED
 
       case LpSolve.TIMEOUT =>
-        println("LPSolve timed out before solution was reached!")
+        logger.info("LPSolve timed out before solution was reached!")
         ProblemStatus.NOT_SOLVED
 
       case _ =>
-        println("LPSolve cannot handle the problem. Status was set to INFEASIBLE.")
+        logger.info("LPSolve cannot handle the problem. Status was set to INFEASIBLE.")
         ProblemStatus.INFEASIBLE
     }
   }

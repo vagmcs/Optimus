@@ -27,13 +27,15 @@ package optimus.optimization
  * along with this program. If not, see <http://www.gnu.org/licenses/lgpl-3.0.en.html>.
  */
 
+import com.typesafe.scalalogging.StrictLogging
 import gnu.trove.map.hash.TLongDoubleHashMap
 import optimus.algebra._
 import optimus.optimization.PreSolve.PreSolve
 import optimus.optimization.ProblemStatus.ProblemStatus
+
 import scala.collection.mutable
 import scala.collection.mutable.ArrayBuffer
-import scala.util.{Success, Failure, Try}
+import scala.util.{Failure, Success, Try}
 
 object ProblemStatus extends Enumeration {
 
@@ -49,7 +51,7 @@ object ProblemStatus extends Enumeration {
 /**
   * Abstract class that should be extended to define a linear-quadratic solver.
   */
-abstract class AbstractMPSolver {
+abstract class AbstractMPSolver extends StrictLogging {
 
   /**
     * Number of rows in the model
@@ -160,7 +162,7 @@ abstract class AbstractMPSolver {
       addConstraint(constraints(idx))
       idx += 1
     }
-    print("Added " + len + " constraints")
+    logger.info("Added " + len + " constraints")
   }
 
   /**
@@ -188,7 +190,7 @@ abstract class AbstractMPSolver {
 /**
   * Should define the problem we are about to solve
   */
-abstract class AbstractMPProblem {
+abstract class AbstractMPProblem extends StrictLogging {
 
   protected val variables = ArrayBuffer[MPVariable]()
   protected val constraints = ArrayBuffer[MPConstraint]()
@@ -255,20 +257,20 @@ abstract class AbstractMPProblem {
     if(!reOptimize) {
       solver.buildProblem(constraints.size, variables.size)
 
-      println("Configuring variable bounds...")
+      logger.info("Configuring variable bounds...")
       setVariableProperties()
 
-      println("Adding objective function...")
+      logger.info("Adding objective function...")
       solver.addObjective(objective, minimize)
 
-      print("Creating constraints: ")
+      logger.info("Creating constraints: ")
       val start = System.currentTimeMillis()
       addAllConstraints()
-      println(" in " + (System.currentTimeMillis() - start) + "ms")
+      logger.info(" in " + (System.currentTimeMillis() - start) + "ms")
 
       reOptimize = true
     }
-    else println("Re-optimize")
+    else logger.info("Re-optimize")
 
     if (timeLimit < Int.MaxValue)
       solver.setTimeout(timeLimit)
@@ -278,12 +280,12 @@ abstract class AbstractMPProblem {
   }
 
   def solveProblem(preSolve: PreSolve) {
-    println("Solving...")
+    logger.info("Solving...")
     status = solver.solveProblem(preSolve)
     if ( (status == ProblemStatus.OPTIMAL) || (status == ProblemStatus.SUBOPTIMAL) )
       variables.indices foreach { i => solution(i) = solver.getValue(i) }
 
-    println("Solution status is " + status)
+    logger.info("Solution status is " + status)
   }
 
   def checkConstraints(tol: Double = 10e-6): Boolean = constraints.forall(_.check(tol))
@@ -347,7 +349,7 @@ class MPVariable(val problem: AbstractMPProblem, val lowerBound: Double, val upp
   * @param constraint the constraint object
   * @param index the index of the constraint in the problem
   */
-class MPConstraint(val problem: AbstractMPProblem, val constraint: Constraint, val index: Int) {
+class MPConstraint(val problem: AbstractMPProblem, val constraint: Constraint, val index: Int) extends StrictLogging {
 
   def check(tol: Double = 10e-6): Boolean = slack match {
     case Success(value) => constraint.operator match {
@@ -356,7 +358,7 @@ class MPConstraint(val problem: AbstractMPProblem, val constraint: Constraint, v
       case ConstraintRelation.EQ => value.abs - tol <= 0
     }
     case Failure(exception) =>
-      println(exception.getMessage)
+      logger.error(exception.getMessage)
       false
   }
 
@@ -390,7 +392,7 @@ class MPConstraint(val problem: AbstractMPProblem, val constraint: Constraint, v
   def isTight(tol: Double = 10e-6) = slack match {
     case Success(value) => value.abs <= tol
     case Failure(exception) =>
-      println(exception.getMessage)
+      logger.error(exception.getMessage)
       false
   }
 
