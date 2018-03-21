@@ -23,8 +23,7 @@ lazy val core = project.in(file("core"))
   .settings(Seq(
     libraryDependencies ++= Dependencies.Logging,
     libraryDependencies ++= Dependencies.ScalaTest,
-    libraryDependencies += Dependencies.ScalaXML,
-    libraryDependencies += Dependencies.Trove
+    libraryDependencies ++= Dependencies.Tools
   ))
 
 // Build settings for Optimus oj solver

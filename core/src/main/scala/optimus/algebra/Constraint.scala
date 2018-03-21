@@ -1,5 +1,3 @@
-package optimus.algebra
-
 /*
  *    /\\\\\
  *   /\\\///\\\
@@ -27,21 +25,32 @@ package optimus.algebra
  * along with this program. If not, see <http://www.gnu.org/licenses/lgpl-3.0.en.html>.
  */
 
-import optimus.algebra.ConstraintRelation.ConstraintRelation
+package optimus.algebra
 
 /**
-  * A constraint has the form (expression RELATION expression) with RELATION in {<=, =, >=}
+  * A constraint has the form (expression RELATION expression). RELATION can be
+  * one of the {<=, =, >=}.
+  *
+  * @param lhs left hand side expression
+  * @param operator relation operator
+  * @param rhs right hand side expression
   */
-class Constraint(val lhs: Expression, val operator: ConstraintRelation, val rhs: Expression) {
+case class Constraint(lhs: Expression, operator: ConstraintRelation, rhs: Expression) {
 
-  override def toString = lhs + " " + operator + " " + rhs
+  override def toString: String = s"$lhs $operator $rhs"
 
-  // Move all terms in the left hand side of the expression in order to properly check equality
-  override def equals(that: Any) = that match {
-    case other: Constraint =>
-      val (a, b) = (lhs - rhs, other.lhs - other.rhs)
-      operator == other.operator &&
-        (a == b || -a == b || a == -b || -a == -b)
+  /**
+    * @param obj an object to compare
+    * @return true in case this object has identical constant
+    *         and terms as the obj argument; false otherwise.
+    */
+  override def equals(obj: Any): Boolean = obj match {
+    case that: Constraint =>
+
+      // Move terms in the left hand side of the expression in order to properly check equality.
+      val (a, b) = (lhs - rhs, that.lhs - that.rhs)
+
+      operator == that.operator && (a == b || -a == b || a == -b || -a == -b)
     case _ => false
   }
 }

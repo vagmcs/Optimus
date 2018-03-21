@@ -38,6 +38,7 @@ object Dependencies {
   final val ojAlgorithmsVersion = "44.0.0"
   final val troveVersion = "3.0.3"
   final val scalaXML = "1.0.6"
+  final val enumeratumVersion = "1.5.12"
 
   // Logging using slf4j and logback
   lazy val Logging = Seq(
@@ -53,10 +54,12 @@ object Dependencies {
     "org.scalacheck" %% "scalacheck" % ScalaCheckVersion % "test"
   )
 
-  lazy val ScalaXML: ModuleID = "org.scala-lang.modules" %% "scala-xml" % scalaXML
-
-  // GNU Trove collections for high performance and memory efficient data structures
-  lazy val Trove: ModuleID = "net.sf.trove4j" % "trove4j" % troveVersion
+  // GNU Trove collections and other tools
+  lazy val Tools = Seq(
+    "org.scala-lang.modules" %% "scala-xml" % scalaXML,
+    "net.sf.trove4j" % "trove4j" % troveVersion,
+    "com.beachape" %% "enumeratum" % enumeratumVersion
+  )
 
   // LpSolve library for linear programming
   lazy val LpSolve: ModuleID = "com.datumbox" % "lpsolve" % LpSolveVersion

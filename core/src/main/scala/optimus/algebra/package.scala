@@ -39,7 +39,7 @@ package object algebra {
   type DecodedIds = Vector[Int]
   type LongDoubleMap = TLongDoubleHashMap
 
-  private[algebra] object LongDoubleMap {
+  private[optimus] object LongDoubleMap {
 
     /**
       * @see [[gnu.trove.map.hash.TLongDoubleHashMap]]

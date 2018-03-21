@@ -32,23 +32,24 @@ object AlgebraOps {
   // Functions over iterable data structures of expressions
 
   def sum(expressions: Iterable[Expression]): Expression = {
-    val temporal: LongDoubleMap = LongDoubleMap.empty
-    var const: Double = 0
+    val resultedTerms: LongDoubleMap = LongDoubleMap.empty
+    var const: Double = 0d
 
     for (expr <- expressions) {
       const += expr.constant
+
       val iterator = expr.terms.iterator
       while (iterator.hasNext) {
         iterator.advance()
-        val coefficient = iterator.value
-        temporal.adjustOrPutValue(iterator.key, coefficient, coefficient)
+        val scalar = iterator.value
+        resultedTerms.adjustOrPutValue(iterator.key, scalar, scalar)
       }
     }
-    temporal.retainEntries((_: Long, v: Double) => v != 0)
+    resultedTerms.retainEntries((_, v: Double) => v != 0d)
 
     new Expression {
-      val constant: Double = const
-      val terms: LongDoubleMap = temporal
+      override val constant: Double = const
+      override val terms: LongDoubleMap = resultedTerms
     }
   }
 

@@ -52,6 +52,7 @@ final class AlgebraSpecTest extends FunSpec with Matchers {
 
     it("Variable x is float and should be bounded to [0, 1]") {
       x.symbol shouldEqual "x"
+      x.index shouldEqual 0
       x.lowerBound shouldEqual 0.0
       x.upperBound shouldEqual 1.0
       x.isInteger shouldEqual false
@@ -61,6 +62,7 @@ final class AlgebraSpecTest extends FunSpec with Matchers {
 
     it("Variable y is float and should be bounded to [3.5, 100]") {
       y.symbol shouldEqual "y"
+      y.index shouldEqual 1
       y.lowerBound shouldEqual 3.5
       y.upperBound shouldEqual 100
       y.isInteger shouldEqual false
@@ -70,6 +72,7 @@ final class AlgebraSpecTest extends FunSpec with Matchers {
 
     it("Variable z is float and should be unbounded") {
       z.symbol shouldBe "z"
+      z.index shouldEqual 2
       z.lowerBound shouldEqual Double.PositiveInfinity
       z.upperBound shouldEqual Double.PositiveInfinity
       z.isInteger shouldEqual false
@@ -79,6 +82,7 @@ final class AlgebraSpecTest extends FunSpec with Matchers {
 
     it("Variable t is float and should be bounded to [0, +infinite)") {
       t.symbol shouldEqual "t"
+      t.index shouldEqual 3
       t.lowerBound shouldEqual 0.0
       t.upperBound shouldEqual Double.PositiveInfinity
       t.isInteger shouldEqual false
@@ -88,6 +92,7 @@ final class AlgebraSpecTest extends FunSpec with Matchers {
 
     it("Variable p is integer and should have domain {5...9}") {
       p.symbol shouldEqual ANONYMOUS
+      p.index shouldEqual 4
       p.lowerBound shouldEqual 5
       p.upperBound shouldEqual 9
       p.isInteger shouldEqual true
@@ -97,6 +102,7 @@ final class AlgebraSpecTest extends FunSpec with Matchers {
 
     it("Variable k is binary and should have domain {0...1}") {
       k.symbol shouldEqual "k"
+      k.index shouldEqual 5
       k.lowerBound shouldEqual 0
       k.upperBound shouldEqual 1
       k.isInteger shouldEqual true
@@ -143,23 +149,6 @@ final class AlgebraSpecTest extends FunSpec with Matchers {
 
     it("x * -7.7 * z should be equal to z * x * -7.7") {
       x * -7.7 * z shouldEqual z * x * -7.7
-    }
-
-    it("x^2 should be equal to x * x (also check for other variables)") {
-      x^2 shouldEqual x * x
-      p^2 shouldEqual p * p
-      k^2 shouldEqual k * k
-    }
-
-    it("x^1 should be equal to x") {
-      x^1 shouldEqual x
-      z^1 shouldEqual z
-      k^1 shouldEqual k
-    }
-
-    it("x^0 should be equal to 1") {
-      x^0 shouldEqual One
-      k^0 shouldEqual One
     }
 
     // Checking complex expression properties
@@ -300,11 +289,13 @@ final class AlgebraSpecTest extends FunSpec with Matchers {
 
   describe("Summation and product having many variables") {
 
-    val variables = Array.tabulate(100)(i => MPFloatVar(i.toString, 0, 1))
+    val variables = Array.tabulate(100000)(i => MPFloatVar(i.toString, 0, 1))
+
+    val variables1 = variables.take(5000).map(-_) ++ variables
 
     val startSum = System.currentTimeMillis()
-    sum(variables)
-    info("Summation of " + variables.length + " variables took " + (System.currentTimeMillis() - startSum) + "ms to calculate")
+    sum(variables1)
+    info("Summation of " + variables1.length + " variables took " + (System.currentTimeMillis() - startSum) + "ms to calculate")
 
     val startProd = System.currentTimeMillis()
     val expr = (x + y + x + y + t + z + t + z + 4.1*y + x + 5) * (x + y + x + y + t + z + t + z + y + x + 2)

@@ -312,8 +312,7 @@ class MPVariable(val problem: AbstractMPProblem, val lowerBound: Double, val upp
   val index = problem.register(this)
 
   // A variable alone has a coefficient value of 1 in front of her
-  val terms = new TLongDoubleHashMap()
-  terms.put(encode(index), 1.0)
+  override val terms = LongDoubleMap(this)
 
   protected var integer = false
 

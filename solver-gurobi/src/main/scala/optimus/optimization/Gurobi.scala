@@ -153,7 +153,7 @@ final class Gurobi extends AbstractMPSolver {
   def addObjective(objective: Expression, minimize: Boolean) = {
 
     objective.getOrder match {
-      case ExpressionOrder.HIGHER => throw new IllegalArgumentException("Higher than quadratic: " + objective)
+      case ExpressionOrder.GENERIC => throw new IllegalArgumentException("Higher than quadratic: " + objective)
 
       case ExpressionOrder.QUADRATIC =>
         val QExpression = new GRBQuadExpr
@@ -201,7 +201,7 @@ final class Gurobi extends AbstractMPSolver {
     }
 
     lhs.getOrder match {
-      case ExpressionOrder.HIGHER => throw new IllegalArgumentException("Higher than quadratic: " + lhs)
+      case ExpressionOrder.GENERIC => throw new IllegalArgumentException("Higher than quadratic: " + lhs)
 
       case ExpressionOrder.QUADRATIC =>
         val QExpression = new GRBQuadExpr

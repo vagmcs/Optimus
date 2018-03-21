@@ -27,45 +27,45 @@
 
 package optimus.algebra
 
-import gnu.trove.map.hash.TLongDoubleHashMap
-import optimus.algebra.ExpressionOrder.ExpressionOrder
+import com.typesafe.scalalogging.LazyLogging
+import optimus.algebra.ConstraintRelation._
 
 /**
   * Expression abstraction, should be extended by anything that is
   * an expression type.
   */
-abstract class Expression {
+abstract class Expression extends LazyLogging {
 
   /*
    * Store the variables, the corresponding scalars and
    * the constant term of the expression.
    */
-  val constant: Double
-  val terms: LongDoubleMap
+  val constant: Double = 0.0
+  val terms: LongDoubleMap = LongDoubleMap.empty
 
-  def +(other: Expression): Expression = other match {
+  def +(that: Expression): Expression = that match {
     case Zero => this
-    case _ => Plus(this, other)
+    case _ => Plus(this, that)
   }
 
-  def -(other: Expression): Expression = other match {
+  def -(that: Expression): Expression = that match {
     case Zero => this
-    case _ => Minus(this, other)
+    case _ => Minus(this, that)
   }
 
-  def *(other: Expression): Expression = other match {
+  def *(that: Expression): Expression = that match {
     case Zero => Zero
     case One => this
-    case _ => Product(this, other)
+    case _ => Product(this, that)
   }
 
   def unary_-(): Expression = Minus(0, this)
 
-  def <:=(other: Expression) = new Constraint(this, ConstraintRelation.LE, other)
+  def <:=(that: Expression) = Constraint(this, LE, that)
 
-  def >:=(other: Expression) = new Constraint(this, ConstraintRelation.GE, other)
+  def >:=(that: Expression) = Constraint(this, GE, that)
 
-  def :=(other: Expression) = new Constraint(this, ConstraintRelation.EQ, other)
+  def :=(that: Expression) = Constraint(this, EQ, that)
 
   // Order of the expression (e.g linear) maybe is a little slow
   @inline private def order: Int = {
@@ -82,25 +82,22 @@ abstract class Expression {
     case 0 => ExpressionOrder.CONSTANT
     case 1 => ExpressionOrder.LINEAR
     case 2 => ExpressionOrder.QUADRATIC
-    case _ => ExpressionOrder.HIGHER
+    case _ => ExpressionOrder.GENERIC
   }
 
-  override def toString =
-    if (terms.isEmpty) constant.toString
-    else {
-      var output = "("
-      val iterator = terms.iterator
-      while(iterator.hasNext) {
-        iterator.advance()
-        output += iterator.value + decode(iterator.key).map(index => "idx" + index).mkString("*") + " + "
-      }
-      output += constant + ")"
-      output
-    }
+  override def toString: String = (terms.keys zip terms.values)
+    .map { case (i, scalar) =>
+      s"$scalar*${decode(i).map(x => s"x@$x").mkString("*")}"
+    }.mkString(" + ") + ( if (constant != 0) " + " + constant else "" )
 
-  override def equals(that: Any) = that match {
-    case other: Expression =>
-      terms == other.terms
+  /**
+    * @param obj an object to compare
+    * @return true in case this object has identical constant
+    *         and terms as the obj argument; false otherwise.
+    */
+  override def equals(obj: Any): Boolean = obj match {
+    case that: Expression =>
+      this.constant == that.constant && this.terms == that.terms
     case _ => false
   }
 }
@@ -113,40 +110,43 @@ abstract class Expression {
   */
 abstract class Var(val symbol: String) extends Expression {
 
-  // A variable alone always has a constant value 0
-  val constant = 0.0
-
   val upperBound: Double
   val lowerBound: Double
   val index: Int
 
-  override def *(other: Expression) = other match {
+  override def *(other: Expression): Expression = other match {
 
     case Zero => Zero
 
     case c: Const => Term(c, Vector(this))
 
-    case variable: Var => Term(One, Vector(this, variable))
+    case v: Var => Term(One, Vector(this, v))
 
-    case term: Term => Term(term.coefficient, term.variables :+ this)
+    case t: Term => Term(t.scalar, t.vars :+ this)
 
     case _ => Product(this, other)
   }
 
-  override def unary_-(): Expression = Term(Const(-1.0), Vector(this))
+  override def unary_-(): Expression = Term(Const(-1), Vector(this))
 
-  def ^(power: Int): Expression = {
-    require(power >= 0, "Power should be positive!")
-    power match {
-      case 0 => One
-      case _ => Term(One, Vector.fill(power)(this))
-    }
-  }
+  /**
+    * @return the symbol of the variable
+    */
+  override def toString: String =
+    if (symbol != ANONYMOUS) symbol else s"x@$index"
 
-  override def toString = symbol
+  /**
+    * @return the index of the variable
+    */
+  override def hashCode: Int = index
 
-  override def equals(that: Any) = that match {
-    case other: Var => index == other.index
+  /**
+    * @param obj an object to compare
+    * @return true only in case the object is a variable
+    *         and has identical index
+    */
+  override def equals(obj: Any): Boolean = obj match {
+    case that: Var => this.index == that.index
     case _ => false
   }
 }
@@ -155,34 +155,33 @@ abstract class Var(val symbol: String) extends Expression {
   * Term is holding a coefficient and all variables which are involved
   * in the product of the term.
   *
-  * coefficient * (variable_1 * ... * variable_n)
+  * scalar * (var_1 * ... * var_n)
   */
-case class Term(coefficient: Const, variables: Vector[Var]) extends Expression {
+case class Term(scalar: Const, vars: Vector[Var]) extends Expression {
 
-  if(variables.length > 2)
-    throw new IllegalArgumentException("Algebra cannot handle expressions of higher order!")
+  require(vars.length < 3,
+    throw new UnsupportedOperationException("Only up to quadratic expressions are supported!"))
 
-  val constant = 0.0
-  val terms = LongDoubleMap(coefficient, variables)
+  override val terms = LongDoubleMap(scalar, vars)
 
-  override def *(other: Expression) = other match {
+  override def *(that: Expression): Expression = that match {
 
     case Zero => Zero
 
     case One => this
 
-    case c: Const => Term(Const(coefficient.value * c.value), variables)
+    case c: Const => Term(scalar * c, vars)
 
-    case v: Var => Term(coefficient, variables :+ v)
+    case v: Var => Term(scalar, vars :+ v)
 
-    case term: Term => Term(coefficient * term.coefficient, variables ++ term.variables)
+    case t: Term => Term(scalar * t.scalar, vars ++ t.vars)
 
-    case _ => Product(this, other)
+    case _ => Product(this, that)
   }
 
-  override def unary_-(): Expression = Term(Const(-coefficient.value), variables)
+  override def unary_-(): Expression = Term(Const(-scalar.value), vars)
 
-  override def toString = coefficient + variables.mkString("*")
+  override def toString: String = scalar + vars.mkString("*")
 }
 
 /**
@@ -192,20 +191,19 @@ case class Term(coefficient: Const, variables: Vector[Var]) extends Expression {
   */
 class Const(val value: Double) extends Expression {
 
-  val constant: Double = value
-  val terms: LongDoubleMap = LongDoubleMap.empty
+  override val constant: Double = value
 
-  def +(other: Const) = other match {
+  def +(other: Const): Const = other match {
     case Zero => this
     case _ => Const(value + other.value)
   }
 
-  def -(other: Const) = other match {
+  def -(other: Const): Const = other match {
     case Zero => this
     case _ => Const(value - other.value)
   }
 
-  def *(other: Const) = other match {
+  def *(other: Const): Const = other match {
     case Zero => Zero
     case One => this
     case _ => Const(value * other.value)
@@ -213,155 +211,162 @@ class Const(val value: Double) extends Expression {
 
   def *(x: Var) = Term(this, Vector(x))
 
-  def *(term: Term): Term = Term(this * term.coefficient, term.variables)
+  def *(term: Term): Term = Term(this * term.scalar, term.vars)
 
   override def *(other: Expression): Expression = ConstProduct(this, other)
 
   override def unary_-(): Expression = Const(-value)
 
-  override def toString = value.toString
+  override def toString: String = value.toString
 
-  override def equals(that: Any) = that match {
-    case other: Const => value == other.value
+  /**
+    * @return the hash code of the boxed double value
+    */
+  override def hashCode: Int = value.##
+
+  /**
+    * @param obj an object to compare
+    * @return true only in case the object is a constant
+    *         and has identical value
+    */
+  override def equals(obj: Any): Boolean = obj match {
+    case that: Const => this.value == that.value
     case _ => false
   }
 }
 
 object Const {
-
-  def apply(value: Double) = value match {
-    case 0.0 => Zero
-    case 1.0 => One
+  def apply(value: Double): Const = value match {
+    case 0 => Zero
+    case 1 => One
     case _ => new Const(value)
   }
 }
 
-/**
-  * Zero is representing the special case of Zero constant.
-  */
-case object Zero extends Const(0.0) {
+case object Zero extends Const(0) {
 
-  override def +(expression: Expression) = expression
+  override def +(expression: Expression): Expression = expression
 
-  override def -(expression: Expression) = -expression
+  override def -(expression: Expression): Expression = -expression
+
+  override def *(expression: Expression): Expression = this
 
   override def unary_-(): Expression = this
-
-  override def *(expression: Expression) = this
 }
 
-/**
-  * One is representing the special case of One constant.
-  */
-case object One extends Const(1.0) {
+case object One extends Const(1) {
 
-  override def *(expression: Expression) = this
+  override def *(expression: Expression): Expression = this
 
-  override def unary_-() = Const(-1.0)
+  override def unary_-() = Const(-1)
 }
 
 /**
   * Const product represents an expression multiplied by a constant and has
   * the form of (c * a).
   *
-  * @param c the constant
+  * @param scalar the constant
   * @param a the expression
   */
-case class ConstProduct(c: Const, a: Expression) extends Expression {
+case class ConstProduct(scalar: Const, a: Expression) extends Expression {
 
-  val constant: Double = if (c == Zero) 0.0 else c.value * a.constant
+  override val constant: Double = scalar.value * a.constant
 
-  val terms: LongDoubleMap = if (c == Zero) LongDoubleMap.empty
-              else LongDoubleMap(a.terms.keys, a.terms.values.map(value => c.value * value))
+  override val terms: LongDoubleMap = scalar match {
+    case Zero => LongDoubleMap.empty
+    case _ => LongDoubleMap(a.terms.keys, a.terms.values.map(_ * scalar.value))
+  }
 
-  override def unary_-(): Expression = ConstProduct(Const(-c.value), a)
+  override def unary_-(): Expression = ConstProduct(Const(-scalar.value), a)
 }
 
 // ------------------------------------- Operator Expressions -------------------------------------
 
 /**
-  * Binary operator abstraction of the form (a operator b), that should be extended by any binary
-  * operator expression type.
+  * Binary operator expression (a operator b), that should be extended
+  * by any binary operator expression type.
   *
-  * @param a the left hand side expression
-  * @param b the right had side expression
+  * @param a left hand side expression
+  * @param b right hand side expression
   */
 abstract class BinaryOp(val a: Expression, val b: Expression) extends Expression {
 
-  val constant: Double = op(a.constant, b.constant)
-  val terms: LongDoubleMap = merge
+  override val constant: Double = op(a.constant, b.constant)
 
-  def op(x: Double, y: Double): Double
+  override val terms: LongDoubleMap = merge
 
-  def merge: LongDoubleMap = {
+  protected def op(x: Double, y: Double): Double
+
+  protected def merge: LongDoubleMap = {
 
     // 1. Add all terms of expression A to the result
-    val temporal = new TLongDoubleHashMap(a.terms)
+    val result = LongDoubleMap(a.terms)
 
-    // 2. For each term of the expression B perform the desired operation if the term already exists
+    // 2. For each term of the expression B apply the operation
     val iterator = b.terms.iterator
-    while(iterator.hasNext) {
+    while (iterator.hasNext) {
       iterator.advance()
       val value = op(0, iterator.value)
-      temporal.adjustOrPutValue(iterator.key, value, value)
+      result.adjustOrPutValue(iterator.key, value, value)
     }
 
-    // 3. Filter out zero terms (very slow)
-    temporal.retainEntries((l: Long, v: Double) => v != 0.0)
-    temporal
+    // 3. Filter out zero terms
+    result.retainEntries((_, v: Double) => v != 0d)
+    result
   }
 }
 
 /**
-  * Binary operator for addition has the form (a + b).
+  * Plus operator for addition (a + b).
   *
-  * @param a the left hand side expression
-  * @param b the right had side expression
+  * @param a left hand side expression
+  * @param b right hand side expression
   */
 case class Plus(override val a: Expression, override val b: Expression) extends BinaryOp(a, b) {
 
-  def op(x: Double, y: Double) = x + y
+  protected def op(x: Double, y: Double): Double = x + y
 
   override def unary_-(): Expression = Plus(-a, -b)
 }
 
 /**
-  * Binary operator for subtraction has the form (a - b).
+  * Minus operator for subtraction (a - b).
   *
-  * @param a the left hand side expression
-  * @param b the right had side expression
+  * @param a left hand side expression
+  * @param b right hand side expression
   */
 case class Minus(override val a: Expression, override val b: Expression) extends BinaryOp(a, b) {
 
-  def op(x: Double, y: Double) = x - y
+  protected def op(x: Double, y: Double): Double = x - y
 
   override def unary_-(): Expression = Minus(b, a)
 }
 
 /**
-  * Binary operator for multiplication has the form (a * b).
+  * Product operator (a * b).
   *
-  * @param a the left hand side expression
-  * @param b the right had side expression
+  * @param a left hand side expression
+  * @param b right hand side expression
   */
 case class Product(override val a: Expression, override val b: Expression) extends BinaryOp(a, b) {
 
-  def op(x: Double, y: Double) = x * y
+  protected def op(x: Double, y: Double): Double = x * y
 
-  override def merge: LongDoubleMap = {
-    val temporal = LongDoubleMap.empty
+  override protected def merge: LongDoubleMap = {
+
+    val result = LongDoubleMap.empty
 
     val iteratorA = a.terms.iterator
-    while(iteratorA.hasNext) {
+    while (iteratorA.hasNext) {
       iteratorA.advance()
       val variablesA = iteratorA.key
       val cA = iteratorA.value
 
       // 1. Calculate products involving terms only from expression A and the constant of B
-      temporal.adjustOrPutValue(variablesA, cA*b.constant, cA*b.constant)
+      result.adjustOrPutValue(variablesA, cA * b.constant, cA * b.constant)
 
       val iteratorB = b.terms.iterator
-      while(iteratorB.hasNext) {
+      while (iteratorB.hasNext) {
         iteratorB.advance()
         val variablesB = iteratorB.key
         val cB = iteratorB.value
@@ -370,16 +375,16 @@ case class Product(override val a: Expression, override val b: Expression) exten
         val variablesProduct = decode(variablesA) ++ decode(variablesB)
         assert(variablesProduct.length <= 2, "Algebra cannot handle expressions of higher order!")
 
-        val variables = encode(variablesProduct.head, variablesProduct(1))
-        temporal.adjustOrPutValue(variables, cA*cB, cA*cB)
+        val variables = encode(variablesProduct.head, variablesProduct.last)
+        result.adjustOrPutValue(variables, cA*cB, cA*cB)
 
         // 3. Calculate products involving terms only from expression B and the constant of A
-        temporal.adjustOrPutValue(variablesB, cB*a.constant, cB*a.constant)
+        result.adjustOrPutValue(variablesB, cB*a.constant, cB*a.constant)
       }
     }
 
-    // 4. Filter out zero terms (very slow)
-    temporal.retainEntries((l: Long, v: Double) => v != 0.0)
-    temporal
+    // 4. Filter out zero terms
+    result.retainEntries((_, v: Double) => v != 0d)
+    result
   }
 }
