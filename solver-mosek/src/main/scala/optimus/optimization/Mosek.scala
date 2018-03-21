@@ -28,7 +28,7 @@ final class Mosek extends AbstractMPSolver {
     */
   override def buildProblem(nbRows: Int, nbCols: Int) = {
 
-    println {
+    logger.info { "\n" +
       """     __  ___                __   """ + "\n" +
       """    /  |/  /___  ________  / /__ """ + "\n" +
       """   / /|_/ / __ \/ ___/ _ \/ //_/ """ + "\n" +
@@ -36,7 +36,7 @@ final class Mosek extends AbstractMPSolver {
       """ /_/  /_/\____/____/\___/_/|_|   """ + "\n"
     }
 
-    println("Model mosek: " + nbRows + "x" + nbCols)
+    logger.info("Model mosek: " + nbRows + "x" + nbCols)
 
     this.nbRows = 0
     this.nbCols = nbCols
@@ -115,7 +115,7 @@ final class Mosek extends AbstractMPSolver {
             ProblemStatus.NOT_SOLVED
         }
       case _ =>
-        println(s"Optimization failed with rescode = $optimizationStatus")
+        logger.info(s"Optimization failed with rescode = $optimizationStatus")
         ProblemStatus.NOT_SOLVED
     }
 

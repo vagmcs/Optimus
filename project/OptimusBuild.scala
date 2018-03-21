@@ -1,27 +1,65 @@
-import sbt.Keys._
+/*
+ *    /\\\\\
+ *   /\\\///\\\
+ *  /\\\/  \///\\\    /\\\\\\\\\     /\\\       /\\\
+ *  /\\\      \//\\\  /\\\/////\\\ /\\\\\\\\\\\ \///    /\\\\\  /\\\\\     /\\\    /\\\  /\\\\\\\\\\
+ *  \/\\\       \/\\\ \/\\\\\\\\\\ \////\\\////   /\\\  /\\\///\\\\\///\\\ \/\\\   \/\\\ \/\\\//////
+ *   \//\\\      /\\\  \/\\\//////     \/\\\      \/\\\ \/\\\ \//\\\  \/\\\ \/\\\   \/\\\ \/\\\\\\\\\\
+ *     \///\\\  /\\\    \/\\\           \/\\\_/\\  \/\\\ \/\\\  \/\\\  \/\\\ \/\\\   \/\\\ \////////\\\
+ *        \///\\\\\/     \/\\\           \//\\\\\   \/\\\ \/\\\  \/\\\  \/\\\ \//\\\\\\\\\  /\\\\\\\\\\
+ *           \/////       \///             \/////    \///  \///   \///   \///  \/////////   \//////////
+ *
+ * Copyright (C) 2014 Evangelos Michelioudakis, Anastasios Skarlatidis
+ *
+ * Optimus is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as published
+ * by the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Optimus is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/lgpl-3.0.en.html>.
+ */
+
 import sbt._
+import sbt.Keys._
 import sbt.plugins.JvmPlugin
 
 object OptimusBuild extends AutoPlugin {
 
   private val logger = ConsoleLogger()
 
+  println {
+    """
+      |   /\\\\\
+      |  /\\\///\\\
+      | /\\\/  \///\\\    /\\\\\\\\\     /\\\       /\\\
+      | /\\\      \//\\\  /\\\/////\\\ /\\\\\\\\\\\ \///    /\\\\\  /\\\\\     /\\\    /\\\  /\\\\\\\\\\
+      | \/\\\       \/\\\ \/\\\\\\\\\\ \////\\\////   /\\\  /\\\///\\\\\///\\\ \/\\\   \/\\\ \/\\\//////
+      |  \//\\\      /\\\  \/\\\//////     \/\\\      \/\\\ \/\\\ \//\\\  \/\\\ \/\\\   \/\\\ \/\\\\\\\\\\
+      |    \///\\\  /\\\    \/\\\           \/\\\_/\\  \/\\\ \/\\\  \/\\\  \/\\\ \/\\\   \/\\\ \////////\\\
+      |       \///\\\\\/     \/\\\           \//\\\\\   \/\\\ \/\\\  \/\\\  \/\\\ \//\\\\\\\\\  /\\\\\\\\\\
+      |          \/////       \///             \/////    \///  \///   \///   \///  \/////////   \//////////
+    """.stripMargin
+  }
+
   override def requires = JvmPlugin
 
-  /**
-    * Allow the plug-in to be included automatically
-    */
+  // Allow the plug-in to be included automatically
   override def trigger: PluginTrigger = allRequirements
 
   override def projectSettings: Seq[Setting[_]] = settings
 
   private val javaVersion: Double = sys.props("java.specification.version").toDouble
 
-  lazy val settings: Seq[Setting[_]] = {
-
+  private lazy val settings: Seq[Setting[_]] = {
     logger.info(s"Loading settings for Java $javaVersion or higher.")
-
-    commonSettings ++ jdkSettings
+    if (javaVersion < 1.8) sys.error("Java 8 or higher is required for building Optimus.")
+    else commonSettings ++ JavaSettings ++ ScalaSettings
   }
 
   private val commonSettings: Seq[Setting[_]] = Seq(
@@ -41,24 +79,15 @@ object OptimusBuild extends AutoPlugin {
     managedScalaInstance := true,
 
     publishMavenStyle := true,
-
     publishArtifact in Test := false,
-
     pomIncludeRepository := { _ => false },
-
-    // fork a new JVM for 'run' and 'test:run'
-    //fork := true,
-
-    // fork a new JVM for 'test:run', but not 'run'
-    //fork in Test := true,
-
-    // add a JVM option to use when forking a JVM for 'run'
-    javaOptions += "-Xmx2G",
 
     resolvers ++= Seq(
       Resolver.mavenLocal,
-      "typesafe" at "http://repo.typesafe.com/typesafe/releases/",
-      "sonatype-oss-public" at "https://oss.sonatype.org/content/groups/public/"),
+      Resolver.typesafeRepo("releases"),
+      Resolver.sonatypeRepo("releases"),
+      Resolver.sonatypeRepo("snapshots")
+    ),
 
     publishTo := {
       val nexus = "https://oss.sonatype.org/"
@@ -96,10 +125,18 @@ object OptimusBuild extends AutoPlugin {
       </developers>
   )
 
-  private lazy val jdkSettings: Seq[Setting[_]] = Seq(
+  private lazy val JavaSettings: Seq[Setting[_]] = Seq(
 
     javacOptions ++= Seq("-source", "1.8", "-target", "1.8", "-Xlint:unchecked", "-Xlint:deprecation"),
 
+    javaOptions ++= Seq(
+      "-XX:+DoEscapeAnalysis",
+      "-XX:+UseFastAccessorMethods",
+      "-XX:+OptimizeStringConcat",
+      "-Dlogback.configurationFile=src/main/resources/logback.xml")
+  )
+
+  private lazy val ScalaSettings: Seq[Setting[_]] = Seq(
     scalacOptions := {
       scalaBinaryVersion.value match {
 
@@ -117,7 +154,7 @@ object OptimusBuild extends AutoPlugin {
           )
 
         case "2.12" =>
-          // Scala compiler settings for Scala 2.12.x+
+          // Scala compiler settings for Scala 2.12.x
           Seq(
             "-deprecation",       // Emit warning and location for usages of deprecated APIs.
             "-unchecked",         // Enable additional warnings where generated code depends on assumptions.
@@ -125,6 +162,7 @@ object OptimusBuild extends AutoPlugin {
             "-target:jvm-1.8",    // Target JVM version 1.8
             "-Ywarn-dead-code"    // Warn when dead code is identified.
           )
+
         case _ => sys.error(s"Unsupported version of Scala '${scalaBinaryVersion.value}'")
       }
     }
