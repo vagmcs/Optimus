@@ -28,7 +28,7 @@ final class Mosek extends AbstractMPSolver {
     */
   override def buildProblem(nbRows: Int, nbCols: Int) = {
 
-    logger.info {
+    logger.info { "\n" +
       """     __  ___                __   """ + "\n" +
       """    /  |/  /___  ________  / /__ """ + "\n" +
       """   / /|_/ / __ \/ ___/ _ \/ //_/ """ + "\n" +

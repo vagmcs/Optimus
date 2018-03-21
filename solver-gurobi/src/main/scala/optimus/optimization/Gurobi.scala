@@ -55,7 +55,7 @@ final class Gurobi extends AbstractMPSolver {
    */
   def buildProblem(nbRows: Int, nbCols: Int) {
 
-    logger.info {
+    logger.info { "\n" +
         """    _________                   ______ _____  """ + "\n" +
         """    __  ____/___  _________________  /____(_) """ + "\n" +
         """    _  / __ _  / / /_  ___/  __ \_  __ \_  /  """ + "\n" +

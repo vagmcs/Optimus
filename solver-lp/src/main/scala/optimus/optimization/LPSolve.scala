@@ -53,7 +53,7 @@ final class LPSolve extends AbstractMPSolver {
    */
   def buildProblem(nbRows: Int, nbCols: Int) = {
 
-    logger.info {
+    logger.info { "\n" +
         """  ______________________     ______            """ + "\n" +
         """  ___  /___  __ \_  ___/________  /__   ______ """ + "\n" +
         """  __  / __  /_/ /____ \_  __ \_  /__ | / /  _ \""" + "\n" +

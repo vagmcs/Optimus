@@ -59,7 +59,7 @@ final class OJalgo extends AbstractMPSolver {
    */
   def buildProblem(nbRows: Int, nbCols: Int) = {
 
-    logger.info {
+    logger.info { "\n" +
       """        _________      ______               """ + "\n" +
       """  ____________  /_____ ___  /______ ______  """ + "\n" +
       """  _  __ \__ _  /_  __  /_  /__  __  /  __ \ """ + "\n" +
