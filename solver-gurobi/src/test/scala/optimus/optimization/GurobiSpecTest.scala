@@ -302,6 +302,23 @@ final class GurobiSpecTest extends FunSpec with Matchers {
 
       release()
     }
+
+    describe("Test VIIII") {
+      implicit val problem = LQProblem(SolverLib.gurobi)
+
+      val x = MPFloatVar("x", 0, 10)
+
+      maximize(x + 1)
+      add(x <:= 1)
+
+      start()
+
+      status shouldBe ProblemStatus.OPTIMAL
+      objectiveValue shouldBe 2.0
+      x.value shouldBe Some(1.0)
+
+      release()
+    }
   }
 
   describe("Quadratic programming") {
