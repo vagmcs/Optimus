@@ -14,20 +14,20 @@ trait QueensTest extends FunSpec with Matchers {
   def solver: SolverLib
 
   val n = 8
-  val Lines = 0 until n
-  val Columns = 0 until n
+  private val lines = 0 until n
+  private val columns = 0 until n
 
-  implicit val queensProblem = MIProblem(solver)
+  implicit val queensProblem: MIProblem = MIProblem(solver)
 
-  val x = Array.tabulate(n, n)((l, c) => MPIntVar("x" +(l, c), 0 to 1))
+  private val x = Array.tabulate(n, n)((l, c) => MPIntVar("x" +(l, c), 0 to 1))
 
-  maximize(sum(Lines, Columns) { (l, c) => x(l)(c) })
+  maximize(sum(lines, columns) { (l, c) => x(l)(c) })
 
   // At most one queen can be placed in each row
-  for (l <- Lines) add(sum(Columns)(c => x(l)(c)) <:= 1)
+  for (l <- lines) add(sum(columns)(c => x(l)(c)) <:= 1)
 
   // At most one queen can be placed in each column
-  for (c <- Columns) add(sum(Lines)(l => x(l)(c)) <:= 1)
+  for (c <- columns) add(sum(lines)(l => x(l)(c)) <:= 1)
 
   // At most one queen can be placed in each /-diagonal upper half
   for (i <- 1 until n) add(sum(0 to i)((j) => x(i - j)(j)) <:= 1)

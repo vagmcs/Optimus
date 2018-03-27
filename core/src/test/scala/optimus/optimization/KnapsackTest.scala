@@ -26,7 +26,7 @@ trait KnapsackTest extends FunSpec with Matchers {
     val utility = Array(40, 35, 18, 4, 10, 2)
     val capacity = 100
 
-    implicit val knapsackProblem = MIProblem(solver)
+    implicit val knapsackProblem: MIProblem = MIProblem(solver)
 
     val items = Array.tabulate(weights.length) { i =>
       Item(weights(i), utility(i), MPIntVar(s"x$i", 0 to 1))
@@ -71,7 +71,7 @@ trait KnapsackTest extends FunSpec with Matchers {
     val utility = Array.tabulate(numOfItems)(i => Random.nextInt(50))
     val capacity = 100
 
-    implicit val knapsackProblem = MIProblem(solver)
+    implicit val knapsackProblem: MIProblem = MIProblem(solver)
 
     val items = Array.tabulate(weights.length) { i =>
       Item(weights(i), utility(i), MPIntVar(s"x$i", 0 to 1))

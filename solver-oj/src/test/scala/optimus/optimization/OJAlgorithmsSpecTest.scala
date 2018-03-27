@@ -3,13 +3,15 @@ package optimus.optimization
 import org.scalatest.{FunSpec, Matchers}
 
 /**
-  * Specification for LPSolve solver.
+  * Specification for ojAlgorithms solver.
   */
-final class LPSolveSpecTest extends FunSpec with Matchers {
+final class OJAlgorithmsSpecTest extends FunSpec with Matchers {
+
+  // Constant objective function tests
 
   describe("Constant Program (1)") {
 
-    implicit val cp: LQProblem = LQProblem(SolverLib.lp_solve)
+    implicit val cp: LQProblem = LQProblem(SolverLib.ojalgo)
 
     val x = MPFloatVar("x", 100, 200)
     val y = MPFloatVar("y", 80, 170)
@@ -46,7 +48,7 @@ final class LPSolveSpecTest extends FunSpec with Matchers {
 
   describe("Constant Program (2)") {
 
-    implicit val cp: LQProblem = LQProblem(SolverLib.lp_solve)
+    implicit val cp: LQProblem = LQProblem(SolverLib.ojalgo)
 
     val x = MPFloatVar("x", 100, 200)
     val y = MPFloatVar("y", 80, 170)
@@ -81,9 +83,11 @@ final class LPSolveSpecTest extends FunSpec with Matchers {
     release()
   }
 
+  // Linear objective function tests
+
   describe("Linear Program (1)") {
 
-    implicit val lp: LQProblem = LQProblem(SolverLib.lp_solve)
+    implicit val lp: LQProblem = LQProblem(SolverLib.ojalgo)
 
     val x = MPFloatVar("x", 100, 200)
     val y = MPFloatVar("y", 80, 170)
@@ -93,7 +97,7 @@ final class LPSolveSpecTest extends FunSpec with Matchers {
       y >:= -x + 200
     )
 
-    start()
+    start(PreSolve.CONSERVATIVE)
 
     it("solution should be optimal") {
       status shouldBe ProblemStatus.OPTIMAL
@@ -120,7 +124,7 @@ final class LPSolveSpecTest extends FunSpec with Matchers {
 
   describe("Linear Program (2)") {
 
-    implicit val lp: LQProblem = LQProblem(SolverLib.lp_solve)
+    implicit val lp: LQProblem = LQProblem(SolverLib.ojalgo)
 
     val x = MPFloatVar("x", 100, 200)
     val y = MPFloatVar("y", 80, 170)
@@ -157,7 +161,7 @@ final class LPSolveSpecTest extends FunSpec with Matchers {
 
   describe("Linear Program (3)") {
 
-    implicit val lp: LQProblem = LQProblem(SolverLib.lp_solve)
+    implicit val lp: LQProblem = LQProblem(SolverLib.ojalgo)
 
     val x = MPFloatVar("x")
     val y = MPFloatVar("y", 80, 170)
@@ -191,7 +195,7 @@ final class LPSolveSpecTest extends FunSpec with Matchers {
 
   describe("Linear Program (4)") {
 
-    implicit val lp: LQProblem = LQProblem(SolverLib.lp_solve)
+    implicit val lp: LQProblem = LQProblem(SolverLib.ojalgo)
 
     val x = MPFloatVar("x", 100, 200)
     val y = MPFloatVar("y", 80, 170)
@@ -236,7 +240,7 @@ final class LPSolveSpecTest extends FunSpec with Matchers {
 
   describe("Linear Program (5)") {
 
-    implicit val lp: LQProblem = LQProblem(SolverLib.lp_solve)
+    implicit val lp: LQProblem = LQProblem(SolverLib.ojalgo)
 
     val x = MPFloatVar("x", 0, 10)
     val y = MPFloatVar("y", 0, 10)
@@ -273,12 +277,12 @@ final class LPSolveSpecTest extends FunSpec with Matchers {
 
   describe("Linear Program (6)") {
 
-    implicit val lp: LQProblem = LQProblem(SolverLib.lp_solve)
+    implicit val lp: LQProblem = LQProblem(SolverLib.ojalgo)
 
     val x = MPFloatVar("x", 0, 10)
     val y = MPFloatVar("y", 0, 10)
 
-    var cons: Vector[MPConstraint] = Vector()
+    var cons = Vector.empty[MPConstraint]
 
     maximize(x + y)
 
@@ -319,7 +323,7 @@ final class LPSolveSpecTest extends FunSpec with Matchers {
       cons(3).slack.get shouldBe 0.0 +- 1e-2
       cons(4).slack.get shouldBe 0.0 +- 1e-2
 
-      cons.foreach(c => c.check() shouldBe true)
+      cons.foreach(_.check() shouldBe true)
     }
 
     release()
@@ -327,13 +331,13 @@ final class LPSolveSpecTest extends FunSpec with Matchers {
 
   describe("Linear Program (7)") {
 
-    implicit val lp: LQProblem = LQProblem(SolverLib.lp_solve)
+    implicit val lp: LQProblem = LQProblem(SolverLib.ojalgo)
 
     val x = MPFloatVar("x", 0, Double.PositiveInfinity)
     val y = MPFloatVar("y", 0, Double.PositiveInfinity)
     val z = MPFloatVar("z", 0, Double.PositiveInfinity)
 
-    var cons: Vector[MPConstraint] = Vector()
+    var cons = Vector.empty[MPConstraint]
 
     maximize(2*x + 4*y + 3*z)
 
@@ -367,7 +371,7 @@ final class LPSolveSpecTest extends FunSpec with Matchers {
     }
 
     it("check constraints") {
-      cons.head.isTight() shouldBe true
+      cons(0).isTight() shouldBe true
       cons(1).isTight() shouldBe true
       cons(2).isTight() shouldBe false
       cons(3).isTight() shouldBe false
@@ -381,7 +385,7 @@ final class LPSolveSpecTest extends FunSpec with Matchers {
       cons(4).slack.get shouldBe 56.67 +- 1e-2
       cons(5).slack.get shouldBe 16.67 +- 1e-2
 
-      cons.foreach(c => c.check() shouldBe true)
+      cons.foreach(_.check() shouldBe true)
     }
 
     release()
@@ -389,14 +393,14 @@ final class LPSolveSpecTest extends FunSpec with Matchers {
 
   describe("Linear Program (8)") {
 
-    implicit val lp: LQProblem = LQProblem(SolverLib.lp_solve)
+    implicit val lp: LQProblem = LQProblem(SolverLib.ojalgo)
 
     val w = MPFloatVar("w", 0, Double.PositiveInfinity)
     val x = MPFloatVar("x", 0, Double.PositiveInfinity)
     val y = MPFloatVar("y", 0, Double.PositiveInfinity)
     val z = MPFloatVar("z", 0, Double.PositiveInfinity)
 
-    var cons: Vector[MPConstraint] = Vector()
+    var cons = Vector.empty[MPConstraint]
 
     maximize(3*w - 8*w + 10*w + 0.001*x - (-0.999*x) - 0.3*10*(-y) - 4*0.0006*0*(w - x - z) + 2*z - 2*z + 4*z)
 
@@ -436,14 +440,15 @@ final class LPSolveSpecTest extends FunSpec with Matchers {
 
       start()
 
-      w.value.get should equal(12.5 +- 1e-2)
+      // w and y are different here than in lp solve and gurobi
+      w.value.get should equal(6.67 +- 1e-2)
       x.value.get should equal(15.0 +- 1e-2)
-      y.value.get should equal(12.5 +- 1e-2)
-      z.value.get should equal(0.0 +- 1e-2)
+      y.value.get should equal(6.67 +- 1e-2)
+      z.value.get should equal(11.67 +- 1e-2)
       objectiveValue shouldBe (115.0 +- 1e-2)
 
       cons(0).isTight() shouldBe true
-      cons(1).isTight() shouldBe false
+      cons(1).isTight() shouldBe true
       cons(2).isTight() shouldBe true
       cons(3).isTight() shouldBe true
 
@@ -454,12 +459,12 @@ final class LPSolveSpecTest extends FunSpec with Matchers {
       cons :+= add(-(-w) - 2 * x + 4 * y + 3 * 0.5 * 2 * z >:= 40 - 3 + 2.7 + 0.3)
       start()
 
-      w.value.get should equal(6.67 +- 1e-2)
-      x.value.get should equal(15.0 +- 1e-2)
-      y.value.get should equal(8.33 +- 1e-2)
-      z.value.get should equal(10.0 +- 1e-2)
+      w.value.get shouldEqual 6.67 +- 1e-2
+      x.value.get shouldEqual 15.0 +- 1e-2
+      y.value.get shouldEqual 8.33 +- 1e-2
+      z.value.get shouldEqual 10.0 +- 1e-2
       objectiveValue shouldBe (113.33 +- 1e-2)
-      status should equal(ProblemStatus.OPTIMAL)
+      status shouldBe ProblemStatus.OPTIMAL
       checkConstraints() shouldBe true
 
       cons(0).isTight() shouldBe true
@@ -473,11 +478,39 @@ final class LPSolveSpecTest extends FunSpec with Matchers {
 
   }
 
+  describe("Linear Program (9)") {
+
+    implicit val lp: LQProblem = LQProblem(SolverLib.ojalgo)
+
+    val x = MPFloatVar("x", 0, 10)
+
+    maximize(x + 1)
+    subjectTo (
+      x <:= 1
+    )
+
+    start()
+
+    it("solution should be optimal") {
+      status shouldBe ProblemStatus.OPTIMAL
+    }
+
+    it("x should be equal to 1.0") {
+      x.value shouldEqual Some(1.0)
+    }
+
+    it("objective value should be equal to 2.0") {
+      objectiveValue shouldEqual 2.0
+    }
+
+    release()
+  }
+
   // Mixed-integer objective function tests
 
   describe("Mixed-Integer Program (1)") {
 
-    implicit val mip: MIProblem = MIProblem(SolverLib.lp_solve)
+    implicit val mip: MIProblem = MIProblem(SolverLib.ojalgo)
 
     val x0 = MPFloatVar("x0", 0, 40)
     val x1 = MPIntVar("x1", 0 to 1000)
@@ -523,7 +556,7 @@ final class LPSolveSpecTest extends FunSpec with Matchers {
 
   describe("Mixed-Integer Program (2)") {
 
-    implicit val mip: MIProblem = MIProblem(SolverLib.lp_solve)
+    implicit val mip: MIProblem = MIProblem(SolverLib.ojalgo)
 
     val x = MPFloatVar("x", 0, 100)
     val y = MPIntVar("y", 0 to 100)
@@ -555,7 +588,7 @@ final class LPSolveSpecTest extends FunSpec with Matchers {
 
   describe("Mixed-Integer Program (3)") {
 
-    implicit val mip: MIProblem = MIProblem(SolverLib.lp_solve)
+    implicit val mip: MIProblem = MIProblem(SolverLib.ojalgo)
 
     val x = Array.tabulate(6)(j => MPIntVar(s"x$j", 0 to 1))
 
@@ -582,5 +615,245 @@ final class LPSolveSpecTest extends FunSpec with Matchers {
     }
 
     release()
+  }
+
+  // Quadratic objective function tests
+
+  describe("Quadratic Program (1)") {
+
+    implicit val qp: LQProblem = LQProblem(SolverLib.ojalgo)
+
+    var cons = Vector.empty[MPConstraint]
+
+    val x = MPFloatVar("x", 0, Double.PositiveInfinity)
+    val y = MPFloatVar("y", 0, Double.PositiveInfinity)
+
+    minimize(-8*x - 16*y + x*x + 4*y*y)
+
+    cons = cons :+ add(x + y <:= 5)
+    cons = cons :+ add(x <:= 3)
+
+    start()
+
+    it("solution should be optimal") {
+      status shouldBe ProblemStatus.OPTIMAL
+    }
+
+    it("objective value should be equal to -31") {
+      objectiveValue shouldEqual -31.0 +- 1e-2
+    }
+
+    it("x should be equal to 3") {
+      x.value.get shouldEqual 3.0 +- 1e-2
+    }
+
+    it("y should be equal to 2") {
+      y.value.get shouldEqual 2.0 +- 1.0e-2
+    }
+
+    it("constraints should be satisfied") {
+      cons(0).isTight() shouldBe true  // Here gurobi fails
+      cons(1).isTight() shouldBe true
+
+      cons(0).slack.get shouldBe 0.0 +- 1.0e-2
+      cons(1).slack.get shouldBe 0.0 +- 1.0e-2
+
+      cons.foreach(_.check() shouldBe true)
+    }
+
+    release()
+  }
+
+  describe("Quadratic Program (2)") {
+
+    implicit val qp: LQProblem = LQProblem(SolverLib.ojalgo)
+
+    var cons = Vector.empty[MPConstraint]
+
+    val x = MPFloatVar("x", 0, Double.PositiveInfinity)
+    val y = MPFloatVar("y", 0, Double.PositiveInfinity)
+
+    minimize(2*x*x + y*y + x*y + x + y)
+
+    cons = cons :+ add(x + y := 1)
+    cons = cons :+ add(x >:= -3)
+    cons = cons :+ add(y >:= -1e-4)
+
+    start()
+
+    it("solution should be optimal") {
+      status shouldBe ProblemStatus.OPTIMAL
+    }
+
+    it("objective value should be equal to 1.87") {
+      objectiveValue shouldEqual 1.87 +- 1.0e-2
+    }
+
+    it("x should be equal to 0.25") {
+      x.value.get shouldEqual 0.25 +- 1e-2
+    }
+
+    it("y should be equal to 0.75") {
+      y.value.get shouldEqual 0.75 +- 1e-2
+    }
+
+    it("constraints should be satisfied") {
+      cons(0).isTight() shouldBe true
+      cons(1).isTight() shouldBe false
+      cons(2).isTight() shouldBe false
+
+      cons(0).slack.get shouldBe 0.0 +- 1e-2
+      cons(1).slack.get shouldBe 3.25 +- 1e-2
+      cons(2).slack.get shouldBe 0.75 +- 1e-2
+
+      cons.foreach(_.check() shouldBe true)
+    }
+
+    release()
+  }
+
+  describe("Quadratic Program (3)") {
+
+    implicit val qp: LQProblem = LQProblem(SolverLib.ojalgo)
+
+    var cons = Vector.empty[MPConstraint]
+
+    val x = MPFloatVar("x", 0, Double.PositiveInfinity)
+    val y = MPFloatVar("y", 0, Double.PositiveInfinity)
+
+    minimize(x*x + x*x + y*y - y*y + y*y + 7*x*y - 6*y*x + x*x - x*x + x - 99.9e-9*y + 1.0000000999*y)
+
+    cons = cons :+ add(x + y := 1)
+    cons = cons :+ add(x >:= -3)
+    cons = cons :+ add(y >:= -1e-4)
+
+    start()
+
+    it("solution should be optimal") {
+      status shouldBe ProblemStatus.OPTIMAL
+    }
+
+    it("objective value should be equal to 1.87") {
+      objectiveValue shouldEqual 1.87 +- 1e-2
+    }
+
+    it("x should be equal to 0.25") {
+      x.value.get shouldEqual 0.25 +- 1e-2
+    }
+
+    it("y should be equal to 0.75") {
+      y.value.get shouldEqual 0.75 +- 1e-2
+    }
+
+    it("constraints should be satisfied") {
+      cons(0).isTight() shouldBe true
+      cons(1).isTight() shouldBe false
+      cons(2).isTight() shouldBe false
+
+      cons(0).slack.get shouldBe 0.0 +- 1e-2
+      cons(1).slack.get shouldBe 3.25 +- 1e-2
+      cons(2).slack.get shouldBe 0.75 +- 1e-2
+
+      cons.foreach(_.check() shouldBe true)
+    }
+
+    release()
+  }
+
+  describe("Quadratic Program (4)") {
+
+    implicit val qp: LQProblem = LQProblem(SolverLib.ojalgo)
+
+    val x = MPFloatVar("x", 0, Double.PositiveInfinity)
+    val y = MPFloatVar("y", 0, Double.PositiveInfinity)
+
+    minimize(-8*x - 16*y + x*x + 4*y*y)
+    subjectTo (
+      x + y <:= 5,
+      x <:= 3,
+      x >:= 0,
+      y >:= 0
+    )
+
+    start()
+
+    it("solution should be optimal") {
+      status shouldBe ProblemStatus.OPTIMAL
+    }
+
+    it("objective value should be equal to -31") {
+      objectiveValue shouldEqual -31.0 +- 1e-2
+    }
+
+    it("x should be equal to 3") {
+      x.value.get shouldEqual 3.0 +- 1e-2
+    }
+
+    it("y should be equal to 2") {
+      y.value.get shouldEqual 2.0 +- 1e-2
+    }
+
+    it("constraints should be satisfied") {
+      checkConstraints() shouldBe true
+    }
+
+    release()
+  }
+
+  describe("Quadratic Program (5)") {
+
+    implicit val qp: LQProblem = LQProblem(SolverLib.ojalgo)
+
+    val w0 = MPFloatVar("w0", Double.NegativeInfinity, Double.PositiveInfinity)
+    val w1 = MPFloatVar("w1", Double.NegativeInfinity, Double.PositiveInfinity)
+    val w2 = MPFloatVar("w2", Double.NegativeInfinity, Double.PositiveInfinity)
+    val slack = MPFloatVar("slack", 0, Double.PositiveInfinity)
+
+    minimize(0.5*(w0*w0 + w1*w1 + w2*w2) + 1000*slack)
+    add(-2.0*w2 + 0.0 >:= -1.0*slack + 16.0)
+
+    start()
+
+    it("solution should be optimal") {
+      status shouldBe ProblemStatus.OPTIMAL
+    }
+
+    it("objective value should be equal to 32") {
+      objectiveValue shouldEqual 32.0 +- 1e-2
+    }
+
+    it("w0 and w1 should be equal to 0") {
+      w0.value.get shouldEqual 0.0 +- 1e-2
+      w1.value.get shouldEqual 0.0 +- 1e-2
+    }
+
+    it("w2 should be equal to -8") {
+      w2.value.get shouldEqual -8.0 +- 1e-2
+    }
+
+    it("slack should be equal to 0") {
+      slack.value.get shouldEqual 0.0 +- 1e-2
+    }
+
+    it("constraints should be satisfied") {
+      checkConstraints() shouldBe true
+    }
+
+    it("Add a couple of constraints and re-optimize") {
+
+      add(-2.0*w1 + -2.0*w0 + 6.0*w2 + 0.0 >:= -1.0*slack + 6.0)
+      start()
+
+      status shouldBe ProblemStatus.OPTIMAL
+      objectiveValue shouldBe 214.25 +- 1e-2
+
+      w0.value.get shouldEqual -13.5 +- 1e-2
+      w1.value.get shouldEqual -13.5 +- 1e-2
+      w2.value.get shouldEqual -8.0 +- 1e-2
+      slack.value.get shouldEqual 0.0 +- 1e-2
+
+      checkConstraints() shouldBe true
+    }
+
   }
 }
