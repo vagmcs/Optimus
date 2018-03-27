@@ -29,22 +29,19 @@ import sbt._
 
 object Dependencies {
 
-  final val LogbackVersion = "1.1.7"
-  final val SLF4JVersion = "1.7.21"
-  final val ScalaLogging = "3.5.0"
+  final val LogbackVersion = "1.2.3"
+  final val ScalaLogging = "3.8.0"
   final val ScalaTestVersion = "3.0.4"
   final val ScalaCheckVersion = "1.13.4"
   final val LpSolveVersion = "5.5.2.0"
   final val ojAlgorithmsVersion = "44.0.0"
   final val troveVersion = "3.0.3"
   final val scalaXML = "1.0.6"
-  final val enumeratumVersion = "1.5.12"
+  final val enumVersion = "1.5.12"
 
   // Logging using slf4j and logback
   lazy val Logging = Seq(
     "ch.qos.logback" % "logback-classic" % LogbackVersion,
-    "ch.qos.logback" % "logback-core" % LogbackVersion,
-    "org.slf4j" % "slf4j-api" % SLF4JVersion,
     "com.typesafe.scala-logging" %% "scala-logging" % ScalaLogging
   )
 
@@ -58,7 +55,7 @@ object Dependencies {
   lazy val Tools = Seq(
     "org.scala-lang.modules" %% "scala-xml" % scalaXML,
     "net.sf.trove4j" % "trove4j" % troveVersion,
-    "com.beachape" %% "enumeratum" % enumeratumVersion
+    "com.beachape" %% "enumeratum" % enumVersion
   )
 
   // LpSolve library for linear programming
