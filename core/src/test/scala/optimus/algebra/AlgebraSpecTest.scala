@@ -271,19 +271,19 @@ final class AlgebraSpecTest extends FunSpec with Matchers {
   describe("Order of expressions") {
 
     it("x - x order should be constant") {
-      (x - x).getOrder shouldEqual ExpressionOrder.CONSTANT
+      (x - x).getOrder shouldEqual ExpressionType.CONSTANT
     }
 
     it("x*x - (x*x + y) order should be linear") {
-      (x*x - (x*x + y)).getOrder shouldEqual ExpressionOrder.LINEAR
+      (x*x - (x*x + y)).getOrder shouldEqual ExpressionType.LINEAR
     }
 
     it("x + t + -5*y + 2*t + -3.2*z order should be linear") {
-      (x + t + -5*y + 2*t + -3.2*z).getOrder shouldEqual ExpressionOrder.LINEAR
+      (x + t + -5*y + 2*t + -3.2*z).getOrder shouldEqual ExpressionType.LINEAR
     }
 
     it("x*y + z*t + 5*y + 2*x*t + z*z order should be quadratic") {
-      (x*y + z*t + 5*y + 2*x*t + z*z).getOrder shouldEqual ExpressionOrder.QUADRATIC
+      (x*y + z*t + 5*y + 2*x*t + z*z).getOrder shouldEqual ExpressionType.QUADRATIC
     }
   }
 

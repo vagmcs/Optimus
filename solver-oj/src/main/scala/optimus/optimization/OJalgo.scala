@@ -155,7 +155,7 @@ final class OJalgo extends AbstractMPSolver {
    */
   def addObjective(objective: Expression, minimize: Boolean) = {
 
-    if(objective.getOrder == ExpressionOrder.GENERIC)
+    if(objective.getOrder == ExpressionType.GENERIC)
       throw new IllegalArgumentException("oJalgo cannot handle expressions of higher order!")
 
     val objectiveFunction = model.addExpression("objective")

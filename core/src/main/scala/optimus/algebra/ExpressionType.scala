@@ -30,14 +30,14 @@ package optimus.algebra
 import enumeratum._
 import scala.collection.immutable._
 
-sealed trait ExpressionOrder extends EnumEntry
+sealed trait ExpressionType extends EnumEntry
 
-object ExpressionOrder extends Enum[ExpressionOrder] {
+object ExpressionType extends Enum[ExpressionType] {
 
-  val values: IndexedSeq[ExpressionOrder] = findValues
+  val values: IndexedSeq[ExpressionType] = findValues
 
-  case object CONSTANT    extends ExpressionOrder
-  case object LINEAR      extends ExpressionOrder
-  case object QUADRATIC   extends ExpressionOrder
-  case object GENERIC     extends ExpressionOrder
+  case object CONSTANT    extends ExpressionType
+  case object LINEAR      extends ExpressionType
+  case object QUADRATIC   extends ExpressionType
+  case object GENERIC     extends ExpressionType
 }

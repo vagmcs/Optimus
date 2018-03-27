@@ -78,11 +78,11 @@ abstract class Expression extends LazyLogging {
     order
   }
 
-  def getOrder: ExpressionOrder = order match {
-    case 0 => ExpressionOrder.CONSTANT
-    case 1 => ExpressionOrder.LINEAR
-    case 2 => ExpressionOrder.QUADRATIC
-    case _ => ExpressionOrder.GENERIC
+  def getOrder: ExpressionType = order match {
+    case 0 => ExpressionType.CONSTANT
+    case 1 => ExpressionType.LINEAR
+    case 2 => ExpressionType.QUADRATIC
+    case _ => ExpressionType.GENERIC
   }
 
   override def toString: String = (terms.keys zip terms.values)

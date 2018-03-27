@@ -150,7 +150,7 @@ final class LPSolve extends AbstractMPSolver {
    */
   def addObjective(objective: Expression, minimize: Boolean) = {
 
-    if(objective.getOrder == ExpressionOrder.QUADRATIC || objective.getOrder == ExpressionOrder.GENERIC)
+    if(objective.getOrder == ExpressionType.QUADRATIC || objective.getOrder == ExpressionType.GENERIC)
         throw new IllegalArgumentException("LPSolve can handle only linear expressions and " + objective + " is higher order!")
 
     val indexes = objective.terms.keys.map(code => decode(code).head + 1)

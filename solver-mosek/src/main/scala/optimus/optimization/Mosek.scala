@@ -130,9 +130,9 @@ final class Mosek extends AbstractMPSolver {
   override def addObjective(objective: Expression, minimize: Boolean) = {
 
     objective.getOrder match {
-      case ExpressionOrder.GENERIC => throw new IllegalArgumentException("Higher than quadratic: " + objective)
+      case ExpressionType.GENERIC => throw new IllegalArgumentException("Higher than quadratic: " + objective)
 
-      case ExpressionOrder.QUADRATIC =>
+      case ExpressionType.QUADRATIC =>
         val iterator = objective.terms.iterator
         while(iterator.hasNext) {
           iterator.advance()
@@ -141,11 +141,11 @@ final class Mosek extends AbstractMPSolver {
             task.putcj(indexes.head, iterator.value)
           else task.putqobjij(Math.max(indexes.head, indexes(1)), Math.min(indexes.head, indexes(1)), iterator.value)
         }
-      case ExpressionOrder.LINEAR =>
+      case ExpressionType.LINEAR =>
         val variables = objective.terms.keys.map(code => decode(code).head)
         task.putclist(variables, objective.terms.values)
 
-      case ExpressionOrder.CONSTANT =>
+      case ExpressionType.CONSTANT =>
         task.putcfix(objective.constant)
     }
 
@@ -164,9 +164,9 @@ final class Mosek extends AbstractMPSolver {
     val operator = mpConstraint.constraint.operator
 
     lhs.getOrder match {
-      case ExpressionOrder.GENERIC => throw new IllegalArgumentException("Higher than quadratic: " + lhs)
+      case ExpressionType.GENERIC => throw new IllegalArgumentException("Higher than quadratic: " + lhs)
 
-      case ExpressionOrder.QUADRATIC =>
+      case ExpressionType.QUADRATIC =>
         var linearIndexes = Array.emptyIntArray
         var linearValues = Array.emptyDoubleArray
         var rowIndexes = Array.emptyIntArray
@@ -190,7 +190,7 @@ final class Mosek extends AbstractMPSolver {
         task.putarow(nbRows, linearIndexes, linearValues)
         task.putqconk(nbRows, rowIndexes, colsIndexes, quadraticValues)
 
-      case ExpressionOrder.LINEAR =>
+      case ExpressionType.LINEAR =>
         val variables = lhs.terms.keys.map(code => decode(code).head)
         task.putarow(nbRows, variables, lhs.terms.values)
     }

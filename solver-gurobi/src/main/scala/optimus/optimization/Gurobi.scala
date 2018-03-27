@@ -153,9 +153,9 @@ final class Gurobi extends AbstractMPSolver {
   def addObjective(objective: Expression, minimize: Boolean) = {
 
     objective.getOrder match {
-      case ExpressionOrder.GENERIC => throw new IllegalArgumentException("Higher than quadratic: " + objective)
+      case ExpressionType.GENERIC => throw new IllegalArgumentException("Higher than quadratic: " + objective)
 
-      case ExpressionOrder.QUADRATIC =>
+      case ExpressionType.QUADRATIC =>
         val QExpression = new GRBQuadExpr
         val iterator = objective.terms.iterator
         while(iterator.hasNext) {
@@ -167,14 +167,14 @@ final class Gurobi extends AbstractMPSolver {
         QExpression.addConstant(objective.constant)
         model.setObjective(QExpression, if (minimize) 1 else -1)
 
-      case ExpressionOrder.LINEAR =>
+      case ExpressionType.LINEAR =>
         val LExpression = new GRBLinExpr
         val variables = objective.terms.keys.map(code => model.getVar(decode(code).head))
         LExpression.addTerms(objective.terms.values, variables)
         LExpression.addConstant(objective.constant)
         model.setObjective(LExpression, if (minimize) 1 else -1)
 
-      case ExpressionOrder.CONSTANT =>
+      case ExpressionType.CONSTANT =>
         val CExpression = new GRBLinExpr
         CExpression.addConstant(objective.constant)
         model.setObjective(CExpression, if (minimize) 1 else -1)
@@ -203,9 +203,9 @@ final class Gurobi extends AbstractMPSolver {
     }
 
     lhs.getOrder match {
-      case ExpressionOrder.GENERIC => throw new IllegalArgumentException("Higher than quadratic: " + lhs)
+      case ExpressionType.GENERIC => throw new IllegalArgumentException("Higher than quadratic: " + lhs)
 
-      case ExpressionOrder.QUADRATIC =>
+      case ExpressionType.QUADRATIC =>
         val QExpression = new GRBQuadExpr
         val iterator = lhs.terms.iterator
         while(iterator.hasNext) {
@@ -216,7 +216,7 @@ final class Gurobi extends AbstractMPSolver {
         }
         model.addQConstr(QExpression, GRBOperator, rhs, "")
 
-      case ExpressionOrder.LINEAR | ExpressionOrder.CONSTANT =>
+      case ExpressionType.LINEAR | ExpressionType.CONSTANT =>
         val LExpression = new GRBLinExpr
         val iterator = lhs.terms.iterator
         while(iterator.hasNext) {
