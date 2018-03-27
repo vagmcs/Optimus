@@ -164,12 +164,14 @@ final class Gurobi extends AbstractMPSolver {
           if(indexes.length == 1) QExpression.addTerm(iterator.value, model.getVar(indexes.head))
           else QExpression.addTerm(iterator.value, model.getVar(indexes.head), model.getVar(indexes(1)))
         }
+        QExpression.addConstant(objective.constant)
         model.setObjective(QExpression, if (minimize) 1 else -1)
 
       case ExpressionOrder.LINEAR =>
         val LExpression = new GRBLinExpr
         val variables = objective.terms.keys.map(code => model.getVar(decode(code).head))
         LExpression.addTerms(objective.terms.values, variables)
+        LExpression.addConstant(objective.constant)
         model.setObjective(LExpression, if (minimize) 1 else -1)
 
       case ExpressionOrder.CONSTANT =>

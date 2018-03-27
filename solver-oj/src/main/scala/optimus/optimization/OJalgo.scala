@@ -50,6 +50,8 @@ final class OJalgo extends AbstractMPSolver {
   // Internal flag for keeping optimization state
   private var minimize = true
 
+  private var constantTerm = 0d
+
   /**
    * Problem builder, should configure the solver and append
    * mathematical model variables.
@@ -167,6 +169,8 @@ final class OJalgo extends AbstractMPSolver {
       else objectiveFunction.set(model.getVariable(indexes.head), model.getVariable(indexes(1)), iterator.value)
     }
 
+    constantTerm = objective.constant
+
     if(!minimize) this.minimize = false else this.minimize = true
   }
 
@@ -212,7 +216,7 @@ final class OJalgo extends AbstractMPSolver {
 
       case Optimisation.State.OPTIMAL | Optimisation.State.DISTINCT =>
         solution = Array.tabulate(nbCols)(col => result.get(col).doubleValue())
-        objectiveValue = result.getValue
+        objectiveValue = result.getValue + constantTerm
         ProblemStatus.OPTIMAL
 
       case Optimisation.State.INFEASIBLE =>

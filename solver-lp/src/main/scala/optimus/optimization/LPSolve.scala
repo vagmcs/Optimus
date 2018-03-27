@@ -44,6 +44,8 @@ final class LPSolve extends AbstractMPSolver {
   var objectiveValue = 0.0
   var status = ProblemStatus.NOT_SOLVED
 
+  private var constantTerm = 0d
+
   /**
    * Problem builder, should configure the solver and append
    * mathematical model variables.
@@ -154,6 +156,8 @@ final class LPSolve extends AbstractMPSolver {
     val indexes = objective.terms.keys.map(code => decode(code).head + 1)
     lp.setObjFnex(objective.terms.size, objective.terms.values, indexes)
 
+    constantTerm = objective.constant
+
     if (!minimize) lp.setMaxim()
   }
 
@@ -196,7 +200,7 @@ final class LPSolve extends AbstractMPSolver {
 
       case LpSolve.OPTIMAL =>
         solution = Array.tabulate(nbCols)(c => lp.getVarPrimalresult(nbRows + c + 1))
-        objectiveValue = lp.getObjective
+        objectiveValue = lp.getObjective + constantTerm
         ProblemStatus.OPTIMAL
 
       case LpSolve.SUBOPTIMAL =>
