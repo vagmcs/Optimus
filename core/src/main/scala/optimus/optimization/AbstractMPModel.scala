@@ -28,25 +28,11 @@ package optimus.optimization
  */
 
 import com.typesafe.scalalogging.StrictLogging
-import gnu.trove.map.hash.TLongDoubleHashMap
 import optimus.algebra._
-import optimus.optimization.PreSolve.PreSolve
-import optimus.optimization.ProblemStatus.ProblemStatus
-
+import optimus.optimization.enums.{PreSolve, ProblemStatus}
 import scala.collection.mutable
 import scala.collection.mutable.ArrayBuffer
 import scala.util.{Failure, Success, Try}
-
-object ProblemStatus extends Enumeration {
-
-  type ProblemStatus = Value
-
-  val NOT_SOLVED = Value("Not solved yet")
-  val OPTIMAL = Value("Optimal")
-  val SUBOPTIMAL = Value("Suboptimal")
-  val UNBOUNDED = Value("Unbounded")
-  val INFEASIBLE = Value("Infeasible")
-}
 
 /**
   * Abstract class that should be extended to define a linear-quadratic solver.
@@ -171,7 +157,7 @@ abstract class AbstractMPSolver extends StrictLogging {
     * @param preSolve pre-solving mode
     * @return status code indicating the nature of the solution
     */
-  def solveProblem(preSolve: PreSolve = PreSolve.DISABLE): ProblemStatus
+  def solveProblem(preSolve: PreSolve = PreSolve.DISABLED): ProblemStatus
 
   /**
     * Release the memory of this solver
@@ -201,7 +187,7 @@ abstract class AbstractMPProblem extends StrictLogging {
 
   protected lazy val solver: AbstractMPSolver = instantiateSolver()
 
-  protected var status = ProblemStatus.NOT_SOLVED
+  protected var status: ProblemStatus = ProblemStatus.NOT_SOLVED
 
   protected def instantiateSolver(): AbstractMPSolver
 
@@ -252,7 +238,7 @@ abstract class AbstractMPProblem extends StrictLogging {
 
   def maximize(expression: Expression): AbstractMPProblem = optimize(expression, minimize = false)
 
-  def start(timeLimit: Int = Int.MaxValue, preSolve: PreSolve = PreSolve.DISABLE): Boolean = {
+  def start(timeLimit: Int = Int.MaxValue, preSolve: PreSolve = PreSolve.DISABLED): Boolean = {
 
     if(!reOptimize) {
       solver.buildProblem(constraints.size, variables.size)
@@ -282,6 +268,7 @@ abstract class AbstractMPProblem extends StrictLogging {
   def solveProblem(preSolve: PreSolve) {
     logger.info("Solving...")
     status = solver.solveProblem(preSolve)
+
     if ( (status == ProblemStatus.OPTIMAL) || (status == ProblemStatus.SUBOPTIMAL) )
       variables.indices foreach { i => solution(i) = solver.getValue(i) }
 

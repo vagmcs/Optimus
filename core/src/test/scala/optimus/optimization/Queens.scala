@@ -30,6 +30,7 @@ package optimus.optimization
 import org.scalatest.{FunSpec, Matchers}
 import optimus.algebra.AlgebraOps._
 import optimus.optimization.SolverLib.SolverLib
+import optimus.optimization.enums.ProblemStatus
 
 /**
   * N-Queens puzzle: Place n chess queens on an n×n chessboard so that no two

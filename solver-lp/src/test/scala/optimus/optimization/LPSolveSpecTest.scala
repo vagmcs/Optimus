@@ -1,5 +1,6 @@
 package optimus.optimization
 
+import optimus.optimization.enums.ProblemStatus
 import org.scalatest.{FunSpec, Matchers}
 
 /**

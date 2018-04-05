@@ -30,6 +30,7 @@ package optimus.optimization
 import optimus.optimization.SolverLib.SolverLib
 import org.scalatest.{FunSpec, Matchers}
 import optimus.algebra.AlgebraOps._
+import optimus.optimization.enums.ProblemStatus
 
 /**
   * The Maximum Flow Problem in a network G = (V, E), where V is a set of nodes,

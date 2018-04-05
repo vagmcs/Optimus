@@ -30,6 +30,7 @@ package optimus.optimization
 import org.scalatest.{FunSpec, Matchers}
 import optimus.algebra.AlgebraOps._
 import optimus.optimization.SolverLib.SolverLib
+import optimus.optimization.enums.ProblemStatus
 
 /**
   * Assign workers to shifts while satisfying requirements for that day.

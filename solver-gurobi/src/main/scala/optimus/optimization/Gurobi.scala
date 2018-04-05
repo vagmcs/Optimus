@@ -28,8 +28,7 @@ package optimus.optimization
  */
 
 import optimus.algebra._
-import optimus.optimization.PreSolve.PreSolve
-import optimus.optimization.ProblemStatus.ProblemStatus
+import optimus.optimization.enums.{PreSolve, ProblemStatus}
 import gurobi._
 
 /**
@@ -232,7 +231,7 @@ final class Gurobi extends AbstractMPSolver {
    *
    * @return status code indicating the nature of the solution
    */
-  def solveProblem(preSolve: PreSolve = PreSolve.DISABLE): ProblemStatus = {
+  def solveProblem(preSolve: PreSolve = PreSolve.DISABLED): ProblemStatus = {
 
     if(preSolve == PreSolve.CONSERVATIVE) model.getEnv.set(GRB.IntParam.Presolve, 1)
     else if(preSolve == PreSolve.AGGRESSIVE) model.getEnv.set(GRB.IntParam.Presolve, 2)

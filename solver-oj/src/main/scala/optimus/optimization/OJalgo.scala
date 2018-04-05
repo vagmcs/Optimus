@@ -1,12 +1,3 @@
-package optimus.optimization
-
-import optimus.algebra.{ConstraintRelation, Expression}
-import optimus.optimization.PreSolve.PreSolve
-import optimus.optimization.ProblemStatus.ProblemStatus
-import org.ojalgo.constant.BigMath
-import org.ojalgo.optimisation.{Optimisation, Variable, ExpressionsBasedModel}
-import optimus.algebra._
-
 /*
  *    /\\\\\
  *   /\\\///\\\
@@ -33,6 +24,14 @@ import optimus.algebra._
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/lgpl-3.0.en.html>.
  */
+
+package optimus.optimization
+
+import optimus.algebra.{ConstraintRelation, Expression}
+import org.ojalgo.constant.BigMath
+import org.ojalgo.optimisation.{ExpressionsBasedModel, Optimisation, Variable}
+import optimus.algebra._
+import optimus.optimization.enums.{PreSolve, ProblemStatus}
 
 /**
   * OJalgo solver.
@@ -206,9 +205,9 @@ final class OJalgo extends AbstractMPSolver {
    *
    * @return status code indicating the nature of the solution
    */
-  def solveProblem(preSolve: PreSolve = PreSolve.DISABLE): ProblemStatus = {
+  def solveProblem(preSolve: PreSolve = PreSolve.DISABLED): ProblemStatus = {
 
-    if(preSolve != PreSolve.DISABLE) logger.info("oJalgo does not support pre-solving!")
+    if(preSolve != PreSolve.DISABLED) logger.info("oJalgo does not support pre-solving!")
     
     val result = if(this.minimize) model.minimise() else model.maximise()
 

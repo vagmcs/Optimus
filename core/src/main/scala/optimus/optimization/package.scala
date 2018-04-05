@@ -1,5 +1,3 @@
-package optimus
-
 /*
  *    /\\\\\
  *   /\\\///\\\
@@ -27,9 +25,11 @@ package optimus
  * along with this program. If not, see <http://www.gnu.org/licenses/lgpl-3.0.en.html>.
  */
 
+package optimus
+
 import com.typesafe.scalalogging.StrictLogging
 import optimus.algebra.{Constraint, Expression}
-import optimus.optimization.PreSolve.PreSolve
+import optimus.optimization.enums.PreSolve
 
 /**
   * Helper functions for linear-quadratic optimization
@@ -57,15 +57,6 @@ package object optimization extends StrictLogging{
     }
     true
   }
-
-  object PreSolve extends Enumeration {
-    
-    type PreSolve = Value
-
-    val DISABLE = Value("Disabled")
-    val CONSERVATIVE = Value("Conservative")
-    val AGGRESSIVE = Value("Aggressive")
-  }
   
   // Helper functions to model using an implicit mathematical programming problem
 
@@ -73,7 +64,7 @@ package object optimization extends StrictLogging{
 
   def subjectTo(constraints: Constraint*)(implicit problem: AbstractMPProblem) = constraints.foreach(add)
 
-  def start(preSolve: PreSolve = PreSolve.DISABLE,
+  def start(preSolve: PreSolve = PreSolve.DISABLED,
             timeLimit: Int = Int.MaxValue)(implicit problem: AbstractMPProblem) = problem.start(timeLimit, preSolve)
 
   def minimize(expression: Expression)(implicit problem: AbstractMPProblem) = problem.minimize(expression)

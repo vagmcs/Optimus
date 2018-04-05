@@ -2,10 +2,7 @@ package optimus.optimization
 
 import mosek._
 import optimus.algebra._
-import optimus.optimization.PreSolve.PreSolve
-import optimus.optimization.ProblemStatus.ProblemStatus
-
-import scala.util.{Failure, Success, Try}
+import optimus.optimization.enums.{PreSolve, ProblemStatus}
 
 final class Mosek extends AbstractMPSolver {
 
