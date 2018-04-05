@@ -31,12 +31,16 @@ lazy val core = project.in(file("core"))
 // Build settings for Optimus oj solver
 lazy val oj = Project("solver-oj", file("solver-oj"))
   .dependsOn(core % "compile->compile ; test->test")
+  .enablePlugins(AutomateHeaderPlugin)
+  .settings(headerLicense := OptimusBuild.projectHeaders)
   .settings(name := "optimus-solver-oj")
   .settings(libraryDependencies += Dependencies.ojAlgorithms)
 
 // Build settings for Optimus lp solver
 lazy val lpsolve = Project("solver-lp", file("solver-lp"))
   .dependsOn(core % "compile->compile ; test->test")
+  .enablePlugins(AutomateHeaderPlugin)
+  .settings(headerLicense := OptimusBuild.projectHeaders)
   .settings(name := "optimus-solver-lp")
   .settings(libraryDependencies += Dependencies.LpSolve)
 
@@ -44,6 +48,8 @@ lazy val lpsolve = Project("solver-lp", file("solver-lp"))
 lazy val gurobi = if (file("lib/gurobi.jar").exists)
   Project("solver-gurobi", file("solver-gurobi"))
     .dependsOn(core % "compile->compile ; test->test")
+    .enablePlugins(AutomateHeaderPlugin)
+    .settings(headerLicense := OptimusBuild.projectHeaders)
     .settings(name := "optimus-solver-gurobi")
     .settings(unmanagedJars in Compile += file("lib/gurobi.jar"))
 else
@@ -58,6 +64,8 @@ else
 lazy val mosek = if (file("lib/mosek.jar").exists)
     Project("solver-mosek", file("solver-mosek"))
       .dependsOn(core % "compile->compile ; test->test")
+      .enablePlugins(AutomateHeaderPlugin)
+      .settings(headerLicense := OptimusBuild.projectHeaders)
       .settings(name := "optimus-solver-mosek")
       .settings(unmanagedJars in Compile += file("lib/mosek.jar"))
 else
