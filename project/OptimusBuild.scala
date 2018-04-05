@@ -28,6 +28,10 @@
 import sbt._
 import sbt.Keys._
 import sbt.plugins.JvmPlugin
+import de.heikoseeberger.sbtheader.HeaderPlugin
+import de.heikoseeberger.sbtheader.AutomateHeaderPlugin
+import de.heikoseeberger.sbtheader.{FileType, CommentStyle}
+import de.heikoseeberger.sbtheader.HeaderPlugin.autoImport._
 
 object OptimusBuild extends AutoPlugin {
 
@@ -47,7 +51,8 @@ object OptimusBuild extends AutoPlugin {
     """.stripMargin
   }
 
-  override def requires = JvmPlugin
+  override def requires: Plugins =
+    JvmPlugin && HeaderPlugin && AutomateHeaderPlugin
 
   // Allow the plug-in to be included automatically
   override def trigger: PluginTrigger = allRequirements
@@ -69,6 +74,10 @@ object OptimusBuild extends AutoPlugin {
     organization := "com.github.vagmcs",
 
     description := "Optimus is a mathematical programming library for Scala",
+
+    headerLicense := projectHeaders,
+
+    headerMappings := headerMappings.value + (FileType.scala -> CommentStyle.cStyleBlockComment),
 
     scalaVersion := "2.12.4",
 
@@ -168,4 +177,36 @@ object OptimusBuild extends AutoPlugin {
     }
   )
 
+  lazy val projectHeaders = Some(
+    HeaderLicense.Custom(
+      """
+        |   /\\\\\
+        |  /\\\///\\\
+        | /\\\/  \///\\\    /\\\\\\\\\     /\\\       /\\\
+        | /\\\      \//\\\  /\\\/////\\\ /\\\\\\\\\\\ \///    /\\\\\  /\\\\\     /\\\    /\\\  /\\\\\\\\\\
+        | \/\\\       \/\\\ \/\\\\\\\\\\ \////\\\////   /\\\  /\\\///\\\\\///\\\ \/\\\   \/\\\ \/\\\//////
+        |  \//\\\      /\\\  \/\\\//////     \/\\\      \/\\\ \/\\\ \//\\\  \/\\\ \/\\\   \/\\\ \/\\\\\\\\\\
+        |    \///\\\  /\\\    \/\\\           \/\\\_/\\  \/\\\ \/\\\  \/\\\  \/\\\ \/\\\   \/\\\ \////////\\\
+        |       \///\\\\\/     \/\\\           \//\\\\\   \/\\\ \/\\\  \/\\\  \/\\\ \//\\\\\\\\\  /\\\\\\\\\\
+        |          \/////       \///             \/////    \///  \///   \///   \///  \/////////   \//////////
+        |
+        | Copyright (C) 2014 Evangelos Michelioudakis, Anastasios Skarlatidis
+        |
+        | This file is part of Optimus.
+        |
+        | Optimus is free software: you can redistribute it and/or modify it
+        | under the terms of the GNU Lesser General Public License as published
+        | by the Free Software Foundation, either version 3 of the License,
+        | or (at your option) any later version.
+        |
+        | Optimus is distributed in the hope that it will be useful, but WITHOUT
+        | ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+        | or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public
+        | License for more details.
+        |
+        | You should have received a copy of the GNU Lesser General Public License
+        | along with Optimus. If not, see <http://www.gnu.org/licenses/>.
+      """.stripMargin
+    )
+  )
 }

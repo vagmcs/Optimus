@@ -17,6 +17,8 @@ publishArtifact in root := false
 
 // Build settings for Optimus core
 lazy val core = project.in(file("core"))
+  .enablePlugins(AutomateHeaderPlugin)
+  .settings(headerLicense := OptimusBuild.projectHeaders)
   .settings(logLevel in Test := Level.Info)
   .settings(logLevel in Compile := Level.Error)
   .settings(name := "optimus")

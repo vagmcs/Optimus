@@ -37,7 +37,7 @@ object Dependencies {
   final val ojAlgorithmsVersion = "44.0.0"
   final val troveVersion = "3.0.3"
   final val scalaXML = "1.0.6"
-  final val enumVersion = "1.5.12"
+  final val enumVersion = "1.5.13"
 
   // Logging using slf4j and logback
   lazy val Logging = Seq(
