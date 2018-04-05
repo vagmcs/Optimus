@@ -1,3 +1,30 @@
+/*
+ *    /\\\\\
+ *   /\\\///\\\
+ *  /\\\/  \///\\\    /\\\\\\\\\     /\\\       /\\\
+ *  /\\\      \//\\\  /\\\/////\\\ /\\\\\\\\\\\ \///    /\\\\\  /\\\\\     /\\\    /\\\  /\\\\\\\\\\
+ *  \/\\\       \/\\\ \/\\\\\\\\\\ \////\\\////   /\\\  /\\\///\\\\\///\\\ \/\\\   \/\\\ \/\\\//////
+ *   \//\\\      /\\\  \/\\\//////     \/\\\      \/\\\ \/\\\ \//\\\  \/\\\ \/\\\   \/\\\ \/\\\\\\\\\\
+ *     \///\\\  /\\\    \/\\\           \/\\\_/\\  \/\\\ \/\\\  \/\\\  \/\\\ \/\\\   \/\\\ \////////\\\
+ *        \///\\\\\/     \/\\\           \//\\\\\   \/\\\ \/\\\  \/\\\  \/\\\ \//\\\\\\\\\  /\\\\\\\\\\
+ *           \/////       \///             \/////    \///  \///   \///   \///  \/////////   \//////////
+ *
+ * Copyright (C) 2014 Evangelos Michelioudakis, Anastasios Skarlatidis
+ *
+ * Optimus is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as published
+ * by the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Optimus is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/lgpl-3.0.en.html>.
+ */
+
 package optimus.optimization
 
 import org.scalatest.{FunSpec, Matchers}
@@ -14,7 +41,7 @@ import scala.util.Random
   * constrained by a fixed-size knapsack and must fill it with the most
   * valuable items.
   */
-trait KnapsackTest extends FunSpec with Matchers {
+trait Knapsack extends FunSpec with Matchers {
 
   def solver: SolverLib
 
@@ -50,7 +77,7 @@ trait KnapsackTest extends FunSpec with Matchers {
     }
 
     it(s"$solver total utility should be 55") {
-      objectiveValue shouldEqual 55.0
+      objectiveValue shouldEqual 55
     }
 
     it(s"$solver total weight should be 100") {

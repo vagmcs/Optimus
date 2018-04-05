@@ -36,7 +36,7 @@ import optimus.algebra.AlgebraOps._
   */
 final class AlgebraSpecTest extends FunSpec with Matchers {
 
-  implicit val problem = LQProblem()
+  implicit val problem: LQProblem = LQProblem()
 
   // Definition of float variables
   val x = MPFloatVar("x", 0.0, 1.0)
