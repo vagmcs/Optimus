@@ -35,7 +35,7 @@ import mosek._
 import optimus.algebra._
 import optimus.optimization.enums.{PreSolve, ProblemStatus}
 
-final class Mosek extends AbstractMPSolver {
+final class Mosek extends MPSolver {
 
   var tempRow = 0
   var nbRows = 0

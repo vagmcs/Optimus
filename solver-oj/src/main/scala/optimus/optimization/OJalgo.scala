@@ -40,7 +40,7 @@ import optimus.optimization.enums.{PreSolve, ProblemStatus}
 /**
   * OJalgo solver.
   */
-final class OJalgo extends AbstractMPSolver {
+final class OJalgo extends MPSolver {
 
   var nbRows = 0
   var nbCols = 0
@@ -156,7 +156,7 @@ final class OJalgo extends AbstractMPSolver {
    * @param objective the expression to be optimized
    * @param minimize flag for minimization instead of maximization
    */
-  def addObjective(objective: Expression, minimize: Boolean) = {
+  def setObjective(objective: Expression, minimize: Boolean) = {
 
     if(objective.getOrder == ExpressionType.GENERIC)
       throw new IllegalArgumentException("oJalgo cannot handle expressions of higher order!")
