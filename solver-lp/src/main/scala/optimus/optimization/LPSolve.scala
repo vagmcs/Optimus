@@ -65,7 +65,7 @@ import optimus.optimization.enums.{PreSolve, ProblemStatus}
 /**
   * LPSolve solver.
   */
-final class LPSolve extends AbstractMPSolver {
+final class LPSolve extends MPSolver {
 
   var lp: LpSolve = null
   var nbRows = 0
@@ -178,7 +178,7 @@ final class LPSolve extends AbstractMPSolver {
    * @param objective the expression to be optimized
    * @param minimize flag for minimization instead of maximization
    */
-  def addObjective(objective: Expression, minimize: Boolean) = {
+  def setObjective(objective: Expression, minimize: Boolean) = {
 
     if(objective.getOrder == ExpressionType.QUADRATIC || objective.getOrder == ExpressionType.GENERIC)
         throw new IllegalArgumentException("LPSolve can handle only linear expressions and " + objective + " is higher order!")

@@ -31,178 +31,12 @@
 
 package optimus.optimization
 
-/*
- *    /\\\\\
- *   /\\\///\\\
- *  /\\\/  \///\\\    /\\\\\\\\\     /\\\       /\\\
- *  /\\\      \//\\\  /\\\/////\\\ /\\\\\\\\\\\ \///    /\\\\\  /\\\\\     /\\\    /\\\  /\\\\\\\\\\
- *  \/\\\       \/\\\ \/\\\\\\\\\\ \////\\\////   /\\\  /\\\///\\\\\///\\\ \/\\\   \/\\\ \/\\\//////
- *   \//\\\      /\\\  \/\\\//////     \/\\\      \/\\\ \/\\\ \//\\\  \/\\\ \/\\\   \/\\\ \/\\\\\\\\\\
- *     \///\\\  /\\\    \/\\\           \/\\\_/\\  \/\\\ \/\\\  \/\\\  \/\\\ \/\\\   \/\\\ \////////\\\
- *        \///\\\\\/     \/\\\           \//\\\\\   \/\\\ \/\\\  \/\\\  \/\\\ \//\\\\\\\\\  /\\\\\\\\\\
- *           \/////       \///             \/////    \///  \///   \///   \///  \/////////   \//////////
- *
- * Copyright (C) 2014 Evangelos Michelioudakis, Anastasios Skarlatidis
- *
- * Optimus is free software: you can redistribute it and/or modify it
- * under the terms of the GNU Lesser General Public License as published
- * by the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * Optimus is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/lgpl-3.0.en.html>.
- */
-
 import com.typesafe.scalalogging.StrictLogging
 import optimus.algebra._
 import optimus.optimization.enums.{PreSolve, ProblemStatus}
 import scala.collection.mutable
 import scala.collection.mutable.ArrayBuffer
 import scala.util.{Failure, Success, Try}
-
-/**
-  * Abstract class that should be extended to define a linear-quadratic solver.
-  */
-abstract class AbstractMPSolver extends StrictLogging {
-
-  /**
-    * Number of rows in the model
-    */
-  var nbRows: Int
-
-  /**
-    * Number of columns / variables in the model
-    */
-  var nbCols: Int
-
-  /**
-    * Solution, one entry for each column / variable
-    */
-  var solution: Array[Double]
-
-  /**
-    * Objective value
-    */
-  var objectiveValue: Double
-  
-  /**
-    * Problem builder, should configure the solver and append
-    * mathematical model variables.
-    *
-    * @param nbRows rows in the model
-    * @param nbCols number of variables in the model
-    */
-  def buildProblem(nbRows: Int, nbCols: Int)
-
-  /**
-    * Get value of the variable in the specified position. Solution
-    * should exist in order for a value to exist.
-    *
-    * @param colId position of the variable
-    * @return the value of the variable in the solution
-    */
-  def getValue(colId: Int): Double
-
-  /**
-    * Set bounds of variable in the specified position.
-    *
-    * @param colId position of the variable
-    * @param lower domain lower bound
-    * @param upper domain upper bound
-    */
-  def setBounds(colId: Int, lower: Double, upper: Double)
-
-  /**
-    * Set upper bound to unbounded (infinite)
-    *
-    * @param colId position of the variable
-    */
-  def setUnboundUpperBound(colId: Int)
-
-  /**
-    * Set lower bound to unbounded (infinite)
-    *
-    * @param colId position of the variable
-    */
-  def setUnboundLowerBound(colId: Int)
-
-  /**
-    * Set the column/variable as an integer variable
-    *
-    * @param colId position of the variable
-    */
-  def setInteger(colId: Int)
-
-  /**
-    * Set the column / variable as an binary integer variable
-    *
-    * @param colId position of the variable
-    */
-  def setBinary(colId: Int)
-
-  /**
-    * Set the column/variable as a float variable
-    *
-    * @param colId position of the variable
-    */
-  def setFloat(colId: Int)
-
-  /**
-    * Add objective expression to be optimized by the solver.
-    *
-    * @param objective the expression to be optimized
-    * @param minimize flag for minimization instead of maximization
-    */
-  def addObjective(objective: Expression, minimize: Boolean)
-
-  /**
-    * Add a mathematical programming constraint to the solver.
-    *
-    * @param mpConstraint the mathematical programming constraint
-    */
-  def addConstraint(mpConstraint: MPConstraint)
-
-  /**
-    * Add all given mathematical programming constraints to the solver.
-    *
-    * @param constraints array buffer containing the constraints
-    */
-  def addAllConstraints(constraints: ArrayBuffer[MPConstraint]) {
-    var idx = 0
-    val len = constraints.length
-    while(idx < len) {
-      addConstraint(constraints(idx))
-      idx += 1
-    }
-    logger.info("Added " + len + " constraints")
-  }
-
-  /**
-    * Solve the problem.
-    *
-    * @param preSolve pre-solving mode
-    * @return status code indicating the nature of the solution
-    */
-  def solveProblem(preSolve: PreSolve = PreSolve.DISABLED): ProblemStatus
-
-  /**
-    * Release the memory of this solver
-    */
-  def release()
-
-  /**
-    * Set a time limit for solver optimization. After the limit
-    * is reached the solver stops running.
-    *
-    * @param limit the time limit
-    */
-  def setTimeout(limit: Int)
-}
 
 /**
   * Should define the problem we are about to solve
@@ -216,11 +50,11 @@ abstract class AbstractMPProblem extends StrictLogging {
   protected var minimize = false
   protected var reOptimize = false
 
-  protected lazy val solver: AbstractMPSolver = instantiateSolver()
+  protected lazy val solver: MPSolver = instantiateSolver()
 
   protected var status: ProblemStatus = ProblemStatus.NOT_SOLVED
 
-  protected def instantiateSolver(): AbstractMPSolver
+  protected def instantiateSolver(): MPSolver
 
   // Register a variables to this problem and return a index for it
   def register(variable: MPVariable) = {
@@ -278,7 +112,7 @@ abstract class AbstractMPProblem extends StrictLogging {
       setVariableProperties()
 
       logger.info("Adding objective function...")
-      solver.addObjective(objective, minimize)
+      solver.setObjective(objective, minimize)
 
       logger.info("Creating constraints: ")
       val start = System.currentTimeMillis()

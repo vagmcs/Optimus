@@ -65,7 +65,7 @@ import gurobi._
 /**
   * Gurobi solver.
   */
-final class Gurobi extends AbstractMPSolver {
+final class Gurobi extends MPSolver {
 
   var nbRows = 0
   var nbCols = 0
