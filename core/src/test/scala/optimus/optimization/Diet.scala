@@ -34,6 +34,7 @@ package optimus.optimization
 import optimus.optimization.SolverLib.SolverLib
 import optimus.algebra.AlgebraOps._
 import optimus.optimization.enums.ProblemStatus
+import optimus.optimization.model.MPFloatVar
 import org.scalatest.{FunSpec, Matchers}
 
 /**

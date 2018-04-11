@@ -27,18 +27,11 @@
  *       
  */
 
-package optimus.optimization.enums
+package optimus.optimization
 
-import enumeratum._
-import scala.collection.immutable._
+package object model {
 
-sealed abstract class PreSolve(override val entryName: String) extends EnumEntry
+  type MPFloatVar = MPVar
 
-object PreSolve extends Enum[PreSolve] {
-
-  val values: IndexedSeq[PreSolve] = findValues
-
-  case object DISABLED      extends PreSolve("Disabled")
-  case object CONSERVATIVE  extends PreSolve("Conservative")
-  case object AGGRESSIVE    extends PreSolve("Aggressive")
+  final val UNBOUNDED = Double.PositiveInfinity
 }

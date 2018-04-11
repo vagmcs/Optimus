@@ -35,6 +35,7 @@ import org.scalatest.{FunSpec, Matchers}
 import optimus.algebra.AlgebraOps._
 import optimus.optimization.SolverLib.SolverLib
 import optimus.optimization.enums.ProblemStatus
+import optimus.optimization.model.MPFloatVar
 
 /**
   * A number of 12 products can be produced. Each of them has a set of features,

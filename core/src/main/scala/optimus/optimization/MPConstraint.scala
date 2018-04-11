@@ -1,3 +1,32 @@
+/*
+ *
+ *   /\\\\\
+ *  /\\\///\\\
+ * /\\\/  \///\\\    /\\\\\\\\\     /\\\       /\\\
+ * /\\\      \//\\\  /\\\/////\\\ /\\\\\\\\\\\ \///    /\\\\\  /\\\\\     /\\\    /\\\  /\\\\\\\\\\
+ * \/\\\       \/\\\ \/\\\\\\\\\\ \////\\\////   /\\\  /\\\///\\\\\///\\\ \/\\\   \/\\\ \/\\\//////
+ *  \//\\\      /\\\  \/\\\//////     \/\\\      \/\\\ \/\\\ \//\\\  \/\\\ \/\\\   \/\\\ \/\\\\\\\\\\
+ *    \///\\\  /\\\    \/\\\           \/\\\_/\\  \/\\\ \/\\\  \/\\\  \/\\\ \/\\\   \/\\\ \////////\\\
+ *       \///\\\\\/     \/\\\           \//\\\\\   \/\\\ \/\\\  \/\\\  \/\\\ \//\\\\\\\\\  /\\\\\\\\\\
+ *          \/////       \///             \/////    \///  \///   \///   \///  \/////////   \//////////
+ *
+ * Copyright (C) 2014 Evangelos Michelioudakis, Anastasios Skarlatidis
+ *
+ * Optimus is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as published
+ * by the Free Software Foundation, either version 3 of the License,
+ * or (at your option) any later version.
+ *
+ * Optimus is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public
+ * License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with Optimus. If not, see <http://www.gnu.org/licenses/>.
+ *       
+ */
+
 package optimus.optimization
 
 import com.typesafe.scalalogging.StrictLogging
@@ -11,7 +40,7 @@ import scala.util.{Failure, Success, Try}
   * @param constraint the constraint object
   * @param index the index of the constraint in the problem
   */
-class MPConstraint(val problem: AbstractMPProblem, val constraint: Constraint, val index: Int) extends StrictLogging {
+class MPConstraint(val problem: MPModel, val constraint: Constraint, val index: Int) extends StrictLogging {
 
   def check(tol: Double = 10e-6): Boolean = slack match {
     case Success(value) => constraint.operator match {

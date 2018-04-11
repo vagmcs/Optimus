@@ -1,31 +1,29 @@
 /*
  *
- *    /\\\\\
- *   /\\\///\\\
- *  /\\\/  \///\\\    /\\\\\\\\\     /\\\       /\\\
- *  /\\\      \//\\\  /\\\/////\\\ /\\\\\\\\\\\ \///    /\\\\\  /\\\\\     /\\\    /\\\  /\\\\\\\\\\
- *  \/\\\       \/\\\ \/\\\\\\\\\\ \////\\\////   /\\\  /\\\///\\\\\///\\\ \/\\\   \/\\\ \/\\\//////
- *   \//\\\      /\\\  \/\\\//////     \/\\\      \/\\\ \/\\\ \//\\\  \/\\\ \/\\\   \/\\\ \/\\\\\\\\\\
- *     \///\\\  /\\\    \/\\\           \/\\\_/\\  \/\\\ \/\\\  \/\\\  \/\\\ \/\\\   \/\\\ \////////\\\
- *        \///\\\\\/     \/\\\           \//\\\\\   \/\\\ \/\\\  \/\\\  \/\\\ \//\\\\\\\\\  /\\\\\\\\\\
- *           \/////       \///             \/////    \///  \///   \///   \///  \/////////   \//////////
+ *   /\\\\\
+ *  /\\\///\\\
+ * /\\\/  \///\\\    /\\\\\\\\\     /\\\       /\\\
+ * /\\\      \//\\\  /\\\/////\\\ /\\\\\\\\\\\ \///    /\\\\\  /\\\\\     /\\\    /\\\  /\\\\\\\\\\
+ * \/\\\       \/\\\ \/\\\\\\\\\\ \////\\\////   /\\\  /\\\///\\\\\///\\\ \/\\\   \/\\\ \/\\\//////
+ *  \//\\\      /\\\  \/\\\//////     \/\\\      \/\\\ \/\\\ \//\\\  \/\\\ \/\\\   \/\\\ \/\\\\\\\\\\
+ *    \///\\\  /\\\    \/\\\           \/\\\_/\\  \/\\\ \/\\\  \/\\\  \/\\\ \/\\\   \/\\\ \////////\\\
+ *       \///\\\\\/     \/\\\           \//\\\\\   \/\\\ \/\\\  \/\\\  \/\\\ \//\\\\\\\\\  /\\\\\\\\\\
+ *          \/////       \///             \/////    \///  \///   \///   \///  \/////////   \//////////
  *
- *  Copyright (C) 2014 Evangelos Michelioudakis, Anastasios Skarlatidis
+ * Copyright (C) 2014 Evangelos Michelioudakis, Anastasios Skarlatidis
  *
- *  This file is part of Optimus.
+ * Optimus is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as published
+ * by the Free Software Foundation, either version 3 of the License,
+ * or (at your option) any later version.
  *
- *  Optimus is free software: you can redistribute it and/or modify it
- *  under the terms of the GNU Lesser General Public License as published
- *  by the Free Software Foundation, either version 3 of the License,
- *  or (at your option) any later version.
+ * Optimus is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public
+ * License for more details.
  *
- *  Optimus is distributed in the hope that it will be useful, but WITHOUT
- *  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public
- *  License for more details.
- *
- *  You should have received a copy of the GNU Lesser General Public License
- *  along with Optimus. If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with Optimus. If not, see <http://www.gnu.org/licenses/>.
  *       
  */
 
@@ -64,22 +62,22 @@ package object optimization extends StrictLogging{
   
   // Helper functions to model using an implicit mathematical programming problem
 
-  def add(constraint: Constraint)(implicit problem: AbstractMPProblem) = problem.add(constraint)
+  def add(constraint: Constraint)(implicit problem: MPModel) = problem.add(constraint)
 
-  def subjectTo(constraints: Constraint*)(implicit problem: AbstractMPProblem) = constraints.foreach(add)
+  def subjectTo(constraints: Constraint*)(implicit problem: MPModel) = constraints.foreach(add)
 
   def start(preSolve: PreSolve = PreSolve.DISABLED,
-            timeLimit: Int = Int.MaxValue)(implicit problem: AbstractMPProblem) = problem.start(timeLimit, preSolve)
+            timeLimit: Int = Int.MaxValue)(implicit problem: MPModel) = problem.start(timeLimit, preSolve)
 
-  def minimize(expression: Expression)(implicit problem: AbstractMPProblem) = problem.minimize(expression)
+  def minimize(expression: Expression)(implicit problem: MPModel) = problem.minimize(expression)
 
-  def maximize(expression: Expression)(implicit problem: AbstractMPProblem) = problem.maximize(expression)
+  def maximize(expression: Expression)(implicit problem: MPModel) = problem.maximize(expression)
 
-  def release()(implicit problem: AbstractMPProblem) = problem.release()
+  def release()(implicit problem: MPModel) = problem.release()
 
-  def objectiveValue(implicit problem: AbstractMPProblem) = problem.objectiveValue()
+  def objectiveValue(implicit problem: MPModel) = problem.objectiveValue()
 
-  def status(implicit problem: AbstractMPProblem) = problem.getStatus
+  def status(implicit problem: MPModel) = problem.getStatus
 
-  def checkConstraints(tol: Double = 10e-6)(implicit problem: AbstractMPProblem) = problem.checkConstraints(tol)
+  def checkConstraints(tol: Double = 10e-6)(implicit problem: MPModel) = problem.checkConstraints(tol)
 }
