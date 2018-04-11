@@ -32,6 +32,8 @@ package optimus.optimization
 import com.typesafe.scalalogging.StrictLogging
 import optimus.algebra.Expression
 import optimus.optimization.enums.{PreSolve, ProblemStatus}
+import optimus.optimization.model.MPConstraint
+
 import scala.collection.mutable.ArrayBuffer
 
 /**

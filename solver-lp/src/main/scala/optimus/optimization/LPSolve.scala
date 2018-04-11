@@ -32,6 +32,7 @@ package optimus.optimization
 import lpsolve.LpSolve
 import optimus.algebra._
 import optimus.optimization.enums.{PreSolve, ProblemStatus}
+import optimus.optimization.model.MPConstraint
 
 /*
  *    /\\\\\
