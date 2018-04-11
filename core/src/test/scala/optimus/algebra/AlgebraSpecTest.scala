@@ -32,8 +32,9 @@
 package optimus.algebra
 
 import org.scalatest.{FunSpec, Matchers}
-import optimus.optimization.{LQProblem, MPFloatVar, MPIntVar}
+import optimus.optimization.{LQProblem, MPIntVar}
 import optimus.algebra.AlgebraOps._
+import optimus.optimization.model.{MPFloatVar, MPIntVar}
 
 /**
   * Specification test for algebra.
@@ -45,8 +46,8 @@ final class AlgebraSpecTest extends FunSpec with Matchers {
   // Definition of float variables
   val x = MPFloatVar("x", 0.0, 1.0)
   val y = MPFloatVar("y", 3.5, 100)
-  val z = MPFloatVar("z", unbounded = true)
-  val t = MPFloatVar("t")
+  val z = MPFloatVar("z")
+  val t = MPFloatVar("t", 0)
 
   // Definition of integer variables
   val p = MPIntVar(5 until 10)

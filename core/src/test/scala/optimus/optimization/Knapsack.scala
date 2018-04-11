@@ -35,7 +35,7 @@ import org.scalatest.{FunSpec, Matchers}
 import optimus.algebra.AlgebraOps._
 import optimus.optimization.SolverLib.SolverLib
 import optimus.optimization.enums.ProblemStatus
-
+import optimus.optimization.model.MPIntVar
 import scala.util.Random
 
 /**
@@ -99,8 +99,8 @@ trait Knapsack extends FunSpec with Matchers {
   describe("Knapsack having several random generated items") {
 
     val numOfItems = 1000
-    val weights = Array.tabulate(numOfItems)(i => Random.nextInt(10))
-    val utility = Array.tabulate(numOfItems)(i => Random.nextInt(50))
+    val weights = Array.tabulate(numOfItems)(_ =>Random.nextInt(10))
+    val utility = Array.tabulate(numOfItems)(_ => Random.nextInt(50))
     val capacity = 100
 
     implicit val knapsackProblem: MIProblem = MIProblem(solver)

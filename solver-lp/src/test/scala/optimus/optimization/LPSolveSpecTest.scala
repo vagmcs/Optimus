@@ -32,6 +32,7 @@
 package optimus.optimization
 
 import optimus.optimization.enums.ProblemStatus
+import optimus.optimization.model.{MPFloatVar, MPIntVar}
 import org.scalatest.{FunSpec, Matchers}
 
 /**
@@ -230,7 +231,7 @@ final class LPSolveSpecTest extends FunSpec with Matchers {
 
     minimize(-2 * x + 5 * y)
 
-    val z = MPFloatVar(lp, "z", 80, 170)
+    val z = MPFloatVar("z", 80, 170)
 
     subjectTo (
       z >:= 170,

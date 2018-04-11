@@ -1,31 +1,29 @@
 /*
  *
- *    /\\\\\
- *   /\\\///\\\
- *  /\\\/  \///\\\    /\\\\\\\\\     /\\\       /\\\
- *  /\\\      \//\\\  /\\\/////\\\ /\\\\\\\\\\\ \///    /\\\\\  /\\\\\     /\\\    /\\\  /\\\\\\\\\\
- *  \/\\\       \/\\\ \/\\\\\\\\\\ \////\\\////   /\\\  /\\\///\\\\\///\\\ \/\\\   \/\\\ \/\\\//////
- *   \//\\\      /\\\  \/\\\//////     \/\\\      \/\\\ \/\\\ \//\\\  \/\\\ \/\\\   \/\\\ \/\\\\\\\\\\
- *     \///\\\  /\\\    \/\\\           \/\\\_/\\  \/\\\ \/\\\  \/\\\  \/\\\ \/\\\   \/\\\ \////////\\\
- *        \///\\\\\/     \/\\\           \//\\\\\   \/\\\ \/\\\  \/\\\  \/\\\ \//\\\\\\\\\  /\\\\\\\\\\
- *           \/////       \///             \/////    \///  \///   \///   \///  \/////////   \//////////
+ *   /\\\\\
+ *  /\\\///\\\
+ * /\\\/  \///\\\    /\\\\\\\\\     /\\\       /\\\
+ * /\\\      \//\\\  /\\\/////\\\ /\\\\\\\\\\\ \///    /\\\\\  /\\\\\     /\\\    /\\\  /\\\\\\\\\\
+ * \/\\\       \/\\\ \/\\\\\\\\\\ \////\\\////   /\\\  /\\\///\\\\\///\\\ \/\\\   \/\\\ \/\\\//////
+ *  \//\\\      /\\\  \/\\\//////     \/\\\      \/\\\ \/\\\ \//\\\  \/\\\ \/\\\   \/\\\ \/\\\\\\\\\\
+ *    \///\\\  /\\\    \/\\\           \/\\\_/\\  \/\\\ \/\\\  \/\\\  \/\\\ \/\\\   \/\\\ \////////\\\
+ *       \///\\\\\/     \/\\\           \//\\\\\   \/\\\ \/\\\  \/\\\  \/\\\ \//\\\\\\\\\  /\\\\\\\\\\
+ *          \/////       \///             \/////    \///  \///   \///   \///  \/////////   \//////////
  *
- *  Copyright (C) 2014 Evangelos Michelioudakis, Anastasios Skarlatidis
+ * Copyright (C) 2014 Evangelos Michelioudakis, Anastasios Skarlatidis
  *
- *  This file is part of Optimus.
+ * Optimus is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as published
+ * by the Free Software Foundation, either version 3 of the License,
+ * or (at your option) any later version.
  *
- *  Optimus is free software: you can redistribute it and/or modify it
- *  under the terms of the GNU Lesser General Public License as published
- *  by the Free Software Foundation, either version 3 of the License,
- *  or (at your option) any later version.
+ * Optimus is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public
+ * License for more details.
  *
- *  Optimus is distributed in the hope that it will be useful, but WITHOUT
- *  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public
- *  License for more details.
- *
- *  You should have received a copy of the GNU Lesser General Public License
- *  along with Optimus. If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with Optimus. If not, see <http://www.gnu.org/licenses/>.
  *       
  */
 
@@ -34,15 +32,16 @@ package optimus.optimization
 import com.typesafe.scalalogging.StrictLogging
 import optimus.algebra._
 import optimus.optimization.enums.{PreSolve, ProblemStatus}
+import optimus.optimization.model.MPVar
 import scala.collection.mutable
 import scala.collection.mutable.ArrayBuffer
 
 /**
   * Should define the problem we are about to solve
   */
-abstract class AbstractMPProblem extends StrictLogging {
+abstract class MPModel extends StrictLogging {
 
-  protected val variables = ArrayBuffer[MPVariable]()
+  protected val variables = ArrayBuffer[MPVar]()
   protected val constraints = ArrayBuffer[MPConstraint]()
   protected var solution = mutable.HashMap.empty[Int, Double]
   protected var objective: Expression = null
@@ -56,7 +55,7 @@ abstract class AbstractMPProblem extends StrictLogging {
   protected def instantiateSolver(): MPSolver
 
   // Register a variables to this problem and return a index for it
-  def register(variable: MPVariable) = {
+  def register(variable: MPVar) = {
     variables += variable
     variables.length - 1
   }
@@ -64,7 +63,7 @@ abstract class AbstractMPProblem extends StrictLogging {
   def variable(i: Int) = variables(i)
 
   // Set given variable bounds
-  protected def setVarBounds(variable: MPVariable) = {
+  protected def setVarBounds(variable: MPVar) = {
     if (variable.isUnbounded) {
       solver.setUnboundUpperBound(variable.index)
       solver.setUnboundLowerBound(variable.index)
@@ -91,16 +90,16 @@ abstract class AbstractMPProblem extends StrictLogging {
 
   def getValue(varIndex: Int): Option[Double] = solution.get(varIndex)
 
-  protected def optimize(expression: Expression, minimize: Boolean): AbstractMPProblem = {
+  protected def optimize(expression: Expression, minimize: Boolean): MPModel = {
     reOptimize = false
     objective = expression
     this.minimize = minimize
     this
   }
 
-  def minimize(expression: Expression): AbstractMPProblem = optimize(expression, minimize = true)
+  def minimize(expression: Expression): MPModel = optimize(expression, minimize = true)
 
-  def maximize(expression: Expression): AbstractMPProblem = optimize(expression, minimize = false)
+  def maximize(expression: Expression): MPModel = optimize(expression, minimize = false)
 
   def start(timeLimit: Int = Int.MaxValue, preSolve: PreSolve = PreSolve.DISABLED): Boolean = {
 

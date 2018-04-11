@@ -32,6 +32,7 @@
 package optimus.optimization
 
 import optimus.optimization.enums.ProblemStatus
+import optimus.optimization.model.MPFloatVar
 import org.scalatest.{FunSpec, Matchers}
 
 final class MosekSpecTest extends FunSpec with Matchers {
@@ -143,7 +144,7 @@ final class MosekSpecTest extends FunSpec with Matchers {
 
       minimize(-2 * x + 5 * y)
 
-      val z = MPFloatVar(lp, "z", 80, 170)
+      val z = MPFloatVar("z", 80, 170)
 
       add(z >:= 170)
       add(y >:= -x + 200)
