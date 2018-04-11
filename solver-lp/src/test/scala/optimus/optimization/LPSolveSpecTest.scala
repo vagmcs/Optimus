@@ -32,7 +32,7 @@
 package optimus.optimization
 
 import optimus.optimization.enums.ProblemStatus
-import optimus.optimization.model.{MPFloatVar, MPIntVar}
+import optimus.optimization.model.{MPConstraint, MPFloatVar, MPIntVar}
 import org.scalatest.{FunSpec, Matchers}
 
 /**

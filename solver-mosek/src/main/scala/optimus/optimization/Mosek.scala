@@ -32,6 +32,7 @@ package optimus.optimization
 import mosek._
 import optimus.algebra._
 import optimus.optimization.enums.{PreSolve, ProblemStatus}
+import optimus.optimization.model.MPConstraint
 
 final class Mosek extends MPSolver {
 

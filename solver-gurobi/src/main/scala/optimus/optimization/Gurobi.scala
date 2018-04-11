@@ -59,6 +59,7 @@ package optimus.optimization
 import optimus.algebra._
 import optimus.optimization.enums.{PreSolve, ProblemStatus}
 import gurobi._
+import optimus.optimization.model.MPConstraint
 
 /**
   * Gurobi solver.

@@ -32,7 +32,7 @@ package optimus.optimization
 import com.typesafe.scalalogging.StrictLogging
 import optimus.algebra._
 import optimus.optimization.enums.{PreSolve, ProblemStatus}
-import optimus.optimization.model.MPVar
+import optimus.optimization.model.{MPConstraint, MPVar}
 import scala.collection.mutable
 import scala.collection.mutable.ArrayBuffer
 
@@ -76,7 +76,7 @@ abstract class MPModel extends StrictLogging {
   }
 
   def add(constraint: Constraint): MPConstraint = {
-    val constraintToAdd = new MPConstraint(this, constraint, constraints.size)
+    val constraintToAdd = new MPConstraint(constraint, constraints.size, this)
     constraints += constraintToAdd
     if(reOptimize) solver.addConstraint(constraintToAdd)
     constraintToAdd

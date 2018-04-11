@@ -34,6 +34,7 @@ import org.ojalgo.constant.BigMath
 import org.ojalgo.optimisation.{ExpressionsBasedModel, Optimisation, Variable}
 import optimus.algebra._
 import optimus.optimization.enums.{PreSolve, ProblemStatus}
+import optimus.optimization.model.MPConstraint
 
 /**
   * OJalgo solver.
