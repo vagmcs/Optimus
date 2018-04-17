@@ -32,15 +32,15 @@ package optimus.optimization.enums
 import enumeratum._
 import scala.collection.immutable._
 
-sealed abstract class ProblemStatus(override val entryName: String) extends EnumEntry
+sealed abstract class SolutionStatus(override val entryName: String) extends EnumEntry
 
-object ProblemStatus extends Enum[ProblemStatus] {
+object SolutionStatus extends Enum[SolutionStatus] {
 
-  val values: IndexedSeq[ProblemStatus] = findValues
+  val values: IndexedSeq[SolutionStatus] = findValues
 
-  case object NOT_SOLVED    extends ProblemStatus("Not solved")
-  case object OPTIMAL      extends ProblemStatus("Optimal")
-  case object SUBOPTIMAL   extends ProblemStatus("Suboptimal")
-  case object UNBOUNDED     extends ProblemStatus("Unbounded")
-  case object INFEASIBLE     extends ProblemStatus("Infeasible")
+  case object NOT_SOLVED   extends SolutionStatus("Not solved")
+  case object OPTIMAL      extends SolutionStatus("Optimal")
+  case object SUBOPTIMAL   extends SolutionStatus("Suboptimal")
+  case object UNBOUNDED    extends SolutionStatus("Unbounded")
+  case object INFEASIBLE   extends SolutionStatus("Infeasible")
 }

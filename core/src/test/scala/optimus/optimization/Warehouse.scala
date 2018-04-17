@@ -33,8 +33,7 @@ package optimus.optimization
 
 import org.scalatest.{FunSpec, Matchers}
 import optimus.algebra.AlgebraOps._
-import optimus.optimization.SolverLib.SolverLib
-import optimus.optimization.enums.ProblemStatus
+import optimus.optimization.enums.{SolutionStatus, SolverLib}
 import optimus.optimization.model.{MPFloatVar, MPIntVar}
 
 /**
@@ -56,7 +55,7 @@ trait Warehouse extends FunSpec with Matchers {
 
   describe("Warehouse Problem") {
 
-    implicit val warehouseProblem: MIProblem = MIProblem(solver)
+    implicit val warehouseProblem: MPModel = MPModel(solver)
 
     // Warehouse demand in thousands of units
     val demand = Array(15, 18, 14, 20)
@@ -104,7 +103,7 @@ trait Warehouse extends FunSpec with Matchers {
     start()
 
     it(s"$solver solution should be optimal") {
-      status shouldBe ProblemStatus.OPTIMAL
+      status shouldBe SolutionStatus.OPTIMAL
     }
 
     it(s"$solver objective value should be 210500") {

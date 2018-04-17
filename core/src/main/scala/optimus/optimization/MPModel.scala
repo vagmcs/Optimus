@@ -31,64 +31,91 @@ package optimus.optimization
 
 import com.typesafe.scalalogging.StrictLogging
 import optimus.algebra._
-import optimus.optimization.enums.{PreSolve, ProblemStatus}
+import optimus.common.Measure._
+import optimus.optimization.enums.PreSolve.DISABLED
+import optimus.optimization.enums.{PreSolve, SolutionStatus, SolverLib}
 import optimus.optimization.model.{MPConstraint, MPVar}
+
 import scala.collection.mutable
 import scala.collection.mutable.ArrayBuffer
+import scala.util.Try
 
 /**
-  * Should define the problem we are about to solve
+  * Defines the mathematical programming model we are about to solve.
+  *
+  * @param solverLib a solver library (default is ojSolver)
   */
-abstract class MPModel extends StrictLogging {
+case class MPModel(solverLib: SolverLib = SolverLib.oJSolver) extends StrictLogging {
 
-  protected val variables = ArrayBuffer[MPVar]()
-  protected val constraints = ArrayBuffer[MPConstraint]()
+  protected val variables: ArrayBuffer[MPVar] = ArrayBuffer.empty[MPVar]
+  protected val constraints: ArrayBuffer[MPConstraint] = ArrayBuffer.empty[MPConstraint]
   protected var solution = mutable.HashMap.empty[Int, Double]
-  protected var objective: Expression = null
+  protected var objective: Expression = 0
   protected var minimize = false
   protected var reOptimize = false
 
-  protected lazy val solver: MPSolver = instantiateSolver()
+  protected var solver: MPSolver = SolverFactory.instantiate(solverLib)
 
-  protected var status: ProblemStatus = ProblemStatus.NOT_SOLVED
-
-  protected def instantiateSolver(): MPSolver
-
-  // Register a variables to this problem and return a index for it
-  def register(variable: MPVar) = {
+  /**
+    * Register a variable to the model
+    *
+    * @see [[optimus.optimization.model.MPVar]]
+    *
+    * @param variable an MPVar to register
+    * @return the index of the variable
+    */
+  def register(variable: MPVar): Int = {
     variables += variable
     variables.length - 1
   }
 
-  def variable(i: Int) = variables(i)
-
-  // Set given variable bounds
-  protected def setVarBounds(variable: MPVar) = {
-    if (variable.isUnbounded) {
-      solver.setUnboundUpperBound(variable.index)
-      solver.setUnboundLowerBound(variable.index)
-    }
-    else solver.setBounds(variable.index, variable.lowerBound, variable.upperBound)
+  /**
+    * @see [[optimus.optimization.model.MPVar]]
+    *
+    * @param idx the index of the variable
+    * @return the MPVar on the given index
+    */
+  def variable(idx: Int): Try[MPVar] = Try {
+    variables(idx)
   }
 
-  protected def setVariableProperties() = {
-    variables.foreach(setVarBounds)
-  }
+  /**
+    * @param idx the index of the variable
+    * @return the solution value for the variable
+    */
+  def getVarValue(idx: Int): Option[Double] =
+    solution.get(idx)
 
+
+  /**
+    * @see [[optimus.algebra.Constraint]]
+    *
+    * @param constraint a constraint to add
+    * @return an MPConstraint
+    */
   def add(constraint: Constraint): MPConstraint = {
-    val constraintToAdd = new MPConstraint(constraint, constraints.size, this)
+    val constraintToAdd = MPConstraint(constraint, constraints.size, this)
     constraints += constraintToAdd
-    if(reOptimize) solver.addConstraint(constraintToAdd)
+    if (reOptimize) solver.addConstraint(constraintToAdd)
     constraintToAdd
   }
 
-  protected def addAllConstraints() = {
-    solver.addAllConstraints(constraints)
-  }
+  /**
+    * @return the objective value of the underlying solver
+    */
+  def objectiveValue: Double = solver.objectiveValue.get
 
-  def objectiveValue() = solver.objectiveValue
+  /**
+    * @param expression
+    * @return
+    */
+  def minimize(expression: Expression): MPModel = optimize(expression, minimize = true)
 
-  def getValue(varIndex: Int): Option[Double] = solution.get(varIndex)
+  /**
+    * @param expression
+    * @return
+    */
+  def maximize(expression: Expression): MPModel = optimize(expression, minimize = false)
 
   protected def optimize(expression: Expression, minimize: Boolean): MPModel = {
     reOptimize = false
@@ -97,25 +124,27 @@ abstract class MPModel extends StrictLogging {
     this
   }
 
-  def minimize(expression: Expression): MPModel = optimize(expression, minimize = true)
+  def start(timeLimit: Int = Int.MaxValue, preSolve: PreSolve = DISABLED): Boolean = {
 
-  def maximize(expression: Expression): MPModel = optimize(expression, minimize = false)
+    if (!reOptimize) {
+      solver.buildModel(variables.size)
 
-  def start(timeLimit: Int = Int.MaxValue, preSolve: PreSolve = PreSolve.DISABLED): Boolean = {
+      logger.info("Configuring variables...")
+      for (x <- variables) {
+        if (x.isUnbounded) solver.setDoubleUnbounded(x.index)
+        else solver.setBounds(x.index, x.lowerBound, x.upperBound)
 
-    if(!reOptimize) {
-      solver.buildProblem(constraints.size, variables.size)
+        if (x.isBinary) solver.setBinary(x.index)
+        else if(x.isInteger) solver.setInteger(x.index)
+      }
 
-      logger.info("Configuring variable bounds...")
-      setVariableProperties()
+      measureTime("Objective function added in: ") {
+        solver.setObjective(objective, minimize)
+      }
 
-      logger.info("Adding objective function...")
-      solver.setObjective(objective, minimize)
-
-      logger.info("Creating constraints: ")
-      val start = System.currentTimeMillis()
-      addAllConstraints()
-      logger.info(" in " + (System.currentTimeMillis() - start) + "ms")
+      measureTime("Constraints created in: ") {
+        solver.addAllConstraints(constraints)
+      }
 
       reOptimize = true
     }
@@ -124,23 +153,42 @@ abstract class MPModel extends StrictLogging {
     if (timeLimit < Int.MaxValue)
       solver.setTimeout(timeLimit)
 
-    solveProblem(preSolve)
-    (status == ProblemStatus.OPTIMAL) || (status == ProblemStatus.SUBOPTIMAL)
-  }
-
-  def solveProblem(preSolve: PreSolve) {
     logger.info("Solving...")
-    status = solver.solveProblem(preSolve)
+    val status = solver.solve(preSolve)
 
-    if ( (status == ProblemStatus.OPTIMAL) || (status == ProblemStatus.SUBOPTIMAL) )
-      variables.indices foreach { i => solution(i) = solver.getValue(i) }
+    if ( (status == SolutionStatus.OPTIMAL) || (status == SolutionStatus.SUBOPTIMAL) )
+      variables.indices foreach { i => solution(i) = solver.getVarValue(i) }
 
     logger.info("Solution status is " + status)
+
+    //val status = solveProblem(preSolve)
+    (status == SolutionStatus.OPTIMAL) || (status == SolutionStatus.SUBOPTIMAL)
   }
 
+  def solveProblem(preSolve: PreSolve): SolutionStatus = {
+    logger.info("Solving...")
+    val status = solver.solve(preSolve)
+
+    if ( (status == SolutionStatus.OPTIMAL) || (status == SolutionStatus.SUBOPTIMAL) )
+      variables.indices foreach { i => solution(i) = solver.getVarValue(i) }
+
+    logger.info("Solution status is " + status)
+    status
+  }
+
+  /**
+    * @param tol
+    * @return
+    */
   def checkConstraints(tol: Double = 10e-6): Boolean = constraints.forall(_.check(tol))
 
-  def getStatus: ProblemStatus = status
+  /**
+    * @return
+    */
+  def getStatus: SolutionStatus = solver.solutionStatus
 
-  def release() = solver.release()
+  /**
+    *
+    */
+  def release(): Unit = solver.release()
 }

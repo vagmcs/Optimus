@@ -31,10 +31,9 @@
 
 package optimus.optimization
 
-import optimus.optimization.SolverLib.SolverLib
 import org.scalatest.{FunSpec, Matchers}
 import optimus.algebra.AlgebraOps._
-import optimus.optimization.enums.ProblemStatus
+import optimus.optimization.enums.{SolutionStatus, SolverLib}
 import optimus.optimization.model.MPFloatVar
 
 /**
@@ -49,7 +48,7 @@ trait MaxFlow extends FunSpec with Matchers {
 
   describe("Max flow problem") {
 
-    implicit val maxFlowProblem: LQProblem = LQProblem(solver)
+    implicit val maxFlowProblem: MPModel = MPModel(solver)
 
     val lines = 0 to 7
     val columns = 0 to 8
@@ -76,7 +75,7 @@ trait MaxFlow extends FunSpec with Matchers {
     start()
 
     it(s"$solver solution should be optimal") {
-      status shouldBe ProblemStatus.OPTIMAL
+      status shouldBe SolutionStatus.OPTIMAL
     }
 
     it(s"$solver objective value should be 29") {

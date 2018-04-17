@@ -33,5 +33,5 @@ package object model {
 
   type MPFloatVar = MPVar
 
-  final val UNBOUNDED = Double.PositiveInfinity
+  final val INFINITE = Double.PositiveInfinity
 }

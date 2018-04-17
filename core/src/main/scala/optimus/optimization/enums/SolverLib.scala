@@ -27,30 +27,19 @@
  *       
  */
 
-package optimus
+package optimus.optimization.enums
 
-import optimus.algebra.{Constraint, Expression}
-import optimus.optimization.enums.{PreSolve, SolutionStatus}
-import optimus.optimization.model.MPConstraint
+import enumeratum._
+import scala.collection.immutable._
 
-package object optimization {
+sealed trait SolverLib extends EnumEntry
 
-  def add(constraint: Constraint)(implicit model: MPModel): MPConstraint = model.add(constraint)
+object SolverLib extends Enum[SolverLib] {
 
-  def subjectTo(constraints: Constraint*)(implicit model: MPModel): Unit = constraints.foreach(add)
+  val values: IndexedSeq[SolverLib] = findValues
 
-  def start(preSolve: PreSolve = PreSolve.DISABLED,
-            timeLimit: Int = Int.MaxValue)(implicit model: MPModel): Boolean = model.start(timeLimit, preSolve)
-
-  def minimize(expression: Expression)(implicit model: MPModel): MPModel = model.minimize(expression)
-
-  def maximize(expression: Expression)(implicit model: MPModel): MPModel = model.maximize(expression)
-
-  def release()(implicit model: MPModel): Unit = model.release()
-
-  def objectiveValue(implicit model: MPModel): Double = model.objectiveValue
-
-  def status(implicit model: MPModel): SolutionStatus = model.getStatus
-
-  def checkConstraints(tol: Double = 10e-6)(implicit model: MPModel): Boolean = model.checkConstraints(tol)
+  case object oJSolver  extends SolverLib
+  case object LpSolve   extends SolverLib
+  case object Gurobi    extends SolverLib
+  case object Mosek     extends SolverLib
 }

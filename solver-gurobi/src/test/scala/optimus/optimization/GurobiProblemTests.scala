@@ -31,8 +31,8 @@
 
 package optimus.optimization
 
-import optimus.optimization.SolverLib.SolverLib
+import optimus.optimization.enums.SolverLib
 
-final class GurobiProblemTests extends AllProblemTests {
-  def solver: SolverLib = SolverLib.gurobi
+final class GurobiProblemTests extends ProblemTests {
+  def solver: SolverLib = SolverLib.Gurobi
 }

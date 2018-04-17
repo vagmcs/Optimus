@@ -31,9 +31,8 @@
 
 package optimus.optimization
 
-import optimus.optimization.SolverLib.SolverLib
 import optimus.algebra.AlgebraOps._
-import optimus.optimization.enums.ProblemStatus
+import optimus.optimization.enums.{SolutionStatus, SolverLib}
 import optimus.optimization.model.MPFloatVar
 import org.scalatest.{FunSpec, Matchers}
 
@@ -50,7 +49,7 @@ trait Diet extends FunSpec with Matchers {
 
   def solver: SolverLib
 
-  implicit val dietProblem: LQProblem = LQProblem(solver)
+  implicit val dietProblem: MPModel = MPModel(solver)
 
   case class Nutriment(name: String)
   case class Food(x: MPFloatVar, price: Double, contents: Nutriment => Double)
@@ -85,7 +84,7 @@ trait Diet extends FunSpec with Matchers {
     start()
 
     it(s"$solver solution should be optimal") {
-      status shouldBe ProblemStatus.OPTIMAL
+      status shouldBe SolutionStatus.OPTIMAL
     }
 
     it(s"$solver total utility should be 100 +- 0.2") {

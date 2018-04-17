@@ -31,7 +31,7 @@
 
 package optimus.optimization
 
-import optimus.optimization.enums.{PreSolve, ProblemStatus}
+import optimus.optimization.enums.{PreSolve, SolutionStatus, SolverLib}
 import optimus.optimization.model.{MPConstraint, MPFloatVar, MPIntVar}
 import org.scalatest.{FunSpec, Matchers}
 
@@ -44,7 +44,7 @@ final class OJAlgorithmsSpecTest extends FunSpec with Matchers {
 
   describe("Constant Program (1)") {
 
-    implicit val cp: LQProblem = LQProblem(SolverLib.ojalgo)
+    implicit val cp: MPModel = MPModel(SolverLib.oJSolver)
 
     val x = MPFloatVar("x", 100, 200)
     val y = MPFloatVar("y", 80, 170)
@@ -57,7 +57,7 @@ final class OJAlgorithmsSpecTest extends FunSpec with Matchers {
     start()
 
     it("solution should be optimal") {
-      status shouldBe ProblemStatus.OPTIMAL
+      status shouldBe SolutionStatus.OPTIMAL
     }
 
     it("x should be equal to 100") {
@@ -81,7 +81,7 @@ final class OJAlgorithmsSpecTest extends FunSpec with Matchers {
 
   describe("Constant Program (2)") {
 
-    implicit val cp: LQProblem = LQProblem(SolverLib.ojalgo)
+    implicit val cp: MPModel = MPModel(SolverLib.oJSolver)
 
     val x = MPFloatVar("x", 100, 200)
     val y = MPFloatVar("y", 80, 170)
@@ -94,7 +94,7 @@ final class OJAlgorithmsSpecTest extends FunSpec with Matchers {
     start()
 
     it("solution should be optimal") {
-      status shouldBe ProblemStatus.OPTIMAL
+      status shouldBe SolutionStatus.OPTIMAL
     }
 
     it("x should be equal to 150") {
@@ -120,7 +120,7 @@ final class OJAlgorithmsSpecTest extends FunSpec with Matchers {
 
   describe("Linear Program (1)") {
 
-    implicit val lp: LQProblem = LQProblem(SolverLib.ojalgo)
+    implicit val lp: MPModel = MPModel(SolverLib.oJSolver)
 
     val x = MPFloatVar("x", 100, 200)
     val y = MPFloatVar("y", 80, 170)
@@ -133,7 +133,7 @@ final class OJAlgorithmsSpecTest extends FunSpec with Matchers {
     start(PreSolve.CONSERVATIVE)
 
     it("solution should be optimal") {
-      status shouldBe ProblemStatus.OPTIMAL
+      status shouldBe SolutionStatus.OPTIMAL
     }
 
     it("x should be equal to 100") {
@@ -157,7 +157,7 @@ final class OJAlgorithmsSpecTest extends FunSpec with Matchers {
 
   describe("Linear Program (2)") {
 
-    implicit val lp: LQProblem = LQProblem(SolverLib.ojalgo)
+    implicit val lp: MPModel = MPModel(SolverLib.oJSolver)
 
     val x = MPFloatVar("x", 100, 200)
     val y = MPFloatVar("y", 80, 170)
@@ -170,7 +170,7 @@ final class OJAlgorithmsSpecTest extends FunSpec with Matchers {
     start()
 
     it("solution should be optimal") {
-      status shouldBe ProblemStatus.OPTIMAL
+      status shouldBe SolutionStatus.OPTIMAL
     }
 
     it("x should be equal to 200") {
@@ -194,7 +194,7 @@ final class OJAlgorithmsSpecTest extends FunSpec with Matchers {
 
   describe("Linear Program (3)") {
 
-    implicit val lp: LQProblem = LQProblem(SolverLib.ojalgo)
+    implicit val lp: MPModel = MPModel(SolverLib.oJSolver)
 
     val x = MPFloatVar("x")
     val y = MPFloatVar("y", 80, 170)
@@ -208,7 +208,7 @@ final class OJAlgorithmsSpecTest extends FunSpec with Matchers {
 
     // Solution is infeasible but some solvers consider it dual infeasible
     it("solution should be infeasible") {
-      status should (equal(ProblemStatus.UNBOUNDED) or equal(ProblemStatus.INFEASIBLE))
+      status should (equal(SolutionStatus.UNBOUNDED) or equal(SolutionStatus.INFEASIBLE))
     }
 
     it("x should be None") {
@@ -228,7 +228,7 @@ final class OJAlgorithmsSpecTest extends FunSpec with Matchers {
 
   describe("Linear Program (4)") {
 
-    implicit val lp: LQProblem = LQProblem(SolverLib.ojalgo)
+    implicit val lp: MPModel = MPModel(SolverLib.oJSolver)
 
     val x = MPFloatVar("x", 100, 200)
     val y = MPFloatVar("y", 80, 170)
@@ -245,7 +245,7 @@ final class OJAlgorithmsSpecTest extends FunSpec with Matchers {
     start()
 
     it("solution should be optimal") {
-      status shouldBe ProblemStatus.OPTIMAL
+      status shouldBe SolutionStatus.OPTIMAL
     }
 
     it("x should be equal to 200") {
@@ -273,7 +273,7 @@ final class OJAlgorithmsSpecTest extends FunSpec with Matchers {
 
   describe("Linear Program (5)") {
 
-    implicit val lp: LQProblem = LQProblem(SolverLib.ojalgo)
+    implicit val lp: MPModel = MPModel(SolverLib.oJSolver)
 
     val x = MPFloatVar("x", 0, 10)
     val y = MPFloatVar("y", 0, 10)
@@ -286,7 +286,7 @@ final class OJAlgorithmsSpecTest extends FunSpec with Matchers {
     start()
 
     it("solution should be optimal") {
-      status shouldBe ProblemStatus.OPTIMAL
+      status shouldBe SolutionStatus.OPTIMAL
     }
 
     it("x should be equal to 10") {
@@ -310,7 +310,7 @@ final class OJAlgorithmsSpecTest extends FunSpec with Matchers {
 
   describe("Linear Program (6)") {
 
-    implicit val lp: LQProblem = LQProblem(SolverLib.ojalgo)
+    implicit val lp: MPModel = MPModel(SolverLib.oJSolver)
 
     val x = MPFloatVar("x", 0, 10)
     val y = MPFloatVar("y", 0, 10)
@@ -328,7 +328,7 @@ final class OJAlgorithmsSpecTest extends FunSpec with Matchers {
     start()
 
     it("solution should be optimal") {
-      status shouldBe ProblemStatus.OPTIMAL
+      status shouldBe SolutionStatus.OPTIMAL
     }
 
     it("x should be equal to 10.0") {
@@ -364,7 +364,7 @@ final class OJAlgorithmsSpecTest extends FunSpec with Matchers {
 
   describe("Linear Program (7)") {
 
-    implicit val lp: LQProblem = LQProblem(SolverLib.ojalgo)
+    implicit val lp: MPModel = MPModel(SolverLib.oJSolver)
 
     val x = MPFloatVar("x", 0, Double.PositiveInfinity)
     val y = MPFloatVar("y", 0, Double.PositiveInfinity)
@@ -384,7 +384,7 @@ final class OJAlgorithmsSpecTest extends FunSpec with Matchers {
     start()
 
     it("solution should be optimal") {
-      status shouldBe ProblemStatus.OPTIMAL
+      status shouldBe SolutionStatus.OPTIMAL
     }
 
     it("x should be equal to 0.0") {
@@ -426,7 +426,7 @@ final class OJAlgorithmsSpecTest extends FunSpec with Matchers {
 
   describe("Linear Program (8)") {
 
-    implicit val lp: LQProblem = LQProblem(SolverLib.ojalgo)
+    implicit val lp: MPModel = MPModel(SolverLib.oJSolver)
 
     val w = MPFloatVar("w", 0, Double.PositiveInfinity)
     val x = MPFloatVar("x", 0, Double.PositiveInfinity)
@@ -443,7 +443,7 @@ final class OJAlgorithmsSpecTest extends FunSpec with Matchers {
     start()
 
     it("solution should be optimal") {
-      status shouldBe ProblemStatus.OPTIMAL
+      status shouldBe SolutionStatus.OPTIMAL
     }
 
     it("x, y and z should be equal to 0.0") {
@@ -485,7 +485,7 @@ final class OJAlgorithmsSpecTest extends FunSpec with Matchers {
       cons(2).isTight() shouldBe true
       cons(3).isTight() shouldBe true
 
-      status shouldEqual ProblemStatus.OPTIMAL
+      status shouldEqual SolutionStatus.OPTIMAL
       checkConstraints() shouldBe true
 
       // Constraint: w - 2x + 4y + 3z >:= 40
@@ -497,7 +497,7 @@ final class OJAlgorithmsSpecTest extends FunSpec with Matchers {
       y.value.get shouldEqual 8.33 +- 1e-2
       z.value.get shouldEqual 10.0 +- 1e-2
       objectiveValue shouldBe (113.33 +- 1e-2)
-      status shouldBe ProblemStatus.OPTIMAL
+      status shouldBe SolutionStatus.OPTIMAL
       checkConstraints() shouldBe true
 
       cons(0).isTight() shouldBe true
@@ -513,7 +513,7 @@ final class OJAlgorithmsSpecTest extends FunSpec with Matchers {
 
   describe("Linear Program (9)") {
 
-    implicit val lp: LQProblem = LQProblem(SolverLib.ojalgo)
+    implicit val lp: MPModel = MPModel(SolverLib.oJSolver)
 
     val x = MPFloatVar("x", 0, 10)
 
@@ -525,7 +525,7 @@ final class OJAlgorithmsSpecTest extends FunSpec with Matchers {
     start()
 
     it("solution should be optimal") {
-      status shouldBe ProblemStatus.OPTIMAL
+      status shouldBe SolutionStatus.OPTIMAL
     }
 
     it("x should be equal to 1.0") {
@@ -543,7 +543,7 @@ final class OJAlgorithmsSpecTest extends FunSpec with Matchers {
 
   describe("Mixed-Integer Program (1)") {
 
-    implicit val mip: MIProblem = MIProblem(SolverLib.ojalgo)
+    implicit val mip: MPModel = MPModel(SolverLib.oJSolver)
 
     val x0 = MPFloatVar("x0", 0, 40)
     val x1 = MPIntVar("x1", 0 to 1000)
@@ -561,7 +561,7 @@ final class OJAlgorithmsSpecTest extends FunSpec with Matchers {
     start()
 
     it("solution should be optimal") {
-      status shouldBe ProblemStatus.OPTIMAL
+      status shouldBe SolutionStatus.OPTIMAL
     }
 
     it("x0 should be equal to 39.9") {
@@ -589,7 +589,7 @@ final class OJAlgorithmsSpecTest extends FunSpec with Matchers {
 
   describe("Mixed-Integer Program (2)") {
 
-    implicit val mip: MIProblem = MIProblem(SolverLib.ojalgo)
+    implicit val mip: MPModel = MPModel(SolverLib.oJSolver)
 
     val x = MPFloatVar("x", 0, 100)
     val y = MPIntVar("y", 0 to 100)
@@ -601,7 +601,7 @@ final class OJAlgorithmsSpecTest extends FunSpec with Matchers {
     start()
 
     it("solution should be optimal") {
-      status shouldBe ProblemStatus.OPTIMAL
+      status shouldBe SolutionStatus.OPTIMAL
     }
 
     it("x should be equal to 8") {
@@ -621,7 +621,7 @@ final class OJAlgorithmsSpecTest extends FunSpec with Matchers {
 
   describe("Mixed-Integer Program (3)") {
 
-    implicit val mip: MIProblem = MIProblem(SolverLib.ojalgo)
+    implicit val mip: MPModel = MPModel(SolverLib.oJSolver)
 
     val x = Array.tabulate(6)(j => MPIntVar(s"x$j", 0 to 1))
 
@@ -640,7 +640,7 @@ final class OJAlgorithmsSpecTest extends FunSpec with Matchers {
     start()
 
     it("solution should be optimal") {
-      status shouldBe ProblemStatus.OPTIMAL
+      status shouldBe SolutionStatus.OPTIMAL
     }
 
     it("objective value should be equal to 11") {
@@ -654,7 +654,7 @@ final class OJAlgorithmsSpecTest extends FunSpec with Matchers {
 
   describe("Quadratic Program (1)") {
 
-    implicit val qp: LQProblem = LQProblem(SolverLib.ojalgo)
+    implicit val qp: MPModel = MPModel(SolverLib.oJSolver)
 
     var cons = Vector.empty[MPConstraint]
 
@@ -669,7 +669,7 @@ final class OJAlgorithmsSpecTest extends FunSpec with Matchers {
     start()
 
     it("solution should be optimal") {
-      status shouldBe ProblemStatus.OPTIMAL
+      status shouldBe SolutionStatus.OPTIMAL
     }
 
     it("objective value should be equal to -31") {
@@ -699,7 +699,7 @@ final class OJAlgorithmsSpecTest extends FunSpec with Matchers {
 
   describe("Quadratic Program (2)") {
 
-    implicit val qp: LQProblem = LQProblem(SolverLib.ojalgo)
+    implicit val qp: MPModel = MPModel(SolverLib.oJSolver)
 
     var cons = Vector.empty[MPConstraint]
 
@@ -715,7 +715,7 @@ final class OJAlgorithmsSpecTest extends FunSpec with Matchers {
     start()
 
     it("solution should be optimal") {
-      status shouldBe ProblemStatus.OPTIMAL
+      status shouldBe SolutionStatus.OPTIMAL
     }
 
     it("objective value should be equal to 1.87") {
@@ -747,7 +747,7 @@ final class OJAlgorithmsSpecTest extends FunSpec with Matchers {
 
   describe("Quadratic Program (3)") {
 
-    implicit val qp: LQProblem = LQProblem(SolverLib.ojalgo)
+    implicit val qp: MPModel = MPModel(SolverLib.oJSolver)
 
     var cons = Vector.empty[MPConstraint]
 
@@ -763,7 +763,7 @@ final class OJAlgorithmsSpecTest extends FunSpec with Matchers {
     start()
 
     it("solution should be optimal") {
-      status shouldBe ProblemStatus.OPTIMAL
+      status shouldBe SolutionStatus.OPTIMAL
     }
 
     it("objective value should be equal to 1.87") {
@@ -795,7 +795,7 @@ final class OJAlgorithmsSpecTest extends FunSpec with Matchers {
 
   describe("Quadratic Program (4)") {
 
-    implicit val qp: LQProblem = LQProblem(SolverLib.ojalgo)
+    implicit val qp: MPModel = MPModel(SolverLib.oJSolver)
 
     val x = MPFloatVar("x", 0, Double.PositiveInfinity)
     val y = MPFloatVar("y", 0, Double.PositiveInfinity)
@@ -811,7 +811,7 @@ final class OJAlgorithmsSpecTest extends FunSpec with Matchers {
     start()
 
     it("solution should be optimal") {
-      status shouldBe ProblemStatus.OPTIMAL
+      status shouldBe SolutionStatus.OPTIMAL
     }
 
     it("objective value should be equal to -31") {
@@ -835,7 +835,7 @@ final class OJAlgorithmsSpecTest extends FunSpec with Matchers {
 
   describe("Quadratic Program (5)") {
 
-    implicit val qp: LQProblem = LQProblem(SolverLib.ojalgo)
+    implicit val qp: MPModel = MPModel(SolverLib.oJSolver)
 
     val w0 = MPFloatVar("w0", Double.NegativeInfinity, Double.PositiveInfinity)
     val w1 = MPFloatVar("w1", Double.NegativeInfinity, Double.PositiveInfinity)
@@ -848,7 +848,7 @@ final class OJAlgorithmsSpecTest extends FunSpec with Matchers {
     start()
 
     it("solution should be optimal") {
-      status shouldBe ProblemStatus.OPTIMAL
+      status shouldBe SolutionStatus.OPTIMAL
     }
 
     it("objective value should be equal to 32") {
@@ -877,7 +877,7 @@ final class OJAlgorithmsSpecTest extends FunSpec with Matchers {
       add(-2.0*w1 + -2.0*w0 + 6.0*w2 + 0.0 >:= -1.0*slack + 6.0)
       start()
 
-      status shouldBe ProblemStatus.OPTIMAL
+      status shouldBe SolutionStatus.OPTIMAL
       objectiveValue shouldBe 214.25 +- 1e-2
 
       w0.value.get shouldEqual -13.5 +- 1e-2

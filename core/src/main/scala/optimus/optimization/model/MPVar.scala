@@ -52,7 +52,7 @@ class MPVar private[optimization](val lowerBound: Double,
   /**
     * @return the value of the variable (integer rounded if the variable is integer).
     */
-  def value: Option[Double] = model.getValue(index)
+  def value: Option[Double] = model.getVarValue(index)
 
   /**
     * @return the bounds of the variable (lower, upper)
@@ -73,7 +73,7 @@ class MPVar private[optimization](val lowerBound: Double,
     * @return true if the variable is unbounded, false otherwise.
     */
   def isUnbounded: Boolean =
-    lowerBound == UNBOUNDED && upperBound == UNBOUNDED
+    lowerBound == INFINITE && upperBound == INFINITE
 
   /**
     * @return a textual representation of the variable along its domain
@@ -91,7 +91,7 @@ object MPFloatVar {
     * @return an unbounded and anonymous float variable
     */
   def apply()(implicit model: MPModel) =
-    new MPFloatVar(UNBOUNDED, UNBOUNDED, ANONYMOUS)
+    new MPFloatVar(INFINITE, INFINITE, ANONYMOUS)
 
   /**
     * @see [[optimus.optimization.model.MPVar]]
@@ -100,7 +100,7 @@ object MPFloatVar {
     * @return an unbounded float variable
     */
   def apply(symbol: String)(implicit model: MPModel) =
-    new MPFloatVar(UNBOUNDED, UNBOUNDED, symbol)
+    new MPFloatVar(INFINITE, INFINITE, symbol)
 
   /**
     * @see [[optimus.optimization.model.MPVar]]
@@ -109,7 +109,7 @@ object MPFloatVar {
     * @return a upper unbounded anonymous float variable
     */
   def apply(lowerBound: Double)(implicit model: MPModel) =
-    new MPFloatVar(lowerBound, UNBOUNDED, ANONYMOUS)
+    new MPFloatVar(lowerBound, INFINITE, ANONYMOUS)
 
   /**
     * @see [[optimus.optimization.model.MPVar]]
@@ -119,7 +119,7 @@ object MPFloatVar {
     * @return a upper unbounded float variable
     */
   def apply(symbol: String, lowerBound: Double)(implicit model: MPModel) =
-    new MPFloatVar(lowerBound, UNBOUNDED, symbol)
+    new MPFloatVar(lowerBound, INFINITE, symbol)
 
   /**
     * @see [[optimus.optimization.model.MPVar]]

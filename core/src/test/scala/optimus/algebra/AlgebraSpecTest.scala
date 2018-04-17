@@ -32,16 +32,16 @@
 package optimus.algebra
 
 import org.scalatest.{FunSpec, Matchers}
-import optimus.optimization.{LQProblem, MPIntVar}
+import optimus.optimization.MPModel
 import optimus.algebra.AlgebraOps._
-import optimus.optimization.model.{MPFloatVar, MPIntVar}
+import optimus.optimization.model.{INFINITE, MPFloatVar, MPIntVar}
 
 /**
   * Specification test for algebra.
   */
 final class AlgebraSpecTest extends FunSpec with Matchers {
 
-  implicit val problem: LQProblem = LQProblem()
+  implicit val model: MPModel = MPModel()
 
   // Definition of float variables
   val x = MPFloatVar("x", 0.0, 1.0)
@@ -78,8 +78,8 @@ final class AlgebraSpecTest extends FunSpec with Matchers {
     it("Variable z is float and should be unbounded") {
       z.symbol shouldBe "z"
       z.index shouldEqual 2
-      z.lowerBound shouldEqual Double.PositiveInfinity
-      z.upperBound shouldEqual Double.PositiveInfinity
+      z.lowerBound shouldEqual INFINITE
+      z.upperBound shouldEqual INFINITE
       z.isInteger shouldEqual false
       z.isBinary shouldEqual false
       z.isUnbounded shouldEqual true
@@ -89,7 +89,7 @@ final class AlgebraSpecTest extends FunSpec with Matchers {
       t.symbol shouldEqual "t"
       t.index shouldEqual 3
       t.lowerBound shouldEqual 0.0
-      t.upperBound shouldEqual Double.PositiveInfinity
+      t.upperBound shouldEqual INFINITE
       t.isInteger shouldEqual false
       t.isBinary shouldEqual false
       t.isUnbounded shouldEqual false
@@ -337,6 +337,4 @@ final class AlgebraSpecTest extends FunSpec with Matchers {
       constraint_1.equals(constraint_2) shouldEqual false
     }
   }
-
-  // end specification
 }

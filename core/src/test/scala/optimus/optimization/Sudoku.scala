@@ -33,8 +33,7 @@ package optimus.optimization
 
 import org.scalatest.{FunSpec, Matchers}
 import optimus.algebra.AlgebraOps._
-import optimus.optimization.SolverLib.SolverLib
-import optimus.optimization.enums.ProblemStatus
+import optimus.optimization.enums.{SolutionStatus, SolverLib}
 import optimus.optimization.model.MPIntVar
 
 /**
@@ -50,7 +49,7 @@ trait Sudoku extends FunSpec with Matchers {
 
   describe("9 x 9 Sudoku Problem") {
 
-    implicit val sdkProblem: MIProblem = MIProblem(solver)
+    implicit val sdkProblem: MPModel = MPModel(solver)
 
     val n = 9
     val N = 0 until n
@@ -114,7 +113,7 @@ trait Sudoku extends FunSpec with Matchers {
     start()
 
     it(s"$solver solution should be optimal") {
-      status shouldBe ProblemStatus.OPTIMAL
+      status shouldBe SolutionStatus.OPTIMAL
     }
 
     it(s"$solver objective value should be 0") {

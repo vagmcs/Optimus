@@ -33,8 +33,7 @@ package optimus.optimization
 
 import org.scalatest.{FunSpec, Matchers}
 import optimus.algebra.AlgebraOps._
-import optimus.optimization.SolverLib.SolverLib
-import optimus.optimization.enums.ProblemStatus
+import optimus.optimization.enums.{SolutionStatus, SolverLib}
 import optimus.optimization.model.MPIntVar
 import scala.util.Random
 
@@ -58,7 +57,7 @@ trait Knapsack extends FunSpec with Matchers {
     val utility = Array(40, 35, 18, 4, 10, 2)
     val capacity = 100
 
-    implicit val knapsackProblem: MIProblem = MIProblem(solver)
+    implicit val knapsackProblem: MPModel = MPModel(solver)
 
     val items = Array.tabulate(weights.length) { i =>
       Item(weights(i), utility(i), MPIntVar(s"x$i", 0 to 1))
@@ -78,7 +77,7 @@ trait Knapsack extends FunSpec with Matchers {
     val totalWeight = selected.map(item => item.weight).sum
 
     it(s"$solver solution should be optimal") {
-      status shouldBe ProblemStatus.OPTIMAL
+      status shouldBe SolutionStatus.OPTIMAL
     }
 
     it(s"$solver total utility should be 55") {
@@ -99,11 +98,11 @@ trait Knapsack extends FunSpec with Matchers {
   describe("Knapsack having several random generated items") {
 
     val numOfItems = 1000
-    val weights = Array.tabulate(numOfItems)(_ =>Random.nextInt(10))
+    val weights = Array.tabulate(numOfItems)(_ => Random.nextInt(10))
     val utility = Array.tabulate(numOfItems)(_ => Random.nextInt(50))
     val capacity = 100
 
-    implicit val knapsackProblem: MIProblem = MIProblem(solver)
+    implicit val knapsackProblem: MPModel = MPModel(solver)
 
     val items = Array.tabulate(weights.length) { i =>
       Item(weights(i), utility(i), MPIntVar(s"x$i", 0 to 1))
@@ -123,7 +122,7 @@ trait Knapsack extends FunSpec with Matchers {
     val totalWeight = selected.map(item => item.weight).sum
 
     it(s"$solver solution should be optimal") {
-      status shouldBe ProblemStatus.OPTIMAL
+      status shouldBe SolutionStatus.OPTIMAL
     }
 
     info(s"$solver total utility is $objectiveValue")

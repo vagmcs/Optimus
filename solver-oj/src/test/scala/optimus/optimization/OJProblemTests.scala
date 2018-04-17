@@ -31,8 +31,8 @@
 
 package optimus.optimization
 
-import optimus.optimization.SolverLib.SolverLib
+import optimus.optimization.enums.SolverLib
 
-final class OJProblemTests extends AllProblemTests {
-  def solver: SolverLib = SolverLib.ojalgo
+final class OJProblemTests extends ProblemTests {
+  def solver: SolverLib = SolverLib.oJSolver
 }

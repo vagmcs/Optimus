@@ -29,72 +29,48 @@
 
 package optimus.optimization
 
-import optimus.optimization.SolverLib._
+import com.typesafe.scalalogging.StrictLogging
+import optimus.optimization.enums.SolverLib
+import optimus.optimization.enums.SolverLib._
+
 import scala.util.{Success, Try}
 
-object SolverFactory {
-  def instantiate(solverLib: SolverLib) = solverLib match {
-    case SolverLib.gurobi =>
+object SolverFactory extends StrictLogging {
+
+  lazy val solvers: List[SolverLib] =
+    List(LpSolve, oJSolver, Gurobi, Mosek).filter(canInstantiateSolver(_).isSuccess)
+
+  lazy val quadraticSolvers: List[SolverLib] =
+    List(oJSolver, Gurobi, Mosek).filter(canInstantiateSolver(_).isSuccess)
+
+  // Checks if the given solver can be ran on this system
+  private[optimization] def canInstantiateSolver(s: SolverLib): Try[MPSolver] = Try {
+    SolverFactory.instantiate(s)
+  }
+
+  def instantiate(solver: SolverLib): MPSolver = solver match {
+    case Gurobi =>
       Try(Class.forName("optimus.optimization.Gurobi")) match {
-        case Success(c) => c.newInstance().asInstanceOf[MPSolver]
+        case Success(c) => c.newInstance.asInstanceOf[MPSolver]
         case _ => sys.error("Gurobi dependency is missing.")
       }
 
-    case SolverLib.mosek =>
+    case Mosek =>
       Try(Class.forName("optimus.optimization.Mosek")) match {
-        case Success(c) => c.newInstance().asInstanceOf[MPSolver]
+        case Success(c) => c.newInstance.asInstanceOf[MPSolver]
         case _ => sys.error("Mosek dependency is missing.")
       }
 
-    case SolverLib.lp_solve => 
+    case LpSolve =>
       Try(Class.forName("optimus.optimization.LPSolve")) match {
-        case Success(c) => c.newInstance().asInstanceOf[MPSolver]
+        case Success(c) => c.newInstance.asInstanceOf[MPSolver]
         case _ => sys.error("LPSolve dependency is missing.")
       }
 
-    case _ => 
-      Try(Class.forName("optimus.optimization.OJalgo")) match {
-        case Success(c) => c.newInstance().asInstanceOf[MPSolver]
-        case _ => sys.error("OJalgo dependency is missing.")
+    case _ =>
+      Try(Class.forName("optimus.optimization.oJSolver")) match {
+        case Success(c) => c.newInstance.asInstanceOf[MPSolver]
+        case _ => sys.error("ojSolver dependency is missing.")
       }
   }
-}
-
-/**
-  * A Linear-Quadratic problem. Can be solved using one of the supported
-  * solvers (LPSolve, ojalgo, Gurobi or Mosek).
-  *
-  * @param solverLib solver library type
-  */
-class LQProblem private[optimization](solverLib: SolverLib = SolverLib.ojalgo) extends MPModel {
-
-  override protected def instantiateSolver(): MPSolver = SolverFactory.instantiate(solverLib)
-}
-
-object LQProblem {
-  def apply(solverLib: SolverLib = SolverLib.ojalgo): LQProblem = new LQProblem(solverLib)
-}
-
-/**
-  * A Mixed-Integer problem. Can be solved using one of the supported
-  * solvers (LPSolve, ojalgo, Gurobi or Mosek).
-  *
-  * @param solverLib solver library type
-  */
-class MIProblem private[optimization](solverLib: SolverLib = SolverLib.ojalgo) extends MPModel {
-
-  override protected def instantiateSolver(): MPSolver = SolverFactory.instantiate(solverLib)
-
-  override protected def setVariableProperties() = {
-    super.setVariableProperties()
-
-    for (x <- variables) {
-      if(x.isBinary) solver.setBinary(x.index)
-      else if(x.isInteger) solver.setInteger(x.index)
-    }
-  }
-}
-
-object MIProblem {
-  def apply(solverLib: SolverLib = SolverLib.ojalgo): MIProblem = new MIProblem(solverLib)
 }
