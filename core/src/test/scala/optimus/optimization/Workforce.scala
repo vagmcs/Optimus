@@ -33,8 +33,7 @@ package optimus.optimization
 
 import org.scalatest.{FunSpec, Matchers}
 import optimus.algebra.AlgebraOps._
-import optimus.optimization.SolverLib.SolverLib
-import optimus.optimization.enums.ProblemStatus
+import optimus.optimization.enums.{SolutionStatus, SolverLib}
 import optimus.optimization.model.MPIntVar
 
 /**
@@ -48,7 +47,7 @@ trait Workforce extends FunSpec with Matchers {
 
   describe("Workforce Problem") {
 
-    implicit val workforceProblem: MIProblem = MIProblem(solver)
+    implicit val workforceProblem: MPModel = MPModel(solver)
 
     val shifts = 0 to 13
     val workers = 0 to 6
@@ -85,7 +84,7 @@ trait Workforce extends FunSpec with Matchers {
     start()
 
     it(s"$solver solution should be optimal") {
-      status shouldBe ProblemStatus.OPTIMAL
+      status shouldBe SolutionStatus.OPTIMAL
     }
 
     it(s"$solver objective value should be 428") {

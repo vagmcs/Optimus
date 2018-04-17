@@ -31,7 +31,7 @@
 
 package optimus.optimization
 
-import optimus.optimization.SolverLib.SolverLib
+import optimus.optimization.enums.SolverLib
 
 /**
   * A set of MIP problem tests that should be implemented
@@ -63,7 +63,7 @@ trait LPProblemTests
   * A set of all the above problem tests that should be implemented
   * by any LP/MIP solver to test their proper functionality.
   */
-trait AllProblemTests
+trait ProblemTests
   extends LPProblemTests
   with MIPProblemTests {
 

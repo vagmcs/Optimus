@@ -31,7 +31,7 @@
 
 package optimus.optimization
 
-import optimus.optimization.enums.ProblemStatus
+import optimus.optimization.enums.{SolutionStatus, SolverLib}
 import optimus.optimization.model.{MPConstraint, MPFloatVar, MPIntVar}
 import org.scalatest.{FunSpec, Matchers}
 
@@ -42,7 +42,7 @@ final class LPSolveSpecTest extends FunSpec with Matchers {
 
   describe("Constant Program (1)") {
 
-    implicit val cp: LQProblem = LQProblem(SolverLib.lp_solve)
+    implicit val cp: MPModel = MPModel(SolverLib.LpSolve)
 
     val x = MPFloatVar("x", 100, 200)
     val y = MPFloatVar("y", 80, 170)
@@ -55,7 +55,7 @@ final class LPSolveSpecTest extends FunSpec with Matchers {
     start()
 
     it("solution should be optimal") {
-      status shouldBe ProblemStatus.OPTIMAL
+      status shouldBe SolutionStatus.OPTIMAL
     }
 
     it("x should be equal to 100") {
@@ -79,7 +79,7 @@ final class LPSolveSpecTest extends FunSpec with Matchers {
 
   describe("Constant Program (2)") {
 
-    implicit val cp: LQProblem = LQProblem(SolverLib.lp_solve)
+    implicit val cp: MPModel = MPModel(SolverLib.LpSolve)
 
     val x = MPFloatVar("x", 100, 200)
     val y = MPFloatVar("y", 80, 170)
@@ -92,7 +92,7 @@ final class LPSolveSpecTest extends FunSpec with Matchers {
     start()
 
     it("solution should be optimal") {
-      status shouldBe ProblemStatus.OPTIMAL
+      status shouldBe SolutionStatus.OPTIMAL
     }
 
     it("x should be equal to 150") {
@@ -116,7 +116,7 @@ final class LPSolveSpecTest extends FunSpec with Matchers {
 
   describe("Linear Program (1)") {
 
-    implicit val lp: LQProblem = LQProblem(SolverLib.lp_solve)
+    implicit val lp: MPModel = MPModel(SolverLib.LpSolve)
 
     val x = MPFloatVar("x", 100, 200)
     val y = MPFloatVar("y", 80, 170)
@@ -129,7 +129,7 @@ final class LPSolveSpecTest extends FunSpec with Matchers {
     start()
 
     it("solution should be optimal") {
-      status shouldBe ProblemStatus.OPTIMAL
+      status shouldBe SolutionStatus.OPTIMAL
     }
 
     it("x should be equal to 100") {
@@ -153,7 +153,7 @@ final class LPSolveSpecTest extends FunSpec with Matchers {
 
   describe("Linear Program (2)") {
 
-    implicit val lp: LQProblem = LQProblem(SolverLib.lp_solve)
+    implicit val lp: MPModel = MPModel(SolverLib.LpSolve)
 
     val x = MPFloatVar("x", 100, 200)
     val y = MPFloatVar("y", 80, 170)
@@ -166,7 +166,7 @@ final class LPSolveSpecTest extends FunSpec with Matchers {
     start()
 
     it("solution should be optimal") {
-      status shouldBe ProblemStatus.OPTIMAL
+      status shouldBe SolutionStatus.OPTIMAL
     }
 
     it("x should be equal to 200") {
@@ -190,7 +190,7 @@ final class LPSolveSpecTest extends FunSpec with Matchers {
 
   describe("Linear Program (3)") {
 
-    implicit val lp: LQProblem = LQProblem(SolverLib.lp_solve)
+    implicit val lp: MPModel = MPModel(SolverLib.LpSolve)
 
     val x = MPFloatVar("x")
     val y = MPFloatVar("y", 80, 170)
@@ -204,7 +204,7 @@ final class LPSolveSpecTest extends FunSpec with Matchers {
 
     // Solution is infeasible but some solvers consider it dual infeasible
     it("solution should be infeasible") {
-      status should (equal(ProblemStatus.UNBOUNDED) or equal(ProblemStatus.INFEASIBLE))
+      status should (equal(SolutionStatus.UNBOUNDED) or equal(SolutionStatus.INFEASIBLE))
     }
 
     it("x should be None") {
@@ -224,7 +224,7 @@ final class LPSolveSpecTest extends FunSpec with Matchers {
 
   describe("Linear Program (4)") {
 
-    implicit val lp: LQProblem = LQProblem(SolverLib.lp_solve)
+    implicit val lp: MPModel = MPModel(SolverLib.LpSolve)
 
     val x = MPFloatVar("x", 100, 200)
     val y = MPFloatVar("y", 80, 170)
@@ -241,7 +241,7 @@ final class LPSolveSpecTest extends FunSpec with Matchers {
     start()
 
     it("solution should be optimal") {
-      status shouldBe ProblemStatus.OPTIMAL
+      status shouldBe SolutionStatus.OPTIMAL
     }
 
     it("x should be equal to 200") {
@@ -269,7 +269,7 @@ final class LPSolveSpecTest extends FunSpec with Matchers {
 
   describe("Linear Program (5)") {
 
-    implicit val lp: LQProblem = LQProblem(SolverLib.lp_solve)
+    implicit val lp: MPModel = MPModel(SolverLib.LpSolve)
 
     val x = MPFloatVar("x", 0, 10)
     val y = MPFloatVar("y", 0, 10)
@@ -282,7 +282,7 @@ final class LPSolveSpecTest extends FunSpec with Matchers {
     start()
 
     it("solution should be optimal") {
-      status shouldBe ProblemStatus.OPTIMAL
+      status shouldBe SolutionStatus.OPTIMAL
     }
 
     it("x should be equal to 10") {
@@ -306,7 +306,7 @@ final class LPSolveSpecTest extends FunSpec with Matchers {
 
   describe("Linear Program (6)") {
 
-    implicit val lp: LQProblem = LQProblem(SolverLib.lp_solve)
+    implicit val lp: MPModel = MPModel(SolverLib.LpSolve)
 
     val x = MPFloatVar("x", 0, 10)
     val y = MPFloatVar("y", 0, 10)
@@ -324,7 +324,7 @@ final class LPSolveSpecTest extends FunSpec with Matchers {
     start()
 
     it("solution should be optimal") {
-      status shouldBe ProblemStatus.OPTIMAL
+      status shouldBe SolutionStatus.OPTIMAL
     }
 
     it("x should be equal to 10.0") {
@@ -360,7 +360,7 @@ final class LPSolveSpecTest extends FunSpec with Matchers {
 
   describe("Linear Program (7)") {
 
-    implicit val lp: LQProblem = LQProblem(SolverLib.lp_solve)
+    implicit val lp: MPModel = MPModel(SolverLib.LpSolve)
 
     val x = MPFloatVar("x", 0, Double.PositiveInfinity)
     val y = MPFloatVar("y", 0, Double.PositiveInfinity)
@@ -380,7 +380,7 @@ final class LPSolveSpecTest extends FunSpec with Matchers {
     start()
 
     it("solution should be optimal") {
-      status shouldBe ProblemStatus.OPTIMAL
+      status shouldBe SolutionStatus.OPTIMAL
     }
 
     it("x should be equal to 0.0") {
@@ -422,7 +422,7 @@ final class LPSolveSpecTest extends FunSpec with Matchers {
 
   describe("Linear Program (8)") {
 
-    implicit val lp: LQProblem = LQProblem(SolverLib.lp_solve)
+    implicit val lp: MPModel = MPModel(SolverLib.LpSolve)
 
     val w = MPFloatVar("w", 0, Double.PositiveInfinity)
     val x = MPFloatVar("x", 0, Double.PositiveInfinity)
@@ -439,7 +439,7 @@ final class LPSolveSpecTest extends FunSpec with Matchers {
     start()
 
     it("solution should be optimal") {
-      status shouldBe ProblemStatus.OPTIMAL
+      status shouldBe SolutionStatus.OPTIMAL
     }
 
     it("x, y and z should be equal to 0.0") {
@@ -480,7 +480,7 @@ final class LPSolveSpecTest extends FunSpec with Matchers {
       cons(2).isTight() shouldBe true
       cons(3).isTight() shouldBe true
 
-      status shouldEqual ProblemStatus.OPTIMAL
+      status shouldEqual SolutionStatus.OPTIMAL
       checkConstraints() shouldBe true
 
       // Constraint: w - 2x + 4y + 3z >:= 40
@@ -492,7 +492,7 @@ final class LPSolveSpecTest extends FunSpec with Matchers {
       y.value.get should equal(8.33 +- 1e-2)
       z.value.get should equal(10.0 +- 1e-2)
       objectiveValue shouldBe (113.33 +- 1e-2)
-      status should equal(ProblemStatus.OPTIMAL)
+      status should equal(SolutionStatus.OPTIMAL)
       checkConstraints() shouldBe true
 
       cons(0).isTight() shouldBe true
@@ -510,7 +510,7 @@ final class LPSolveSpecTest extends FunSpec with Matchers {
 
   describe("Mixed-Integer Program (1)") {
 
-    implicit val mip: MIProblem = MIProblem(SolverLib.lp_solve)
+    implicit val mip: MPModel = MPModel(SolverLib.LpSolve)
 
     val x0 = MPFloatVar("x0", 0, 40)
     val x1 = MPIntVar("x1", 0 to 1000)
@@ -528,7 +528,7 @@ final class LPSolveSpecTest extends FunSpec with Matchers {
     start()
 
     it("solution should be optimal") {
-      status shouldBe ProblemStatus.OPTIMAL
+      status shouldBe SolutionStatus.OPTIMAL
     }
 
     it("x0 should be equal to 39.9") {
@@ -556,7 +556,7 @@ final class LPSolveSpecTest extends FunSpec with Matchers {
 
   describe("Mixed-Integer Program (2)") {
 
-    implicit val mip: MIProblem = MIProblem(SolverLib.lp_solve)
+    implicit val mip: MPModel = MPModel(SolverLib.LpSolve)
 
     val x = MPFloatVar("x", 0, 100)
     val y = MPIntVar("y", 0 to 100)
@@ -568,7 +568,7 @@ final class LPSolveSpecTest extends FunSpec with Matchers {
     start()
 
     it("solution should be optimal") {
-      status shouldBe ProblemStatus.OPTIMAL
+      status shouldBe SolutionStatus.OPTIMAL
     }
 
     it("x should be equal to 8") {
@@ -588,7 +588,7 @@ final class LPSolveSpecTest extends FunSpec with Matchers {
 
   describe("Mixed-Integer Program (3)") {
 
-    implicit val mip: MIProblem = MIProblem(SolverLib.lp_solve)
+    implicit val mip: MPModel = MPModel(SolverLib.LpSolve)
 
     val x = Array.tabulate(6)(j => MPIntVar(s"x$j", 0 to 1))
 
@@ -607,7 +607,7 @@ final class LPSolveSpecTest extends FunSpec with Matchers {
     start()
 
     it("solution should be optimal") {
-      status shouldBe ProblemStatus.OPTIMAL
+      status shouldBe SolutionStatus.OPTIMAL
     }
 
     it("objective value should be equal to 11") {

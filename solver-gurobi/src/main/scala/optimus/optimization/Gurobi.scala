@@ -56,9 +56,9 @@ package optimus.optimization
  * along with this program. If not, see <http://www.gnu.org/licenses/lgpl-3.0.en.html>.
  */
 
-import optimus.algebra._
-import optimus.optimization.enums.{PreSolve, ProblemStatus}
 import gurobi._
+import optimus.algebra._
+import optimus.optimization.enums.{PreSolve, SolutionStatus}
 import optimus.optimization.model.MPConstraint
 
 /**
@@ -66,23 +66,17 @@ import optimus.optimization.model.MPConstraint
   */
 final class Gurobi extends MPSolver {
 
-  var nbRows = 0
-  var nbCols = 0
-  var solution = Array[Double]()
-  var objectiveValue = 0.0
-  var status = ProblemStatus.NOT_SOLVED
+  type Solver = GRBModel
 
-  var env = new GRBEnv()
-  var model = new GRBModel(env)
+  protected var underlyingSolver: Solver = new GRBModel(new GRBEnv())
 
   /**
-   * Problem builder, should configure the solver and append
-   * mathematical model variables.
-   *
-   * @param nbRows rows in the model
-   * @param nbCols number of variables in the model
-   */
-  def buildProblem(nbRows: Int, nbCols: Int) {
+    * Problem builder, should configure the solver and append
+    * mathematical model variables and constraints.
+    *
+    * @param numberOfVars number of variables in the model
+    */
+  def buildModel(numberOfVars: Int): Unit = {
 
     logger.info { "\n" +
         """    _________                   ______ _____  """ + "\n" +
@@ -92,18 +86,19 @@ final class Gurobi extends MPSolver {
         """    \____/  \__._/ /_/    \____//_____//_/    """ + "\n"
     }
 
-    logger.info("Model gurobi: " + nbRows + "x" + nbCols)
+    this.numberOfVars = numberOfVariables
 
-    model.getEnv.set(GRB.IntParam.OutputFlag, 0)
+    underlyingSolver.getEnv.set(GRB.IntParam.OutputFlag, 0)
 
-    this.nbRows = nbRows
-    this.nbCols = nbCols
-    val cols = (1 to nbCols).toArray
+    underlyingSolver.addVars(
+      Array.fill(numberOfVariables)(0),
+      Array.fill(numberOfVariables)(GRB.INFINITY),
+      Array.fill(numberOfVariables)(0),
+      Array.fill(numberOfVariables)(GRB.CONTINUOUS),
+      Array.tabulate(numberOfVariables)(i => s"x$i")
+    )
 
-    model.addVars(cols map (i => 0.0), cols map (i => GRB.INFINITY),
-                  cols map (i => 0.0), cols map (i => GRB.CONTINUOUS), cols map ("x" + _))
-
-    model.update()
+    underlyingSolver.update()
   }
 
   /**
@@ -113,7 +108,7 @@ final class Gurobi extends MPSolver {
    * @param colId position of the variable
    * @return the value of the variable in the solution
    */
-  def getValue(colId: Int): Double = solution(colId)
+  def getVarValue(colId: Int): Double = solution(colId)
 
   /**
    * Set bounds of variable in the specified position.
@@ -122,8 +117,8 @@ final class Gurobi extends MPSolver {
    * @param lower domain lower bound
    * @param upper domain upper bound
    */
-  def setBounds(colId: Int, lower: Double, upper: Double) {
-    val GRBVar = model.getVar(colId)
+  def setBounds(colId: Int, lower: Double, upper: Double): Unit = {
+    val GRBVar = underlyingSolver.getVar(colId)
     GRBVar.set(GRB.DoubleAttr.LB, lower)
     GRBVar.set(GRB.DoubleAttr.UB, upper)
   }
@@ -133,8 +128,8 @@ final class Gurobi extends MPSolver {
    *
    * @param colId position of the variable
    */
-  def setUnboundUpperBound(colId: Int) {
-    model.getVar(colId).set(GRB.DoubleAttr.UB, GRB.INFINITY)
+  def setUnboundUpperBound(colId: Int): Unit = {
+    underlyingSolver.getVar(colId).set(GRB.DoubleAttr.UB, GRB.INFINITY)
   }
 
   /**
@@ -142,8 +137,8 @@ final class Gurobi extends MPSolver {
    *
    * @param colId position of the variable
    */
-  def setUnboundLowerBound(colId: Int) {
-    model.getVar(colId).set(GRB.DoubleAttr.LB, -GRB.INFINITY)
+  def setUnboundLowerBound(colId: Int): Unit = {
+    underlyingSolver.getVar(colId).set(GRB.DoubleAttr.LB, -GRB.INFINITY)
   }
 
   /**
@@ -151,8 +146,8 @@ final class Gurobi extends MPSolver {
    *
    * @param colId position of the variable
    */
-  def setInteger(colId: Int) {
-    model.getVar(colId).set(GRB.CharAttr.VType, GRB.INTEGER)
+  def setInteger(colId: Int): Unit = {
+    underlyingSolver.getVar(colId).set(GRB.CharAttr.VType, GRB.INTEGER)
   }
 
   /**
@@ -160,8 +155,8 @@ final class Gurobi extends MPSolver {
    *
    * @param colId position of the variable
    */
-  def setBinary(colId: Int) {
-    model.getVar(colId).set(GRB.CharAttr.VType, GRB.BINARY)
+  def setBinary(colId: Int): Unit = {
+    underlyingSolver.getVar(colId).set(GRB.CharAttr.VType, GRB.BINARY)
   }
 
   /**
@@ -169,8 +164,8 @@ final class Gurobi extends MPSolver {
    *
    * @param colId position of the variable
    */
-  def setFloat(colId: Int) {
-    model.getVar(colId).set(GRB.CharAttr.VType, GRB.CONTINUOUS)
+  def setFloat(colId: Int): Unit = {
+    underlyingSolver.getVar(colId).set(GRB.CharAttr.VType, GRB.CONTINUOUS)
   }
 
   /**
@@ -179,7 +174,7 @@ final class Gurobi extends MPSolver {
    * @param objective the expression to be optimized
    * @param minimize flag for minimization instead of maximization
    */
-  def setObjective(objective: Expression, minimize: Boolean) = {
+  def setObjective(objective: Expression, minimize: Boolean): Unit = {
 
     objective.getOrder match {
       case ExpressionType.GENERIC => throw new IllegalArgumentException("Higher than quadratic: " + objective)
@@ -190,26 +185,26 @@ final class Gurobi extends MPSolver {
         while(iterator.hasNext) {
           iterator.advance()
           val indexes = decode(iterator.key)
-          if(indexes.length == 1) QExpression.addTerm(iterator.value, model.getVar(indexes.head))
-          else QExpression.addTerm(iterator.value, model.getVar(indexes.head), model.getVar(indexes(1)))
+          if(indexes.length == 1) QExpression.addTerm(iterator.value, underlyingSolver.getVar(indexes.head))
+          else QExpression.addTerm(iterator.value, underlyingSolver.getVar(indexes.head), underlyingSolver.getVar(indexes(1)))
         }
         QExpression.addConstant(objective.constant)
-        model.setObjective(QExpression, if (minimize) 1 else -1)
+        underlyingSolver.setObjective(QExpression, if (minimize) 1 else -1)
 
       case ExpressionType.LINEAR =>
         val LExpression = new GRBLinExpr
-        val variables = objective.terms.keys.map(code => model.getVar(decode(code).head))
+        val variables = objective.terms.keys.map(code => underlyingSolver.getVar(decode(code).head))
         LExpression.addTerms(objective.terms.values, variables)
         LExpression.addConstant(objective.constant)
-        model.setObjective(LExpression, if (minimize) 1 else -1)
+        underlyingSolver.setObjective(LExpression, if (minimize) 1 else -1)
 
       case ExpressionType.CONSTANT =>
         val CExpression = new GRBLinExpr
         CExpression.addConstant(objective.constant)
-        model.setObjective(CExpression, if (minimize) 1 else -1)
+        underlyingSolver.setObjective(CExpression, if (minimize) 1 else -1)
     }
 
-    model.update()
+    underlyingSolver.update()
   }
 
   /**
@@ -217,9 +212,9 @@ final class Gurobi extends MPSolver {
    *
    * @param mpConstraint the mathematical programming constraint
    */
-  def addConstraint(mpConstraint: MPConstraint) = {
+  def addConstraint(mpConstraint: MPConstraint): Unit = {
 
-    nbRows += 1
+    numberOfCons += 1
 
     val lhs = mpConstraint.constraint.lhs - mpConstraint.constraint.rhs
     val rhs = -lhs.constant
@@ -240,19 +235,19 @@ final class Gurobi extends MPSolver {
         while(iterator.hasNext) {
           iterator.advance()
           val indexes = decode(iterator.key)
-          if(indexes.length == 1) QExpression.addTerm(iterator.value, model.getVar(indexes.head))
-          else QExpression.addTerm(iterator.value, model.getVar(indexes.head), model.getVar(indexes(1)))
+          if (indexes.length == 1) QExpression.addTerm(iterator.value, underlyingSolver.getVar(indexes.head))
+          else QExpression.addTerm(iterator.value, underlyingSolver.getVar(indexes.head), underlyingSolver.getVar(indexes(1)))
         }
-        model.addQConstr(QExpression, GRBOperator, rhs, "")
+        underlyingSolver.addQConstr(QExpression, GRBOperator, rhs, "")
 
       case ExpressionType.LINEAR | ExpressionType.CONSTANT =>
         val LExpression = new GRBLinExpr
         val iterator = lhs.terms.iterator
-        while(iterator.hasNext) {
+        while (iterator.hasNext) {
           iterator.advance()
-          LExpression.addTerm(iterator.value, model.getVar(decode(iterator.key).head))
+          LExpression.addTerm(iterator.value, underlyingSolver.getVar(decode(iterator.key).head))
         }
-        model.addConstr(LExpression, GRBOperator, rhs, "")
+        underlyingSolver.addConstr(LExpression, GRBOperator, rhs, "")
     }
   }
 
@@ -261,38 +256,38 @@ final class Gurobi extends MPSolver {
    *
    * @return status code indicating the nature of the solution
    */
-  def solveProblem(preSolve: PreSolve = PreSolve.DISABLED): ProblemStatus = {
+  def solve(preSolve: PreSolve = PreSolve.DISABLED): SolutionStatus = {
 
-    if(preSolve == PreSolve.CONSERVATIVE) model.getEnv.set(GRB.IntParam.Presolve, 1)
-    else if(preSolve == PreSolve.AGGRESSIVE) model.getEnv.set(GRB.IntParam.Presolve, 2)
+    if(preSolve == PreSolve.CONSERVATIVE) underlyingSolver.getEnv.set(GRB.IntParam.Presolve, 1)
+    else if(preSolve == PreSolve.AGGRESSIVE) underlyingSolver.getEnv.set(GRB.IntParam.Presolve, 2)
+
+    underlyingSolver.update()
+    underlyingSolver.optimize()
     
-    model.update()
-    model.optimize()
-    
-    var optimizationStatus = model.get(GRB.IntAttr.Status)
+    var optimizationStatus = underlyingSolver.get(GRB.IntAttr.Status)
 
     if (optimizationStatus == GRB.INF_OR_UNBD) {
-      model.getEnv.set(GRB.IntParam.Presolve, 0)
-      model.optimize()
-      optimizationStatus = model.get(GRB.IntAttr.Status)
-      ProblemStatus.UNBOUNDED
+      underlyingSolver.getEnv.set(GRB.IntParam.Presolve, 0)
+      underlyingSolver.optimize()
+      optimizationStatus = underlyingSolver.get(GRB.IntAttr.Status)
+      SolutionStatus.UNBOUNDED
     }
     else if (optimizationStatus == GRB.OPTIMAL) {
-      solution = Array.tabulate(nbCols)(col => model.getVar(col).get(GRB.DoubleAttr.X))
-      objectiveValue = model.get(GRB.DoubleAttr.ObjVal)
-      ProblemStatus.OPTIMAL
+      _solution = Array.tabulate(numberOfVars)(col => underlyingSolver.getVar(col).get(GRB.DoubleAttr.X))
+      _objectiveValue = Some(underlyingSolver.get(GRB.DoubleAttr.ObjVal))
+      SolutionStatus.OPTIMAL
     }
     else if (optimizationStatus == GRB.INFEASIBLE) {
-      model.computeIIS()
-      ProblemStatus.INFEASIBLE
+      underlyingSolver.computeIIS()
+      SolutionStatus.INFEASIBLE
     }
     else if (optimizationStatus == GRB.UNBOUNDED) {
-      ProblemStatus.UNBOUNDED
+      SolutionStatus.UNBOUNDED
     }
     else {
-      solution = Array.tabulate(nbCols)(col => model.getVar(col).get(GRB.DoubleAttr.X))
+      _solution = Array.tabulate(numberOfVars)(col => underlyingSolver.getVar(col).get(GRB.DoubleAttr.X))
       logger.info("Optimization stopped with status = " + optimizationStatus)
-      ProblemStatus.SUBOPTIMAL
+      SolutionStatus.SUBOPTIMAL
     }
   }
 
@@ -300,10 +295,10 @@ final class Gurobi extends MPSolver {
    * Release memory associated to the problem and the environment as well as
    * the gurobi license.
    */
-  def release() = {
-    model.dispose()
-    env.release()
-    env.dispose()
+  def release(): Unit = {
+    underlyingSolver.dispose()
+    underlyingSolver.getEnv.release()
+    underlyingSolver.getEnv.dispose()
   }
 
   /**
@@ -312,8 +307,8 @@ final class Gurobi extends MPSolver {
    *
    * @param limit the time limit
    */
-  def setTimeout(limit: Int) {
+  def setTimeout(limit: Int): Unit = {
     require(0 <= limit)
-    model.getEnv.set(GRB.DoubleParam.TimeLimit, limit.toDouble)
+    underlyingSolver.getEnv.set(GRB.DoubleParam.TimeLimit, limit.toDouble)
   }
 }

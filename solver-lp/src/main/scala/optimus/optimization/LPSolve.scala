@@ -30,61 +30,31 @@
 package optimus.optimization
 
 import lpsolve.LpSolve
+import optimus.algebra.ExpressionType.{GENERIC, QUADRATIC}
 import optimus.algebra._
-import optimus.optimization.enums.{PreSolve, ProblemStatus}
+import optimus.optimization.enums.{PreSolve, SolutionStatus}
 import optimus.optimization.model.MPConstraint
 
-/*
- *    /\\\\\
- *   /\\\///\\\
- *  /\\\/  \///\\\    /\\\\\\\\\     /\\\       /\\\
- *  /\\\      \//\\\  /\\\/////\\\ /\\\\\\\\\\\ \///    /\\\\\  /\\\\\     /\\\    /\\\  /\\\\\\\\\\
- *  \/\\\       \/\\\ \/\\\\\\\\\\ \////\\\////   /\\\  /\\\///\\\\\///\\\ \/\\\   \/\\\ \/\\\//////
- *   \//\\\      /\\\  \/\\\//////     \/\\\      \/\\\ \/\\\ \//\\\  \/\\\ \/\\\   \/\\\ \/\\\\\\\\\\
- *     \///\\\  /\\\    \/\\\           \/\\\_/\\  \/\\\ \/\\\  \/\\\  \/\\\ \/\\\   \/\\\ \////////\\\
- *        \///\\\\\/     \/\\\           \//\\\\\   \/\\\ \/\\\  \/\\\  \/\\\ \//\\\\\\\\\  /\\\\\\\\\\
- *           \/////       \///             \/////    \///  \///   \///   \///  \/////////   \//////////
- *
- * Copyright (C) 2014 Evangelos Michelioudakis, Anastasios Skarlatidis
- *
- * Optimus is free software: you can redistribute it and/or modify it
- * under the terms of the GNU Lesser General Public License as published
- * by the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * Optimus is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/lgpl-3.0.en.html>.
- */
-
 /**
-  * LPSolve solver.
+  * LpSolve solver.
   */
 final class LPSolve extends MPSolver {
 
-  var lp: LpSolve = null
-  var nbRows = 0
-  var nbCols = 0
-  var solution = Array[Double]()
-  var objectiveValue = 0.0
-  var status = ProblemStatus.NOT_SOLVED
+  type Solver = LpSolve
 
-  private var constantTerm = 0d
+  protected var _objectiveConstant: Double = 0
+  protected var underlyingSolver: Solver = LpSolve.makeLp(0, 0)
 
   /**
-   * Problem builder, should configure the solver and append
-   * mathematical model variables.
-   *
-   * @param nbRows rows in the model
-   * @param nbCols number of variables in the model
-   */
-  def buildProblem(nbRows: Int, nbCols: Int) = {
+    * Problem builder, should configure the solver and append
+    * mathematical model variables and constraints.
+    *
+    * @param numberOfVars number of variables in the model
+    */
+  def buildModel(numberOfVars: Int): Unit = {
 
-    logger.info { "\n" +
+    logger.info {
+      "\n" +
         """  ______________________     ______            """ + "\n" +
         """  ___  /___  __ \_  ___/________  /__   ______ """ + "\n" +
         """  __  / __  /_/ /____ \_  __ \_  /__ | / /  _ \""" + "\n" +
@@ -92,15 +62,11 @@ final class LPSolve extends MPSolver {
         """  /_____/_/     /____/ \____//_/  _____/ \___/ """ + "\n"
     }
 
-    logger.info("Model lpSolve: " + nbRows + "x" + nbCols)
-
-    this.nbRows = 0
-    this.nbCols = nbCols
-
-    lp = LpSolve.makeLp(0, nbCols)
-    lp.setInfinite(Double.MaxValue)
-    lp.setAddRowmode(true)
-    lp.setVerbose(LpSolve.IMPORTANT)
+    this.numberOfVars = numberOfVars
+    underlyingSolver.resizeLp(0, numberOfVars)
+    underlyingSolver.setInfinite(Double.MaxValue)
+    underlyingSolver.setAddRowmode(true)
+    underlyingSolver.setVerbose(LpSolve.IMPORTANT)
   }
 
   /**
@@ -110,8 +76,8 @@ final class LPSolve extends MPSolver {
    * @param colId position of the variable
    * @return the value of the variable in the solution
    */
-  def getValue(colId: Int): Double = {
-    if (solution == null || colId < 0 || colId >= nbCols) 0.0
+  def getVarValue(colId: Int): Double = {
+    if (_solution.isEmpty || colId < 0 || colId >= numberOfVars) 0
     else solution(colId)
   }
 
@@ -122,8 +88,8 @@ final class LPSolve extends MPSolver {
    * @param lower domain lower bound
    * @param upper domain upper bound
    */
-  def setBounds(colId: Int, lower: Double, upper: Double) = {
-    lp.setBounds(colId + 1, lower, upper)
+  def setBounds(colId: Int, lower: Double, upper: Double): Unit = {
+    underlyingSolver.setBounds(colId + 1, lower, upper)
   }
 
   /**
@@ -131,8 +97,8 @@ final class LPSolve extends MPSolver {
    *
    * @param colId position of the variable
    */
-  def setUnboundUpperBound(colId: Int) = {
-    lp.setUpbo(colId + 1, lp.getInfinite)
+  def setUnboundUpperBound(colId: Int): Unit = {
+    underlyingSolver.setUpbo(colId + 1, underlyingSolver.getInfinite)
   }
 
   /**
@@ -140,8 +106,8 @@ final class LPSolve extends MPSolver {
    *
    * @param colId position of the variable
    */
-  def setUnboundLowerBound(colId: Int) = {
-    lp.setLowbo(colId + 1, -lp.getInfinite)
+  def setUnboundLowerBound(colId: Int): Unit = {
+    underlyingSolver.setLowbo(colId + 1, -underlyingSolver.getInfinite)
   }
 
   /**
@@ -149,8 +115,8 @@ final class LPSolve extends MPSolver {
    *
    * @param colId position of the variable
    */
-  def setInteger(colId: Int) {
-    lp.setInt(colId + 1, true)
+  def setInteger(colId: Int): Unit = {
+    underlyingSolver.setInt(colId + 1, true)
   }
 
   /**
@@ -158,8 +124,8 @@ final class LPSolve extends MPSolver {
    *
    * @param colId position of the variable
    */
-  def setBinary(colId: Int) {
-    lp.setBinary(colId + 1, true)
+  def setBinary(colId: Int): Unit = {
+    underlyingSolver.setBinary(colId + 1, true)
   }
 
   /**
@@ -167,8 +133,8 @@ final class LPSolve extends MPSolver {
    *
    * @param colId position of the variable
    */
-  def setFloat(colId: Int) {
-    lp.setInt(colId + 1, false)
+  def setFloat(colId: Int): Unit = {
+    underlyingSolver.setInt(colId + 1, false)
   }
 
   /**
@@ -177,17 +143,16 @@ final class LPSolve extends MPSolver {
    * @param objective the expression to be optimized
    * @param minimize flag for minimization instead of maximization
    */
-  def setObjective(objective: Expression, minimize: Boolean) = {
+  def setObjective(objective: Expression, minimize: Boolean): Unit = {
 
-    if(objective.getOrder == ExpressionType.QUADRATIC || objective.getOrder == ExpressionType.GENERIC)
-        throw new IllegalArgumentException("LPSolve can handle only linear expressions and " + objective + " is higher order!")
+    if (objective.getOrder == QUADRATIC || objective.getOrder == GENERIC)
+      throw new IllegalArgumentException(s"LPSolve can handle only linear expressions and $objective is of higher order!")
 
     val indexes = objective.terms.keys.map(code => decode(code).head + 1)
-    lp.setObjFnex(objective.terms.size, objective.terms.values, indexes)
+    underlyingSolver.setObjFnex(objective.terms.size, objective.terms.values, indexes)
+    _objectiveConstant = objective.constant
 
-    constantTerm = objective.constant
-
-    if (!minimize) lp.setMaxim()
+    if (!minimize) underlyingSolver.setMaxim()
   }
 
   /**
@@ -195,8 +160,8 @@ final class LPSolve extends MPSolver {
    *
    * @param mpConstraint the mathematical programming constraint
    */
-  def addConstraint(mpConstraint: MPConstraint) = {
-    nbRows += 1
+  def addConstraint(mpConstraint: MPConstraint): Unit = {
+    numberOfCons += 1
 
     val lhs = mpConstraint.constraint.lhs - mpConstraint.constraint.rhs
     val operator = mpConstraint.constraint.operator
@@ -208,9 +173,15 @@ final class LPSolve extends MPSolver {
     }
 
     val indexes = lhs.terms.keys.map(code => decode(code).head + 1)
-    lp.addConstraintex(lhs.terms.size, lhs.terms.values,
-                      indexes, LPOperator, -lhs.constant)
-    lp.setRowName(nbRows, "")
+    underlyingSolver.addConstraintex(
+      lhs.terms.size,
+      lhs.terms.values,
+      indexes,
+      LPOperator,
+      -lhs.constant
+    )
+
+    underlyingSolver.setRowName(numberOfCons, ANONYMOUS)
   }
 
   /**
@@ -218,46 +189,48 @@ final class LPSolve extends MPSolver {
    *
    * @return status code indicating the nature of the solution
    */
-  def solveProblem(preSolve: PreSolve = PreSolve.DISABLED): ProblemStatus = {
+  def solve(preSolve: PreSolve = PreSolve.DISABLED): SolutionStatus = {
 
-    if (preSolve == PreSolve.CONSERVATIVE) lp.setPresolve(LpSolve.PRESOLVE_ROWS + LpSolve.PRESOLVE_COLS, 0)
-    else if (preSolve == PreSolve.AGGRESSIVE) lp.setPresolve(LpSolve.PRESOLVE_ROWS + LpSolve.PRESOLVE_COLS + LpSolve.PRESOLVE_LINDEP, 0)
-    
-    lp.setAddRowmode(false)
+    if (preSolve == PreSolve.CONSERVATIVE)
+      underlyingSolver.setPresolve(LpSolve.PRESOLVE_ROWS + LpSolve.PRESOLVE_COLS, 0)
+    else if (preSolve == PreSolve.AGGRESSIVE)
+      underlyingSolver.setPresolve(LpSolve.PRESOLVE_ROWS + LpSolve.PRESOLVE_COLS + LpSolve.PRESOLVE_LINDEP, 0)
 
-    lp.solve match {
+    underlyingSolver.setAddRowmode(false)
+
+    underlyingSolver.solve match {
 
       case LpSolve.OPTIMAL =>
-        solution = Array.tabulate(nbCols)(c => lp.getVarPrimalresult(nbRows + c + 1))
-        objectiveValue = lp.getObjective + constantTerm
-        ProblemStatus.OPTIMAL
+        _solution = Array.tabulate(numberOfVars)(c => underlyingSolver.getVarPrimalresult(numberOfCons + c + 1))
+        _objectiveValue = Some(underlyingSolver.getObjective + _objectiveConstant)
+        SolutionStatus.OPTIMAL
 
       case LpSolve.SUBOPTIMAL =>
-        solution = Array.tabulate(nbCols)(c => lp.getVarPrimalresult(nbRows + c + 1))
-        objectiveValue = lp.getObjective
-        ProblemStatus.SUBOPTIMAL
+        _solution = Array.tabulate(numberOfVars)(c => underlyingSolver.getVarPrimalresult(numberOfCons + c + 1))
+        _objectiveValue = Some(underlyingSolver.getObjective + _objectiveConstant)
+        SolutionStatus.SUBOPTIMAL
 
       case LpSolve.INFEASIBLE =>
-        ProblemStatus.INFEASIBLE
+        SolutionStatus.INFEASIBLE
 
       case LpSolve.UNBOUNDED =>
-        ProblemStatus.UNBOUNDED
+        SolutionStatus.UNBOUNDED
 
       case LpSolve.TIMEOUT =>
         logger.info("LPSolve timed out before solution was reached!")
-        ProblemStatus.NOT_SOLVED
+        SolutionStatus.NOT_SOLVED
 
       case _ =>
         logger.info("LPSolve cannot handle the problem. Status was set to INFEASIBLE.")
-        ProblemStatus.INFEASIBLE
+        SolutionStatus.INFEASIBLE
     }
   }
 
   /**
    * Release the memory of this solver
    */
-  def release() = {
-    lp.deleteLp()
+  def release(): Unit = {
+    underlyingSolver.deleteLp()
   }
 
   /**
@@ -266,8 +239,8 @@ final class LPSolve extends MPSolver {
    *
    * @param limit the time limit
    */
-  def setTimeout(limit: Int) =  {
+  def setTimeout(limit: Int): Unit =  {
     require(0 <= limit)
-    lp.setTimeout(limit)
+    underlyingSolver.setTimeout(limit)
   }
 }

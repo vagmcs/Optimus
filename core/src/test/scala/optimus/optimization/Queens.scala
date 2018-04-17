@@ -33,8 +33,7 @@ package optimus.optimization
 
 import org.scalatest.{FunSpec, Matchers}
 import optimus.algebra.AlgebraOps._
-import optimus.optimization.SolverLib.SolverLib
-import optimus.optimization.enums.ProblemStatus
+import optimus.optimization.enums.{SolutionStatus, SolverLib}
 import optimus.optimization.model.MPIntVar
 
 /**
@@ -48,7 +47,7 @@ trait Queens extends FunSpec with Matchers {
 
   describe("8 Queens Problem") {
 
-    implicit val queensProblem: MIProblem = MIProblem(solver)
+    implicit val queensProblem: MPModel = MPModel(solver)
 
     val n = 8
     val lines = 0 until n
@@ -79,7 +78,7 @@ trait Queens extends FunSpec with Matchers {
     start()
 
     it(s"$solver solution status should be optimal") {
-      status shouldBe ProblemStatus.OPTIMAL
+      status shouldBe SolutionStatus.OPTIMAL
     }
 
     it(s"$solver objective value should be 8.0") {
@@ -102,7 +101,7 @@ trait Queens extends FunSpec with Matchers {
 
   describe("15 Queens Problem") {
 
-    implicit val queensProblem: MIProblem = MIProblem(solver)
+    implicit val queensProblem: MPModel = MPModel(solver)
 
     val n = 15
     val lines = 0 until n
@@ -133,7 +132,7 @@ trait Queens extends FunSpec with Matchers {
     start()
 
     it(s"$solver solution status should be optimal") {
-      status shouldBe ProblemStatus.OPTIMAL
+      status shouldBe SolutionStatus.OPTIMAL
     }
 
     it(s"$solver objective value should be 15.0") {

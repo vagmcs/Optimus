@@ -33,8 +33,7 @@ package optimus.optimization
 
 import org.scalatest.{FunSpec, Matchers}
 import optimus.algebra.AlgebraOps._
-import optimus.optimization.SolverLib.SolverLib
-import optimus.optimization.enums.ProblemStatus
+import optimus.optimization.enums.{SolutionStatus, SolverLib}
 import optimus.optimization.model.MPFloatVar
 
 /**
@@ -51,7 +50,7 @@ trait ProductionPlanning extends FunSpec with Matchers {
 
   describe("Production Planning Problem") {
 
-    implicit val ppProblem: LQProblem = LQProblem(solver)
+    implicit val ppProblem: MPModel = MPModel(solver)
 
     // dimensions
     val b = Array(18209, 7692, 1333, 924, 26638, 61188, 13360)
@@ -82,7 +81,7 @@ trait ProductionPlanning extends FunSpec with Matchers {
     start()
 
     it(s"$solver solution should be optimal") {
-      status shouldBe ProblemStatus.OPTIMAL
+      status shouldBe SolutionStatus.OPTIMAL
     }
 
     it(s"$solver objective value should be 261972 +- 0.5") {

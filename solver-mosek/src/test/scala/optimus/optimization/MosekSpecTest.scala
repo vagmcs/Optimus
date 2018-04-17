@@ -31,7 +31,7 @@
 
 package optimus.optimization
 
-import optimus.optimization.enums.ProblemStatus
+import optimus.optimization.enums.{SolutionStatus, SolverLib}
 import optimus.optimization.model.MPFloatVar
 import org.scalatest.{FunSpec, Matchers}
 
@@ -40,7 +40,7 @@ final class MosekSpecTest extends FunSpec with Matchers {
   describe("Constant programming") {
 
     describe("Test I") {
-      implicit val problem = LQProblem(SolverLib.mosek)
+      implicit val problem = MPModel(SolverLib.Mosek)
 
       val x = MPFloatVar("x", 100, 200)
       val y = MPFloatVar("y", 80, 170)
@@ -54,13 +54,13 @@ final class MosekSpecTest extends FunSpec with Matchers {
       y.value should equal(Some(80))
       objectiveValue should equal(-5)
       checkConstraints() shouldBe true
-      status should equal(ProblemStatus.OPTIMAL)
+      status should equal(SolutionStatus.OPTIMAL)
 
       release()
     }
 
     describe("Test II") {
-      implicit val problem = LQProblem(SolverLib.mosek)
+      implicit val problem = MPModel(SolverLib.Mosek)
 
       val x = MPFloatVar("x", 100, 200)
       val y = MPFloatVar("y", 80, 170)
@@ -74,7 +74,7 @@ final class MosekSpecTest extends FunSpec with Matchers {
       y.value should equal(Some(80))
       objectiveValue should equal(-5)
       checkConstraints() shouldBe true
-      status should equal(ProblemStatus.OPTIMAL)
+      status should equal(SolutionStatus.OPTIMAL)
 
       release()
     }
@@ -83,7 +83,7 @@ final class MosekSpecTest extends FunSpec with Matchers {
   describe("Linear programming") {
 
     describe("Test I") {
-      implicit val problem = LQProblem(SolverLib.mosek)
+      implicit val problem = MPModel(SolverLib.Mosek)
       
       val x = MPFloatVar("x", 100, 200)
       val y = MPFloatVar("y", 80, 170)
@@ -96,13 +96,13 @@ final class MosekSpecTest extends FunSpec with Matchers {
       y.value.get shouldEqual 170d +- 1.001
       objectiveValue shouldEqual 650d +- 1.001
       checkConstraints() shouldBe true
-      status should equal(ProblemStatus.OPTIMAL)
+      status should equal(SolutionStatus.OPTIMAL)
 
       release()
     }
 
     describe("Test II") {
-      implicit val problem = LQProblem(SolverLib.mosek)
+      implicit val problem = MPModel(SolverLib.Mosek)
 
       val x = MPFloatVar("x", 100, 200)
       val y = MPFloatVar("y", 80, 170)
@@ -115,13 +115,13 @@ final class MosekSpecTest extends FunSpec with Matchers {
       y.value.get shouldEqual 80d +- 1.001
       objectiveValue shouldEqual 0d +- 1.001
       checkConstraints() shouldBe true
-      status should equal(ProblemStatus.OPTIMAL)
+      status should equal(SolutionStatus.OPTIMAL)
 
       release()
     }
 
     describe("Test III") {
-      implicit val lp = new LQProblem(SolverLib.mosek)
+      implicit val lp = new MPModel(SolverLib.Mosek)
 
       val x = MPFloatVar("x")
       val y = MPFloatVar("y", 80, 170)
@@ -131,13 +131,13 @@ final class MosekSpecTest extends FunSpec with Matchers {
       start()
 
       // Solution is infeasible but some solvers consider it dual infeasible
-      status should (equal(ProblemStatus.UNBOUNDED) or equal(ProblemStatus.INFEASIBLE))
+      status should (equal(SolutionStatus.UNBOUNDED) or equal(SolutionStatus.INFEASIBLE))
 
       release()
     }
 
     describe("Test IV") {
-      implicit val lp = LQProblem(SolverLib.mosek)
+      implicit val lp = MPModel(SolverLib.Mosek)
 
       val x = MPFloatVar("x", 100, 200)
       val y = MPFloatVar("y", 80, 170)
@@ -154,13 +154,13 @@ final class MosekSpecTest extends FunSpec with Matchers {
       y.value.get shouldEqual 80d +- 1.001
       z.value.get shouldEqual 170d +- 1.001
       objectiveValue shouldEqual 0d +- 1.001
-      status should equal(ProblemStatus.OPTIMAL)
+      status should equal(SolutionStatus.OPTIMAL)
 
       release()
     }
 
     describe("Test V") {
-      implicit val lp = LQProblem(SolverLib.mosek)
+      implicit val lp = MPModel(SolverLib.Mosek)
 
       val x = MPFloatVar("x", 0, 10)
       val y = MPFloatVar("y", 0, 10)
@@ -172,7 +172,7 @@ final class MosekSpecTest extends FunSpec with Matchers {
       x.value should equal(Some(10))
       y.value should equal(Some(10))
       objectiveValue should equal(20)
-      status should equal(ProblemStatus.OPTIMAL)
+      status should equal(SolutionStatus.OPTIMAL)
 
       release()
     }
@@ -182,7 +182,7 @@ final class MosekSpecTest extends FunSpec with Matchers {
   describe("Quadratic programming") {
 
     describe("Test II") {
-      implicit val lp = LQProblem(SolverLib.mosek)
+      implicit val lp = MPModel(SolverLib.Mosek)
 
       val x = MPFloatVar("x", 0, Double.PositiveInfinity)
       val y = MPFloatVar("y", 0, Double.PositiveInfinity)
@@ -195,7 +195,7 @@ final class MosekSpecTest extends FunSpec with Matchers {
       x.value.get shouldEqual 1.6829 +- 0.0001
       y.value.get shouldEqual 0d +- 0.0001
       objectiveValue shouldBe 0d +- 0.0001
-      status should equal(ProblemStatus.OPTIMAL)
+      status should equal(SolutionStatus.OPTIMAL)
 
       release()
     }

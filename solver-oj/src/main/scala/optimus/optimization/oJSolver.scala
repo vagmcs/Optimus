@@ -29,39 +29,35 @@
 
 package optimus.optimization
 
+import optimus.algebra.ExpressionType.GENERIC
+import optimus.algebra._
 import optimus.algebra.{ConstraintRelation, Expression}
 import org.ojalgo.constant.BigMath
 import org.ojalgo.optimisation.{ExpressionsBasedModel, Optimisation, Variable}
-import optimus.algebra._
-import optimus.optimization.enums.{PreSolve, ProblemStatus}
+import optimus.optimization.model.INFINITE
+import optimus.optimization.enums.{PreSolve, SolutionStatus}
 import optimus.optimization.model.MPConstraint
 
 /**
-  * OJalgo solver.
+  * oj solver.
   */
-final class OJalgo extends MPSolver {
+final class oJSolver extends MPSolver {
 
-  var nbRows = 0
-  var nbCols = 0
-  var solution = Array[Double]()
-  var objectiveValue = 0.0
-  var status = ProblemStatus.NOT_SOLVED
+  type Solver = ExpressionsBasedModel
 
-  val model = new ExpressionsBasedModel
+  protected var _objectiveConstant: Double = 0
+  protected var underlyingSolver: Solver = new ExpressionsBasedModel
 
   // Internal flag for keeping optimization state
   private var minimize = true
 
-  private var constantTerm = 0d
-
   /**
-   * Problem builder, should configure the solver and append
-   * mathematical model variables.
-   *
-   * @param nbRows rows in the model
-   * @param nbCols number of variables in the model
-   */
-  def buildProblem(nbRows: Int, nbCols: Int) = {
+    * Problem builder, should configure the solver and append
+    * mathematical model variables and constraints.
+    *
+    * @param numberOfVars number of variables in the model
+    */
+  def buildModel(numberOfVars: Int): Unit = {
 
     logger.info { "\n" +
       """        _________      ______               """ + "\n" +
@@ -72,12 +68,13 @@ final class OJalgo extends MPSolver {
       """                            /____/          """ + "\n"
     }
 
-    logger.info("Model oJalgo: " + nbRows + "x" + nbCols)
+    this.numberOfVars = numberOfVars
 
-    this.nbRows = nbRows
-    this.nbCols = nbCols
-
-    for(i <- 1 to nbCols) model.addVariable(Variable.make(i.toString))
+    var i = 0
+    while (i < numberOfVariables) {
+      underlyingSolver.addVariable(Variable.make(i.toString))
+      i += 1
+    }
   }
 
   /**
@@ -87,7 +84,7 @@ final class OJalgo extends MPSolver {
    * @param colId position of the variable
    * @return the value of the variable in the solution
    */
-  def getValue(colId: Int): Double = solution(colId)
+  def getVarValue(colId: Int): Double = solution(colId)
 
   /**
    * Set bounds of variable in the specified position.
@@ -96,12 +93,12 @@ final class OJalgo extends MPSolver {
    * @param lower domain lower bound
    * @param upper domain upper bound
    */
-  def setBounds(colId: Int, lower: Double, upper: Double) = {
-    if(upper == Double.PositiveInfinity) model.getVariable(colId).upper(null)
-    else model.getVariable(colId).upper(upper)
+  def setBounds(colId: Int, lower: Double, upper: Double): Unit = {
+    if (upper == INFINITE) underlyingSolver.getVariable(colId).upper(null)
+    else underlyingSolver.getVariable(colId).upper(upper)
 
-    if(lower == Double.NegativeInfinity) model.getVariable(colId).lower(null)
-    else model.getVariable(colId).lower(lower)
+    if (lower == INFINITE) underlyingSolver.getVariable(colId).lower(null)
+    else underlyingSolver.getVariable(colId).lower(lower)
   }
 
   /**
@@ -109,8 +106,8 @@ final class OJalgo extends MPSolver {
    *
    * @param colId position of the variable
    */
-  def setUnboundUpperBound(colId: Int) = {
-    model.getVariable(colId).upper(null)
+  def setUnboundUpperBound(colId: Int): Unit = {
+    underlyingSolver.getVariable(colId).upper(null)
   }
 
   /**
@@ -118,8 +115,8 @@ final class OJalgo extends MPSolver {
    *
    * @param colId position of the variable
    */
-  def setUnboundLowerBound(colId: Int) = {
-    model.getVariable(colId).lower(null)
+  def setUnboundLowerBound(colId: Int): Unit = {
+    underlyingSolver.getVariable(colId).lower(null)
   }
 
   /**
@@ -127,8 +124,8 @@ final class OJalgo extends MPSolver {
    *
    * @param colId position of the variable
    */
-  def setInteger(colId: Int) {
-    model.getVariable(colId).integer(true)
+  def setInteger(colId: Int): Unit = {
+    underlyingSolver.getVariable(colId).integer(true)
   }
 
   /**
@@ -136,8 +133,8 @@ final class OJalgo extends MPSolver {
    *
    * @param colId position of the variable
    */
-  def setBinary(colId: Int) {
-    model.getVariable(colId).binary()
+  def setBinary(colId: Int): Unit = {
+    underlyingSolver.getVariable(colId).binary()
   }
 
   /**
@@ -145,8 +142,8 @@ final class OJalgo extends MPSolver {
    *
    * @param colId position of the variable
    */
-  def setFloat(colId: Int) {
-    model.getVariable(colId).integer(false)
+  def setFloat(colId: Int): Unit = {
+    underlyingSolver.getVariable(colId).integer(false)
   }
 
   /**
@@ -155,25 +152,24 @@ final class OJalgo extends MPSolver {
    * @param objective the expression to be optimized
    * @param minimize flag for minimization instead of maximization
    */
-  def setObjective(objective: Expression, minimize: Boolean) = {
+  def setObjective(objective: Expression, minimize: Boolean): Unit = {
 
-    if(objective.getOrder == ExpressionType.GENERIC)
-      throw new IllegalArgumentException("oJalgo cannot handle expressions of higher order!")
+    if (objective.getOrder == GENERIC)
+      throw new IllegalArgumentException("ojSolver cannot handle expressions of higher order!")
 
-    val objectiveFunction = model.addExpression("objective")
+    val objectiveFunction = underlyingSolver.addExpression("objective")
     objectiveFunction.weight(BigMath.ONE)
 
     val iterator = objective.terms.iterator
-    while(iterator.hasNext) {
+    while (iterator.hasNext) {
       iterator.advance()
       val indexes = decode(iterator.key)
-      if(indexes.length == 1) objectiveFunction.set(model.getVariable(indexes.head), iterator.value)
-      else objectiveFunction.set(model.getVariable(indexes.head), model.getVariable(indexes(1)), iterator.value)
+      if(indexes.length == 1) objectiveFunction.set(underlyingSolver.getVariable(indexes.head), iterator.value)
+      else objectiveFunction.set(underlyingSolver.getVariable(indexes.head), underlyingSolver.getVariable(indexes(1)), iterator.value)
     }
+    _objectiveConstant = objective.constant
 
-    constantTerm = objective.constant
-
-    if(!minimize) this.minimize = false else this.minimize = true
+    if (!minimize) this.minimize = false else this.minimize = true
   }
 
   /**
@@ -181,19 +177,21 @@ final class OJalgo extends MPSolver {
    *
    * @param mpConstraint the mathematical programming constraint
    */
-  def addConstraint(mpConstraint: MPConstraint) = {
+  def addConstraint(mpConstraint: MPConstraint): Unit = {
+
+    numberOfCons += 1
 
     val lhs = mpConstraint.constraint.lhs - mpConstraint.constraint.rhs
     val operator = mpConstraint.constraint.operator
 
-    val constraint = model.addExpression(mpConstraint.index.toString)
+    val constraint = underlyingSolver.addExpression(mpConstraint.index.toString)
 
     val iterator = lhs.terms.iterator
-    while(iterator.hasNext) {
+    while (iterator.hasNext) {
       iterator.advance()
       val indexes = decode(iterator.key)
-      if(indexes.length == 1) constraint.set(model.getVariable(indexes.head), iterator.value)
-      else constraint.set(model.getVariable(indexes.head), model.getVariable(indexes(1)), iterator.value)
+      if (indexes.length == 1) constraint.set(underlyingSolver.getVariable(indexes.head), iterator.value)
+      else constraint.set(underlyingSolver.getVariable(indexes.head), underlyingSolver.getVariable(indexes(1)), iterator.value)
     }
 
     operator match {
@@ -208,36 +206,38 @@ final class OJalgo extends MPSolver {
    *
    * @return status code indicating the nature of the solution
    */
-  def solveProblem(preSolve: PreSolve = PreSolve.DISABLED): ProblemStatus = {
+  def solve(preSolve: PreSolve = PreSolve.DISABLED): SolutionStatus = {
 
-    if(preSolve != PreSolve.DISABLED) logger.info("oJalgo does not support pre-solving!")
-    
-    val result = if(this.minimize) model.minimise() else model.maximise()
+    if (preSolve != PreSolve.DISABLED) logger.warn("ojSolver does not support pre-solving!")
 
-    result.getState match {
+    val result = if (this.minimize) underlyingSolver.minimise() else underlyingSolver.maximise()
+
+    _solutionStatus = result.getState match {
 
       case Optimisation.State.OPTIMAL | Optimisation.State.DISTINCT =>
-        solution = Array.tabulate(nbCols)(col => result.get(col).doubleValue())
-        objectiveValue = result.getValue + constantTerm
-        ProblemStatus.OPTIMAL
+        _solution = Array.tabulate(numberOfVars)(col => result.get(col).doubleValue)
+        _objectiveValue = Some(result.getValue + _objectiveConstant)
+        SolutionStatus.OPTIMAL
 
       case Optimisation.State.INFEASIBLE =>
-        ProblemStatus.INFEASIBLE
+        SolutionStatus.INFEASIBLE
 
       case Optimisation.State.UNBOUNDED =>
-        ProblemStatus.UNBOUNDED
+        SolutionStatus.UNBOUNDED
 
       case _ =>
-        solution = Array.tabulate(nbCols)(col => result.get(col).doubleValue())
-        ProblemStatus.SUBOPTIMAL
+        _solution = Array.tabulate(numberOfVars)(col => result.get(col).doubleValue)
+        SolutionStatus.SUBOPTIMAL
     }
+
+    _solutionStatus
   }
 
   /**
    * Release the memory of this solver
    */
-  def release() = {
-    model.dispose()
+  def release(): Unit = {
+    underlyingSolver.dispose()
   }
 
   /**
@@ -246,8 +246,8 @@ final class OJalgo extends MPSolver {
    *
    * @param limit the time limit
    */
-  def setTimeout(limit: Int) = {
+  def setTimeout(limit: Int): Unit = {
     require(0 <= limit)
-    model.options.time_abort = limit
+    underlyingSolver.options.time_abort = limit
   }
 }

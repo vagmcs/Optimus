@@ -62,7 +62,7 @@ case class MPConstraint(constraint: Constraint, index: Int, model: MPModel) exte
     while (iteratorLHS.hasNext) {
       iteratorLHS.advance()
       res += iteratorLHS.value * decode(iteratorLHS.key).map { v =>
-        model.getValue(v).getOrElse(
+        model.getVarValue(v).getOrElse(
           return Failure(new NoSuchElementException(s"Value for variable ${model.variable(v)} not found!"))
         )
       }.product
@@ -72,7 +72,7 @@ case class MPConstraint(constraint: Constraint, index: Int, model: MPModel) exte
     while (iteratorRHS.hasNext) {
       iteratorRHS.advance()
       res -= iteratorRHS.value * decode(iteratorRHS.key).map{ v =>
-        model.getValue(v).getOrElse(
+        model.getVarValue(v).getOrElse(
           return Failure(new NoSuchElementException(s"Value for variable ${model.variable(v)} not found!"))
         )
       }.product

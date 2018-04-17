@@ -29,12 +29,13 @@
 
 package optimus.optimization
 
+import scala.collection.mutable.ArrayBuffer
 import com.typesafe.scalalogging.StrictLogging
 import optimus.algebra.Expression
-import optimus.optimization.enums.{PreSolve, ProblemStatus}
+import optimus.optimization.enums.PreSolve.DISABLED
+import optimus.optimization.enums.SolutionStatus.NOT_SOLVED
+import optimus.optimization.enums.{PreSolve, SolutionStatus}
 import optimus.optimization.model.MPConstraint
-
-import scala.collection.mutable.ArrayBuffer
 
 /**
   * Solver interface that describes a mathematical programming solver. It should
@@ -42,38 +43,33 @@ import scala.collection.mutable.ArrayBuffer
   */
 trait MPSolver extends StrictLogging {
 
-  /**
-    * Number of rows in the model
-    */
-  var nbRows: Int // TODO should not be in the interface
+  protected var numberOfVars: Int = 0
+  protected var numberOfCons: Int = 0
+  protected var _objectiveValue: Option[Double] = None
+  protected var _solution: Array[Double] = Array.emptyDoubleArray
+  protected var _solutionStatus: SolutionStatus = NOT_SOLVED
 
-  /**
-    * Number of columns / variables in the model
-    */
-  var nbCols: Int // TODO should not be in the interface
+  type Solver
 
-  /**
-    * Solution, one entry for each column / variable
-    */
-  var solution: Array[Double] // TODO should be a function
-
-  /**
-    * Objective value
-    */
-  var objectiveValue: Double // TODO should be a function
-
-  def solutionStatus: ProblemStatus = ???
-
-  def objectiveBound: Double = ???
+  protected var underlyingSolver: Solver
 
   /**
     * Problem builder, should configure the solver and append
-    * mathematical model variables.
+    * mathematical model variables and constraints.
     *
-    * @param nbRows rows in the model
-    * @param nbCols number of variables in the model
+    * @param numberOfVars number of variables in the model
     */
-  def buildProblem(nbRows: Int, nbCols: Int)
+  def buildModel(numberOfVars: Int): Unit
+
+  /**
+    * @return the number of variables in the solver.
+    */
+  def numberOfVariables: Int = numberOfVars
+
+  /**
+    * @return the number of constraints in the solver.
+    */
+  def numberOfConstraints: Int = numberOfCons
 
   /**
     * Get value of the variable in the specified position. Solution
@@ -82,7 +78,7 @@ trait MPSolver extends StrictLogging {
     * @param colId position of the variable
     * @return the value of the variable in the solution
     */
-  def getValue(colId: Int): Double
+  def getVarValue(colId: Int): Double
 
   /**
     * Set bounds of variable in the specified position.
@@ -91,42 +87,52 @@ trait MPSolver extends StrictLogging {
     * @param lower domain lower bound
     * @param upper domain upper bound
     */
-  def setBounds(colId: Int, lower: Double, upper: Double)
+  def setBounds(colId: Int, lower: Double, upper: Double): Unit
 
   /**
-    * Set upper bound to unbounded (infinite)
+    * Set bot upper and lower bounds to unbounded (infinite).
     *
     * @param colId position of the variable
     */
-  def setUnboundUpperBound(colId: Int)
+  def setDoubleUnbounded(colId: Int): Unit = {
+    setUnboundLowerBound(colId)
+    setUnboundUpperBound(colId)
+  }
+
+  /**
+    * Set upper bound to unbounded (infinite).
+    *
+    * @param colId position of the variable
+    */
+  def setUnboundUpperBound(colId: Int): Unit
 
   /**
     * Set lower bound to unbounded (infinite)
     *
     * @param colId position of the variable
     */
-  def setUnboundLowerBound(colId: Int)
+  def setUnboundLowerBound(colId: Int): Unit
 
   /**
     * Set the column/variable as an integer variable
     *
     * @param colId position of the variable
     */
-  def setInteger(colId: Int)
+  def setInteger(colId: Int): Unit
 
   /**
     * Set the column / variable as an binary integer variable
     *
     * @param colId position of the variable
     */
-  def setBinary(colId: Int)
+  def setBinary(colId: Int): Unit
 
   /**
     * Set the column/variable as a float variable
     *
     * @param colId position of the variable
     */
-  def setFloat(colId: Int)
+  def setFloat(colId: Int): Unit
 
   /**
     * Add objective expression to be optimized by the solver.
@@ -134,40 +140,59 @@ trait MPSolver extends StrictLogging {
     * @param objective the expression to be optimized
     * @param minimize flag for minimization instead of maximization
     */
-  def setObjective(objective: Expression, minimize: Boolean)
+  def setObjective(objective: Expression, minimize: Boolean): Unit
 
   /**
     * Add a mathematical programming constraint to the solver.
     *
     * @param mpConstraint the mathematical programming constraint
     */
-  def addConstraint(mpConstraint: MPConstraint)
+  def addConstraint(mpConstraint: MPConstraint): Unit
 
   /**
     * Add all given mathematical programming constraints to the solver.
     *
-    * @param constraints array buffer containing the constraints
+    * @param constraints an array buffer containing the constraints
     */
-  def addAllConstraints(constraints: ArrayBuffer[MPConstraint]) {
+  def addAllConstraints(constraints: ArrayBuffer[MPConstraint]): Unit = {
     var idx = 0
     val len = constraints.length
-    while(idx < len) {
+    while (idx < len) {
       addConstraint(constraints(idx))
       idx += 1
     }
-    logger.info("Added " + len + " constraints")
+    logger.info(s"Added $len constraints.")
   }
 
   /**
-    * Solve the problem.
+    * Solves the optimization problem.
     *
     * @param preSolve pre-solving mode
     * @return status code indicating the nature of the solution
     */
-  def solveProblem(preSolve: PreSolve = PreSolve.DISABLED): ProblemStatus
+  def solve(preSolve: PreSolve = DISABLED): SolutionStatus
 
   /**
-    * Release the memory of this solver
+    * @note The objective value may be the best feasible solution
+    *       if optimality is not attained or proven.
+    * @return the objective value of the solution found by the solver
+    */
+  def objectiveValue: Option[Double] = _objectiveValue
+
+  /**
+    * @note the solution may be the best feasible solution found
+    *       so far if optimality is not attained or proven.
+    * @return the solution found by the solver, for each variable
+    */
+  def solution: Array[Double] = _solution
+
+  /**
+    * @return the status of the solution found by the solver
+    */
+  def solutionStatus: SolutionStatus = _solutionStatus
+
+  /**
+    * Release the memory of the solver.
     */
   def release(): Unit
 
