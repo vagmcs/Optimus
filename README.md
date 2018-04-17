@@ -11,18 +11,18 @@ This program comes with ABSOLUTELY NO WARRANTY. This is free software, and you a
 
 ## Features
 1. High level mathematical modeling in Scala using algebraic expressions
-  * Linear and quadratic objective and constraint expressions
-  * Higher order expressions cannot be defined or handled by the solvers yet
-  * Addition, subtraction and multiplication operations can be performed on expressions
-  * Exponentiation can be performed on variables (up to quadratic)
+  * Linear and quadratic objective and constraint expressions.
+  * Higher order expressions cannot be defined or handled by the solvers yet.
+  * Addition, subtraction and multiplication operations can be performed on expressions.
+  * Expression simplification produces the simpler form of the expression.
 2. Supports various optimization settings by using existing mathematical programming solvers
   * Linear programming (LP)
   * Quadratic programming (QP)
   * Quadratic constraint quadratic programming (QCQP)
   * Mixed integer programming (MIP)
 3. Available solvers:
-  * Open source [lpsolve](http://sourceforge.net/projects/lpsolve/) can be used for LP and MIP
-  * Open source [ojAlgo](http://ojalgo.org/) can be used for LP, QP and MIP
+  * Open source [LpSolve](http://sourceforge.net/projects/lpsolve/) can be used for LP and MIP
+  * Open source [oJSolver](http://ojalgo.org/) can be used for LP, QP and MIP
   * Proprietary solver [Gurobi](http://www.gurobi.com/) can be used for efficiently solving LP, QP, QCQP and MIP
   * Proprietary solver [Mosek](https://www.mosek.com/) (experimental)
 
