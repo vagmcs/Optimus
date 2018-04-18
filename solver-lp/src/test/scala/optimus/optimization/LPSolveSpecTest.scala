@@ -97,7 +97,7 @@ final class LPSolveSpecTest extends FunSpec with Matchers {
       x.value shouldEqual Some(150)
     }
 
-    it("y should be equal to 170") {
+    it("y should be equal to 80") {
       y.value shouldEqual Some(80)
     }
 

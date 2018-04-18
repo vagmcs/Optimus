@@ -99,7 +99,7 @@ final class GurobiSpecTest extends FunSpec with Matchers {
       x.value shouldEqual Some(200)
     }
 
-    it("y should be equal to 170") {
+    it("y should be equal to 80") {
       y.value shouldEqual Some(80)
     }
 

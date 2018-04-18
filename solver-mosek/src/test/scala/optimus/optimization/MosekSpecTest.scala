@@ -29,175 +29,826 @@
 
 package optimus.optimization
 
-import optimus.optimization.enums.{SolutionStatus, SolverLib}
-import optimus.optimization.model.MPFloatVar
+import optimus.optimization.enums.{PreSolve, SolutionStatus, SolverLib}
+import optimus.optimization.model.{MPConstraint, MPFloatVar}
 import org.scalatest.{FunSpec, Matchers}
 
 final class MosekSpecTest extends FunSpec with Matchers {
 
-  describe("Constant programming") {
+  // Constant objective function tests
 
-    describe("Test I") {
-      implicit val problem = MPModel(SolverLib.Mosek)
+  describe("Constant Program (1)") {
 
-      val x = MPFloatVar("x", 100, 200)
-      val y = MPFloatVar("y", 80, 170)
+    implicit val cp: MPModel = MPModel(SolverLib.Mosek)
 
-      maximize(-5)
-      add(x >:= 5)
-      add(y <:= 100)
-      start()
+    val x = MPFloatVar("x", 100, 200)
+    val y = MPFloatVar("y", 80, 170)
 
-      println("end")
-      x.value should equal(Some(100))
-      y.value should equal(Some(80))
-      objectiveValue should equal(-5)
-      checkConstraints() shouldBe true
-      status should equal(SolutionStatus.OPTIMAL)
+    maximize(-5)
 
-      release()
+    add(x >:= 5)
+    add(y <:= 100)
+
+    start()
+
+    it("solution should be optimal") {
+      status shouldBe SolutionStatus.OPTIMAL
     }
 
-    describe("Test II") {
-      implicit val problem = MPModel(SolverLib.Mosek)
-
-      val x = MPFloatVar("x", 100, 200)
-      val y = MPFloatVar("y", 80, 170)
-
-      minimize(-5)
-      add(x >:= 5)
-      add(y <:= 100)
-      start()
-
-      x.value should equal(Some(100))
-      y.value should equal(Some(80))
-      objectiveValue should equal(-5)
-      checkConstraints() shouldBe true
-      status should equal(SolutionStatus.OPTIMAL)
-
-      release()
+    it("x should be equal to 100") {
+      x.value shouldEqual Some(100)
     }
+
+    it("y should be equal to 80") {
+      y.value shouldEqual Some(80)
+    }
+
+    it("objective value should be equal to -5") {
+      objectiveValue shouldEqual -5
+    }
+
+    it("constraints should be satisfied") {
+      checkConstraints() shouldBe true
+    }
+
+    release()
   }
 
-  describe("Linear programming") {
+  describe("Constant Program (2)") {
 
-    describe("Test I") {
-      implicit val problem = MPModel(SolverLib.Mosek)
-      
-      val x = MPFloatVar("x", 100, 200)
-      val y = MPFloatVar("y", 80, 170)
+    implicit val cp: MPModel = MPModel(SolverLib.Mosek)
 
-      maximize(-2 * x + 5 * y)
-      add(y >:= -x + 200)
-      start()
+    val x = MPFloatVar("x", 100, 200)
+    val y = MPFloatVar("y", 80, 170)
 
-      x.value.get shouldEqual 100.0 +- 1E-5
-      y.value.get shouldEqual 170d +- 1.001
-      objectiveValue shouldEqual 650d +- 1.001
-      checkConstraints() shouldBe true
-      status should equal(SolutionStatus.OPTIMAL)
+    minimize(-5)
 
-      release()
+    add(x >:= 150)
+    add(y <:= 100)
+
+    start()
+
+    it("solution should be optimal") {
+      status shouldBe SolutionStatus.OPTIMAL
     }
 
-    describe("Test II") {
-      implicit val problem = MPModel(SolverLib.Mosek)
-
-      val x = MPFloatVar("x", 100, 200)
-      val y = MPFloatVar("y", 80, 170)
-
-      minimize(-2 * x + 5 * y)
-      add(y >:= -x + 200)
-      start()
-
-      x.value.get shouldEqual 200d +- 1.0001
-      y.value.get shouldEqual 80d +- 1.001
-      objectiveValue shouldEqual 0d +- 1.001
-      checkConstraints() shouldBe true
-      status should equal(SolutionStatus.OPTIMAL)
-
-      release()
+    it("x should be equal to 150") {
+      x.value shouldEqual Some(150)
     }
 
-    describe("Test III") {
-      implicit val lp = new MPModel(SolverLib.Mosek)
+    it("y should be equal to 80") {
+      y.value shouldEqual Some(80)
+    }
 
-      val x = MPFloatVar("x")
-      val y = MPFloatVar("y", 80, 170)
+    it("objective value should be equal to -5") {
+      objectiveValue shouldEqual -5
+    }
 
-      minimize(-2 * x + 5 * y)
-      add(y >:= -x + 200)
-      start()
+    it("constraints should be satisfied") {
+      checkConstraints() shouldBe true
+    }
 
-      // Solution is infeasible but some solvers consider it dual infeasible
+    release()
+  }
+
+  // Linear objective function tests
+
+  describe("Linear Program (1)") {
+
+    implicit val lp: MPModel = MPModel(SolverLib.Mosek)
+
+    val x = MPFloatVar("x", 100, 200)
+    val y = MPFloatVar("y", 80, 170)
+
+    maximize(-2 * x + 5 * y)
+    subjectTo (
+      y >:= -x + 200
+    )
+
+    start(PreSolve.CONSERVATIVE)
+
+    it("solution should be optimal") {
+      status shouldBe SolutionStatus.OPTIMAL
+    }
+
+    it("all variables should have a value") {
+      x.value.isDefined shouldBe true
+      y.value.isDefined shouldBe true
+    }
+
+    it("x should be equal to 100") {
+      x.value.get shouldEqual 100.0 +- 1e-2
+    }
+
+    it("y should be equal to 170") {
+      y.value.get shouldEqual 170.0 +- 1e-2
+    }
+
+    it("objective value should be equal to 650") {
+      objectiveValue shouldEqual 650.0 +- 1e-2
+    }
+
+    it("constraints should be satisfied") {
+      checkConstraints() shouldBe true
+    }
+
+    release()
+  }
+
+  describe("Linear Program (2)") {
+
+    implicit val lp: MPModel = MPModel(SolverLib.Mosek)
+
+    val x = MPFloatVar("x", 100, 200)
+    val y = MPFloatVar("y", 80, 170)
+
+    minimize(-2 * x + 5 * y)
+    subjectTo (
+      y >:= -x + 200
+    )
+
+    start()
+
+    it("solution should be optimal") {
+      status shouldBe SolutionStatus.OPTIMAL
+    }
+
+    it("all variables should have a value") {
+      x.value.isDefined shouldBe true
+      y.value.isDefined shouldBe true
+    }
+
+    it("x should be equal to 200") {
+      x.value.get shouldEqual 200.0 +- 1e-2
+    }
+
+    it("y should be equal to 80") {
+      y.value.get shouldEqual 80.0 +- 1e-2
+    }
+
+    it("objective value should be equal to 0") {
+      objectiveValue shouldEqual 0.0 +- 1e-2
+    }
+
+    it("constraints should be satisfied") {
+      checkConstraints() shouldBe true
+    }
+
+    release()
+  }
+
+  describe("Linear Program (3)") {
+
+    implicit val lp: MPModel = MPModel(SolverLib.Mosek)
+
+    val x = MPFloatVar("x")
+    val y = MPFloatVar("y", 80, 170)
+
+    minimize(-2 * x + 5 * y)
+    subjectTo (
+      y >:= -x + 200
+    )
+
+    start()
+
+    // Solution is infeasible but some solvers consider it dual infeasible
+    it("solution should be infeasible") {
       status should (equal(SolutionStatus.UNBOUNDED) or equal(SolutionStatus.INFEASIBLE))
+    }
+
+    it("x should be None") {
+      x.value shouldBe None
+    }
+
+    it("y should be None") {
+      y.value shouldBe None
+    }
+
+    it("constraints should be unsatisfied") {
+      checkConstraints() shouldBe false
+    }
+
+    release()
+  }
+
+  describe("Linear Program (4)") {
+
+    implicit val lp: MPModel = MPModel(SolverLib.Mosek)
+
+    val x = MPFloatVar("x", 100, 200)
+    val y = MPFloatVar("y", 80, 170)
+
+    minimize(-2 * x + 5 * y)
+
+    val z = MPFloatVar("z", 80, 170)
+
+    subjectTo (
+      z >:= 170,
+      y >:= -x + 200
+    )
+
+    start()
+
+    it("solution should be optimal") {
+      status shouldBe SolutionStatus.OPTIMAL
+    }
+
+    it("all variables should have a value") {
+      x.value.isDefined shouldBe true
+      y.value.isDefined shouldBe true
+    }
+
+    it("x should be equal to 200") {
+      x.value.get shouldEqual 200.0 +- 1e-2
+    }
+
+    it("y should be equal to 80") {
+      y.value.get shouldEqual 80.0 +- 1e-2
+    }
+
+    it("z should be equal to 170") {
+      z.value shouldEqual Some(170)
+    }
+
+    it("objective value should be equal to 0") {
+      objectiveValue shouldEqual 0.0 +- 1e-2
+    }
+
+    it("constraints should be satisfied") {
+      checkConstraints() shouldBe true
+    }
+
+    release()
+  }
+
+  describe("Linear Program (5)") {
+
+    implicit val lp: MPModel = MPModel(SolverLib.Mosek)
+
+    val x = MPFloatVar("x", 0, 10)
+    val y = MPFloatVar("y", 0, 10)
+
+    maximize(x + y)
+    subjectTo (
+      x + y >:= 5
+    )
+
+    start()
+
+    it("solution should be optimal") {
+      status shouldBe SolutionStatus.OPTIMAL
+    }
+
+    it("x should be equal to 10") {
+      x.value shouldEqual Some(10)
+    }
+
+    it("y should be equal to 10") {
+      y.value shouldEqual Some(10)
+    }
+
+    it("objective value should be equal to 20") {
+      objectiveValue shouldEqual 20
+    }
+
+    it("constraints should be satisfied") {
+      checkConstraints() shouldBe true
+    }
+
+    release()
+  }
+
+  describe("Linear Program (6)") {
+
+    implicit val lp: MPModel = MPModel(SolverLib.Mosek)
+
+    val x = MPFloatVar("x", 0, 10)
+    val y = MPFloatVar("y", 0, 10)
+
+    var cons = Vector.empty[MPConstraint]
+
+    maximize(x + y)
+
+    cons = cons :+ add(x + y >:= 5)
+    cons = cons :+ add(x + 2 * y <:= 25)
+    cons = cons :+ add(x + 2 * y <:= 30)
+    cons = cons :+ add(x + y >:= 17.5)
+    cons = cons :+ add(x := 10.0)
+
+    start()
+
+    it("solution should be optimal") {
+      status shouldBe SolutionStatus.OPTIMAL
+    }
+
+    it("x should be equal to 10.0") {
+      x.value.get shouldEqual 10.0 +- 1e-2
+    }
+
+    it("y should be equal to 7.5") {
+      y.value.get shouldEqual 7.5 +- 1e-2
+    }
+
+    it("objective value should be equal to 17.5") {
+      objectiveValue shouldEqual 17.5 +- 1e-2
+    }
+
+    it("check constraints") {
+      cons(0).isTight() shouldBe false
+      cons(1).isTight() shouldBe true
+      cons(2).isTight() shouldBe false
+      cons(3).isTight() shouldBe true
+      cons(4).isTight() shouldBe true
+
+      cons(0).slack.get shouldBe 12.5 +- 1e-2
+      cons(1).slack.get shouldBe 0.0 +- 1e-2
+      cons(2).slack.get shouldBe 5.0 +- 1e-2
+      cons(3).slack.get shouldBe 0.0 +- 1e-2
+      cons(4).slack.get shouldBe 0.0 +- 1e-2
+
+      cons.foreach(_.check() shouldBe true)
+    }
+
+    release()
+  }
+
+  describe("Linear Program (7)") {
+
+    implicit val lp: MPModel = MPModel(SolverLib.Mosek)
+
+    val x = MPFloatVar("x", 0, Double.PositiveInfinity)
+    val y = MPFloatVar("y", 0, Double.PositiveInfinity)
+    val z = MPFloatVar("z", 0, Double.PositiveInfinity)
+
+    var cons = Vector.empty[MPConstraint]
+
+    maximize(2*x + 4*y + 3*z)
+
+    cons = cons :+ add(3*x + 4*y + 2*z <:= 60)
+    cons = cons :+ add(2*x + y + 2*z <:= 40)
+    cons = cons :+ add(x + 3*y + 2*z <:= 80)
+    cons = cons :+ add(x >:= -80)
+    cons = cons :+ add(y >:= -50)
+    cons = cons :+ add(z >:= -0.005)
+
+    start()
+
+    it("solution should be optimal") {
+      status shouldBe SolutionStatus.OPTIMAL
+    }
+
+    it("x should be equal to 0.0") {
+      x.value.get shouldEqual 0.0 +- 1e-2
+    }
+
+    it("y should be equal to 6.67") {
+      y.value.get shouldEqual 6.67 +- 1e-2
+    }
+
+    it("z should be equal to 16.67") {
+      z.value.get shouldEqual 16.67 +- 1e-2
+    }
+
+    it("objective value should be equal to 76.67") {
+      objectiveValue shouldEqual 76.67 +- 1e-2
+    }
+
+    it("check constraints") {
+      cons(0).isTight() shouldBe true
+      cons(1).isTight() shouldBe true
+      cons(2).isTight() shouldBe false
+      cons(3).isTight() shouldBe false
+      cons(4).isTight() shouldBe false
+      cons(5).isTight() shouldBe false
+
+      cons(0).slack.get shouldBe 0.0 +- 1e-2
+      cons(1).slack.get shouldBe 0.0 +- 1e-2
+      cons(2).slack.get shouldBe 26.67 +- 1e-2
+      cons(3).slack.get shouldBe 80.0 +- 1e-2
+      cons(4).slack.get shouldBe 56.67 +- 1e-2
+      cons(5).slack.get shouldBe 16.67 +- 1e-2
+
+      cons.foreach(_.check() shouldBe true)
+    }
+
+    release()
+  }
+
+  describe("Linear Program (8)") {
+
+    implicit val lp: MPModel = MPModel(SolverLib.Mosek)
+
+    val w = MPFloatVar("w", 0, Double.PositiveInfinity)
+    val x = MPFloatVar("x", 0, Double.PositiveInfinity)
+    val y = MPFloatVar("y", 0, Double.PositiveInfinity)
+    val z = MPFloatVar("z", 0, Double.PositiveInfinity)
+
+    var cons: Vector[MPConstraint] = Vector()
+
+    maximize(3*w - 8*w + 10*w + 0.001*x - (-0.999*x) - 0.3*10*(-y) - 4*0.0006*0*(w - x - z) + 2*z - 2*z + 4*z)
+
+    cons = cons :+ add(w + x + y + z <:= 40)
+    cons = cons :+ add(2*w + x - y - z >:= 10)
+
+    start()
+
+    it("solution should be optimal") {
+      status shouldBe SolutionStatus.OPTIMAL
+    }
+
+    it("x, y and z should be equal to 0.0") {
+      x.value.get shouldEqual 0.0 +- 1e-2
+      y.value.get shouldEqual 0.0 +- 1e-2
+      z.value.get shouldEqual 0.0 +- 1e-2
+    }
+
+    it("w should be equal to 40.0") {
+      w.value.get shouldEqual 40.0 +- 1e-2
+    }
+
+    it("objective value should be equal to 200.0") {
+      objectiveValue shouldEqual 200.0 +- 1e-2
+    }
+
+    it("constraints should be satisfied") {
+      cons.head.isTight() shouldBe true
+      cons.last.isTight() shouldBe false
+      checkConstraints() shouldBe true
+    }
+
+    it("Add a couple of constraints and re-optimize") {
+
+      cons = cons :+ add(y >:= w)
+      cons = cons :+ add(x >:= 15)
+
+      start()
+
+      w.value.get should equal(12.5 +- 1e-2)
+      x.value.get should equal(15.0 +- 1e-2)
+      y.value.get should equal(12.5 +- 1e-2)
+      z.value.get should equal(0.0 +- 1e-2)
+      objectiveValue shouldBe (115.0 +- 1e-2)
+
+      cons(0).isTight() shouldBe true
+      cons(1).isTight() shouldBe false
+      cons(2).isTight() shouldBe true
+      cons(3).isTight() shouldBe true
+
+      status shouldEqual SolutionStatus.OPTIMAL
+      checkConstraints() shouldBe true
+
+      // Constraint: w - 2x + 4y + 3z >:= 40
+      cons :+= add(-(-w) - 2 * x + 4 * y + 3 * 0.5 * 2 * z >:= 40 - 3 + 2.7 + 0.3)
+      start()
+
+      w.value.get should equal(6.67 +- 1e-2)
+      x.value.get should equal(15.0 +- 1e-2)
+      y.value.get should equal(8.33 +- 1e-2)
+      z.value.get should equal(10.0 +- 1e-2)
+      objectiveValue shouldBe (113.33 +- 1e-2)
+      status should equal(SolutionStatus.OPTIMAL)
+      checkConstraints() shouldBe true
+
+      cons(0).isTight() shouldBe true
+      cons(1).isTight() shouldBe true
+      cons(2).isTight() shouldBe false
+      cons(3).isTight() shouldBe true
+      cons(4).isTight() shouldBe true
 
       release()
     }
 
-    describe("Test IV") {
-      implicit val lp = MPModel(SolverLib.Mosek)
+  }
 
-      val x = MPFloatVar("x", 100, 200)
-      val y = MPFloatVar("y", 80, 170)
+  describe("Linear Program (9)") {
 
-      minimize(-2 * x + 5 * y)
+    implicit val lp: MPModel = MPModel(SolverLib.Mosek)
 
-      val z = MPFloatVar("z", 80, 170)
+    val x = MPFloatVar("x", 0, 10)
 
-      add(z >:= 170)
-      add(y >:= -x + 200)
-      start()
+    maximize(x + 1)
+    subjectTo (
+      x <:= 1
+    )
 
-      x.value.get shouldEqual 200d +- 1.001
-      y.value.get shouldEqual 80d +- 1.001
-      z.value.get shouldEqual 170d +- 1.001
-      objectiveValue shouldEqual 0d +- 1.001
-      status should equal(SolutionStatus.OPTIMAL)
+    start()
 
-      release()
+    it("solution should be optimal") {
+      status shouldBe SolutionStatus.OPTIMAL
     }
 
-    describe("Test V") {
-      implicit val lp = MPModel(SolverLib.Mosek)
+    it("x should be equal to 1.0") {
+      x.value shouldEqual Some(1.0)
+    }
 
-      val x = MPFloatVar("x", 0, 10)
-      val y = MPFloatVar("y", 0, 10)
+    it("objective value should be equal to 2.0") {
+      objectiveValue shouldEqual 2.0
+    }
 
-      maximize(x + y)
-      add(x + y >:= 5)
+    release()
+  }
+
+  // Quadratic objective function tests
+
+  describe("Quadratic Program (1)") {
+
+    implicit val qp: MPModel = MPModel(SolverLib.Mosek)
+
+    var cons = Vector.empty[MPConstraint]
+
+    val x = MPFloatVar("x", 0, Double.PositiveInfinity)
+    val y = MPFloatVar("y", 0, Double.PositiveInfinity)
+
+    minimize(-8*x - 16*y + x*x + 4*y*y)
+
+    cons = cons :+ add(x + y <:= 5)
+    cons = cons :+ add(x <:= 3)
+
+    start()
+
+    it("solution should be optimal") {
+      status shouldBe SolutionStatus.OPTIMAL
+    }
+
+    it("objective value should be equal to -31") {
+      objectiveValue shouldEqual -31.0 +- 1e-2
+    }
+
+    it("x should be equal to 3") {
+      x.value.get shouldEqual 3.0 +- 1e-2
+    }
+
+    it("y should be equal to 2") {
+      y.value.get shouldEqual 2.0 +- 1.0e-2 // Here gurobi requires +- 1.0e-4
+    }
+
+    it("constraints should be satisfied") {
+      cons(0).isTight() shouldBe false
+      cons(1).isTight() shouldBe true
+
+      cons(0).slack.get shouldBe 0.0 +- 1.0e-2
+      cons(1).slack.get shouldBe 0.0 +- 1.0e-2
+
+      cons.foreach(_.check() shouldBe true)
+    }
+
+    release()
+  }
+
+  describe("Quadratic Program (2)") {
+
+    implicit val qp: MPModel = MPModel(SolverLib.Mosek)
+
+    var cons = Vector.empty[MPConstraint]
+
+    val x = MPFloatVar("x", 0, Double.PositiveInfinity)
+    val y = MPFloatVar("y", 0, Double.PositiveInfinity)
+
+    minimize(2*x*x + y*y + x*y + x + y)
+
+    cons = cons :+ add(x + y := 1)
+    cons = cons :+ add(x >:= -3)
+    cons = cons :+ add(y >:= -1e-4)
+
+    start()
+
+    it("solution should be optimal") {
+      status shouldBe SolutionStatus.OPTIMAL
+    }
+
+    it("objective value should be equal to 1.87") {
+      objectiveValue shouldEqual 1.87 +- 1.0e-2
+    }
+
+    it("x should be equal to 0.25") {
+      x.value.get shouldEqual 0.25 +- 1e-2
+    }
+
+    it("y should be equal to 0.75") {
+      y.value.get shouldEqual 0.75 +- 1e-2
+    }
+
+    it("constraints should be satisfied") {
+      cons(0).isTight() shouldBe true
+      cons(1).isTight() shouldBe false
+      cons(2).isTight() shouldBe false
+
+      cons(0).slack.get shouldBe 0.0 +- 1e-2
+      cons(1).slack.get shouldBe 3.25 +- 1e-2
+      cons(2).slack.get shouldBe 0.75 +- 1e-2
+
+      cons.foreach(_.check() shouldBe true)
+    }
+
+    release()
+  }
+
+  describe("Quadratic Program (3)") {
+
+    implicit val qp: MPModel = MPModel(SolverLib.Mosek)
+
+    var cons = Vector.empty[MPConstraint]
+
+    val x = MPFloatVar("x", 0, Double.PositiveInfinity)
+    val y = MPFloatVar("y", 0, Double.PositiveInfinity)
+
+    minimize(x*x + x*x + y*y - y*y + y*y + 7*x*y - 6*y*x + x*x - x*x + x - 99.9e-9*y + 1.0000000999*y)
+
+    cons = cons :+ add(x + y := 1)
+    cons = cons :+ add(x >:= -3)
+    cons = cons :+ add(y >:= -1e-4)
+
+    start()
+
+    it("solution should be optimal") {
+      status shouldBe SolutionStatus.OPTIMAL
+    }
+
+    it("objective value should be equal to 1.87") {
+      objectiveValue shouldEqual 1.87 +- 1e-2
+    }
+
+    it("x should be equal to 0.25") {
+      x.value.get shouldEqual 0.25 +- 1e-2
+    }
+
+    it("y should be equal to 0.75") {
+      y.value.get shouldEqual 0.75 +- 1e-2
+    }
+
+    it("constraints should be satisfied") {
+      cons(0).isTight() shouldBe true
+      cons(1).isTight() shouldBe false
+      cons(2).isTight() shouldBe false
+
+      cons(0).slack.get shouldBe 0.0 +- 1e-2
+      cons(1).slack.get shouldBe 3.25 +- 1e-2
+      cons(2).slack.get shouldBe 0.75 +- 1e-2
+
+      cons.foreach(_.check() shouldBe true)
+    }
+
+    release()
+  }
+
+  describe("Quadratic Program (4)") {
+
+    implicit val qp: MPModel = MPModel(SolverLib.Mosek)
+
+    val x = MPFloatVar("x", 0, Double.PositiveInfinity)
+    val y = MPFloatVar("y", 0, Double.PositiveInfinity)
+
+    minimize(-8*x - 16*y + x*x + 4*y*y)
+    subjectTo (
+      x + y <:= 5,
+      x <:= 3,
+      x >:= 0,
+      y >:= 0
+    )
+
+    start()
+
+    it("solution should be optimal") {
+      status shouldBe SolutionStatus.OPTIMAL
+    }
+
+    it("objective value should be equal to -31") {
+      objectiveValue shouldEqual -31.0 +- 1e-2
+    }
+
+    it("x should be equal to 3") {
+      x.value.get shouldEqual 3.0 +- 1e-2
+    }
+
+    it("y should be equal to 2") {
+      y.value.get shouldEqual 2.0 +- 1e-2
+    }
+
+    it("constraints should be satisfied") {
+      checkConstraints() shouldBe true
+    }
+
+    release()
+  }
+
+  describe("Quadratic Program (5)") {
+
+    implicit val qp: MPModel = MPModel(SolverLib.Mosek)
+
+    val w0 = MPFloatVar("w0", Double.NegativeInfinity, Double.PositiveInfinity)
+    val w1 = MPFloatVar("w1", Double.NegativeInfinity, Double.PositiveInfinity)
+    val w2 = MPFloatVar("w2", Double.NegativeInfinity, Double.PositiveInfinity)
+    val slack = MPFloatVar("slack", 0, Double.PositiveInfinity)
+
+    minimize(0.5*(w0*w0 + w1*w1 + w2*w2) + 1000*slack)
+    add(-2.0*w2 + 0.0 >:= -1.0*slack + 16.0)
+
+    start()
+
+    it("solution should be optimal") {
+      status shouldBe SolutionStatus.OPTIMAL
+    }
+
+    it("objective value should be equal to 32") {
+      objectiveValue shouldEqual 32.0 +- 1e-2
+    }
+
+    it("w0 and w1 should be equal to 0") {
+      w0.value.get shouldEqual 0.0 +- 1e-2
+      w1.value.get shouldEqual 0.0 +- 1e-2
+    }
+
+    it("w2 should be equal to -8") {
+      w2.value.get shouldEqual -8.0 +- 1e-2
+    }
+
+    it("slack should be equal to 0") {
+      slack.value.get shouldEqual 0.0 +- 1e-2
+    }
+
+    it("constraints should be satisfied") {
+      checkConstraints() shouldBe true
+    }
+
+    it("Add a couple of constraints and re-optimize") {
+
+      add(-2.0*w1 + -2.0*w0 + 6.0*w2 + 0.0 >:= -1.0*slack + 6.0)
       start()
 
-      x.value should equal(Some(10))
-      y.value should equal(Some(10))
-      objectiveValue should equal(20)
-      status should equal(SolutionStatus.OPTIMAL)
+      status shouldBe SolutionStatus.OPTIMAL
+      objectiveValue shouldBe 214.25 +- 1e-2
 
-      release()
+      w0.value.get shouldEqual -13.5 +- 1e-2
+      w1.value.get shouldEqual -13.5 +- 1e-2
+      w2.value.get shouldEqual -8.0 +- 1e-2
+      slack.value.get shouldEqual 0.0 +- 1e-2
+
+      checkConstraints() shouldBe true
     }
   }
 
+  // Quadratic objective function tests having quadratic constraints
 
-  describe("Quadratic programming") {
+  describe("Quadratic Constraint Program (1)") {
 
-    describe("Test II") {
-      implicit val lp = MPModel(SolverLib.Mosek)
+    implicit val qp: MPModel = MPModel(SolverLib.Mosek)
 
-      val x = MPFloatVar("x", 0, Double.PositiveInfinity)
-      val y = MPFloatVar("y", 0, Double.PositiveInfinity)
-      val z = MPFloatVar("z", 0, Double.PositiveInfinity)
+    val x = MPFloatVar("x", Double.NegativeInfinity, Double.PositiveInfinity)
+    val y = MPFloatVar("y", -0.5, 0.5)
 
-      minimize(x * x + 0.1 * y * y + z * z - x * z + y)
-      add(x + y + z - x * x - y * y - 0.1 * z * z + 0.2 * x * z >:= 1)
-      start()
+    maximize(x)
+    add(x*x + y*y <:= 1)
 
-      x.value.get shouldEqual 1.6829 +- 0.0001
-      y.value.get shouldEqual 0d +- 0.0001
-      objectiveValue shouldBe 0d +- 0.0001
-      status should equal(SolutionStatus.OPTIMAL)
+    start()
 
-      release()
+    it("solution should be optimal") {
+      status shouldBe SolutionStatus.OPTIMAL
     }
+
+    it("objective value should be equal to 1") {
+      objectiveValue shouldEqual 1.0 +- 1e-2
+    }
+
+    it("x should be equal to 1") {
+      x.value.get shouldEqual 1.0
+    }
+
+    it("y should be equal to 0") {
+      y.value.get shouldEqual 0.0
+    }
+
+    release()
   }
 
+  describe("Quadratic Constraint Program (2)") {
+
+    implicit val qp: MPModel = MPModel(SolverLib.Mosek)
+
+    val x = MPFloatVar("x", 0, Double.PositiveInfinity)
+    val y = MPFloatVar("y", 0, Double.PositiveInfinity)
+    val z = MPFloatVar("z", 0, Double.PositiveInfinity)
+
+    minimize(x*x + 0.1*y*y + z*z - x*z + y)
+    add(x + y + z - x*x - y*y - 0.1*z*z + 0.2*x*z >:= 1)
+
+    start()
+
+    it("solution should be optimal") {
+      status shouldBe SolutionStatus.OPTIMAL
+    }
+
+    it("objective value should be equal to 0.41") {
+      objectiveValue shouldEqual 0.41 +- 1e-2
+    }
+
+    it("x should be equal to 1") {
+      x.value.get shouldEqual 0.46 +- 1e-2
+    }
+
+    it("y should be equal to 0") {
+      y.value.get shouldEqual 0.01 +- 1e-2
+    }
+
+    release()
+  }
 }
