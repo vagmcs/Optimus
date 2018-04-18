@@ -29,35 +29,9 @@
 
 package optimus.optimization
 
-/*
- *    /\\\\\
- *   /\\\///\\\
- *  /\\\/  \///\\\    /\\\\\\\\\     /\\\       /\\\
- *  /\\\      \//\\\  /\\\/////\\\ /\\\\\\\\\\\ \///    /\\\\\  /\\\\\     /\\\    /\\\  /\\\\\\\\\\
- *  \/\\\       \/\\\ \/\\\\\\\\\\ \////\\\////   /\\\  /\\\///\\\\\///\\\ \/\\\   \/\\\ \/\\\//////
- *   \//\\\      /\\\  \/\\\//////     \/\\\      \/\\\ \/\\\ \//\\\  \/\\\ \/\\\   \/\\\ \/\\\\\\\\\\
- *     \///\\\  /\\\    \/\\\           \/\\\_/\\  \/\\\ \/\\\  \/\\\  \/\\\ \/\\\   \/\\\ \////////\\\
- *        \///\\\\\/     \/\\\           \//\\\\\   \/\\\ \/\\\  \/\\\  \/\\\ \//\\\\\\\\\  /\\\\\\\\\\
- *           \/////       \///             \/////    \///  \///   \///   \///  \/////////   \//////////
- *
- * Copyright (C) 2014 Evangelos Michelioudakis, Anastasios Skarlatidis
- *
- * Optimus is free software: you can redistribute it and/or modify it
- * under the terms of the GNU Lesser General Public License as published
- * by the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * Optimus is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/lgpl-3.0.en.html>.
- */
-
 import gurobi._
 import optimus.algebra._
+import optimus.optimization.enums.PreSolve._
 import optimus.optimization.enums.{PreSolve, SolutionStatus}
 import optimus.optimization.model.MPConstraint
 
@@ -86,7 +60,7 @@ final class Gurobi extends MPSolver {
         """    \____/  \__._/ /_/    \____//_____//_/    """ + "\n"
     }
 
-    this.numberOfVars = numberOfVariables
+    this.numberOfVars = numberOfVars
 
     underlyingSolver.getEnv.set(GRB.IntParam.OutputFlag, 0)
 
@@ -256,17 +230,17 @@ final class Gurobi extends MPSolver {
    *
    * @return status code indicating the nature of the solution
    */
-  def solve(preSolve: PreSolve = PreSolve.DISABLED): SolutionStatus = {
+  def solve(preSolve: PreSolve = DISABLED): SolutionStatus = {
 
-    if(preSolve == PreSolve.CONSERVATIVE) underlyingSolver.getEnv.set(GRB.IntParam.Presolve, 1)
-    else if(preSolve == PreSolve.AGGRESSIVE) underlyingSolver.getEnv.set(GRB.IntParam.Presolve, 2)
+    if (preSolve == CONSERVATIVE) underlyingSolver.getEnv.set(GRB.IntParam.Presolve, 1)
+    else if (preSolve == AGGRESSIVE) underlyingSolver.getEnv.set(GRB.IntParam.Presolve, 2)
 
     underlyingSolver.update()
     underlyingSolver.optimize()
     
     var optimizationStatus = underlyingSolver.get(GRB.IntAttr.Status)
 
-    if (optimizationStatus == GRB.INF_OR_UNBD) {
+    _solutionStatus = if (optimizationStatus == GRB.INF_OR_UNBD) {
       underlyingSolver.getEnv.set(GRB.IntParam.Presolve, 0)
       underlyingSolver.optimize()
       optimizationStatus = underlyingSolver.get(GRB.IntAttr.Status)
@@ -289,6 +263,8 @@ final class Gurobi extends MPSolver {
       logger.info("Optimization stopped with status = " + optimizationStatus)
       SolutionStatus.SUBOPTIMAL
     }
+
+    _solutionStatus
   }
 
   /**

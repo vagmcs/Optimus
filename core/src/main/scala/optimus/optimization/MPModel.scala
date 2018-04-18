@@ -35,7 +35,6 @@ import optimus.common.Measure._
 import optimus.optimization.enums.PreSolve.DISABLED
 import optimus.optimization.enums.{PreSolve, SolutionStatus, SolverLib}
 import optimus.optimization.model.{MPConstraint, MPVar}
-
 import scala.collection.mutable
 import scala.collection.mutable.ArrayBuffer
 import scala.util.Try
@@ -54,7 +53,7 @@ case class MPModel(solverLib: SolverLib = SolverLib.oJSolver) extends StrictLogg
   protected var minimize = false
   protected var reOptimize = false
 
-  protected var solver: MPSolver = SolverFactory.instantiate(solverLib)
+  protected lazy val solver: MPSolver = SolverFactory.instantiate(solverLib)
 
   /**
     * Register a variable to the model

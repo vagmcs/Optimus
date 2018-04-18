@@ -63,7 +63,7 @@ final class LPSolve extends MPSolver {
     }
 
     this.numberOfVars = numberOfVars
-    underlyingSolver.resizeLp(0, numberOfVars)
+    underlyingSolver = LpSolve.makeLp(0, numberOfVars)
     underlyingSolver.setInfinite(Double.MaxValue)
     underlyingSolver.setAddRowmode(true)
     underlyingSolver.setVerbose(LpSolve.IMPORTANT)
@@ -180,8 +180,6 @@ final class LPSolve extends MPSolver {
       LPOperator,
       -lhs.constant
     )
-
-    underlyingSolver.setRowName(numberOfCons, ANONYMOUS)
   }
 
   /**
@@ -198,7 +196,7 @@ final class LPSolve extends MPSolver {
 
     underlyingSolver.setAddRowmode(false)
 
-    underlyingSolver.solve match {
+    _solutionStatus = underlyingSolver.solve match {
 
       case LpSolve.OPTIMAL =>
         _solution = Array.tabulate(numberOfVars)(c => underlyingSolver.getVarPrimalresult(numberOfCons + c + 1))
@@ -224,6 +222,8 @@ final class LPSolve extends MPSolver {
         logger.info("LPSolve cannot handle the problem. Status was set to INFEASIBLE.")
         SolutionStatus.INFEASIBLE
     }
+
+    _solutionStatus
   }
 
   /**

@@ -58,8 +58,6 @@ final class Mosek extends MPSolver {
     }
 
     this.numberOfVars = numberOfVars
-
-    underlyingSolver.appendcons(0)
     underlyingSolver.appendvars(numberOfVars)
 
     val cols = (0 until numberOfVars).toArray
@@ -178,6 +176,10 @@ final class Mosek extends MPSolver {
     */
   def addConstraint(mpConstraint: MPConstraint): Unit = {
 
+    // TODO fix that
+    underlyingSolver.appendcons(numberOfCons + 1)
+    println(underlyingSolver.getnumcon())
+
     val lhs = mpConstraint.constraint.lhs - mpConstraint.constraint.rhs
     val rhs = -lhs.constant
     val operator = mpConstraint.constraint.operator
@@ -234,21 +236,22 @@ final class Mosek extends MPSolver {
     */
   def solve(preSolve: PreSolve): SolutionStatus = {
 
+    _solution = Array.ofDim(numberOfVars)
     val optimizationStatus = underlyingSolver.optimize()
 
-    optimizationStatus match {
+    _solutionStatus = optimizationStatus match {
       case rescode.ok =>
         val solutionStatus = new Array[solsta](1)
         underlyingSolver.getsolsta(soltype.itr, solutionStatus)
 
         solutionStatus.head match {
           case solsta.optimal =>
-            underlyingSolver.getxx(soltype.itr, solution)
+            underlyingSolver.getxx(soltype.itr, _solution)
             _objectiveValue = Some(underlyingSolver.getprimalobj(soltype.itr))
             SolutionStatus.OPTIMAL
 
           case solsta.near_optimal =>
-            underlyingSolver.getxx(soltype.itr, solution)
+            underlyingSolver.getxx(soltype.itr, _solution)
             _objectiveValue = Some(underlyingSolver.getprimalobj(soltype.itr))
             SolutionStatus.SUBOPTIMAL
 
@@ -266,6 +269,7 @@ final class Mosek extends MPSolver {
         SolutionStatus.NOT_SOLVED
     }
 
+    _solutionStatus
   }
 
   /**
