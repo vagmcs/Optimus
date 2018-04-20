@@ -1,15 +1,16 @@
 ## Linear Programming
 
-Import the optimization package:
+Import the following optimization packages:
 
 ```scala
-import optimus.optimization._
+import optimus.optimization.enums._
+import optimus.optimization.model._
 ```
 
-Create a linear-quadratic problem and select a solver for it:
+Create a model and select a solver for it:
 
 ```scala
-implicit val problem = LQProblem(SolverLib.ojalgo)
+implicit val model = MPModel(SolverLib.oJSolver)
 ```
 
 Ok! Let's create a couple of variables:
@@ -30,8 +31,9 @@ At last, we can solve the problem by starting the solver and displaying the resu
 
 ```scala
 start()
-println("objective: " + objectiveValue)
-println("x = " + x.value + "y = " + y.value)
+
+println(s"objective: $objectiveValue")
+println(s"x = ${x.value} y = ${y.value}")
 ```
 
 Finally, don't forget to release the memory used by the internal solver:

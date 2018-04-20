@@ -21,10 +21,10 @@ This program comes with ABSOLUTELY NO WARRANTY. This is free software, and you a
   * Quadratic constraint quadratic programming (QCQP)
   * Mixed integer programming (MIP)
 3. Available solvers:
-  * Open source [LpSolve](http://sourceforge.net/projects/lpsolve/) can be used for LP and MIP
-  * Open source [oJSolver](http://ojalgo.org/) can be used for LP, QP and MIP
-  * Proprietary solver [Gurobi](http://www.gurobi.com/) can be used for efficiently solving LP, QP, QCQP and MIP
-  * Proprietary solver [Mosek](https://www.mosek.com/) (experimental)
+  * Open source [LpSolve](http://sourceforge.net/projects/lpsolve/) can be used for LP and MIP.
+  * Open source [oJSolver](http://ojalgo.org/) can be used for LP, QP and MIP.
+  * Proprietary solver [Gurobi](http://www.gurobi.com/) can be used for efficiently solving LP, QP, QCQP and MIP.
+  * Proprietary solver [Mosek](https://www.mosek.com/) can be used for efficiently solving LP, QP, QCQP and MIP.
 
 ## Building
 

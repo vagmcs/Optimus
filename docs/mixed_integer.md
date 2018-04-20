@@ -1,15 +1,16 @@
 ## Mixed-Integer Programming
 
-Import the optimization package:
+Import the following optimization packages:
 
 ```scala
-import optimus.optimization._
+import optimus.optimization.enums._
+import optimus.optimization.model._
 ```
 
-Create a linear-quadratic problem and select a solver for it:
+Create a model problem and select a solver for it:
 
 ```scala
-implicit val problem = MIProblem(SolverLib.ojalgo)
+implicit val model = MPModel(SolverLib.oJSolver)
 ```
 
 Ok! Let's create a couple of float and a couple of integer variables:
@@ -35,8 +36,9 @@ At last, we can solve the problem by starting the solver and displaying the resu
 
 ```scala
 start()
-println("objective: " + objectiveValue)
-println("x = " + x.value + "y = " + y.value + "z = " + z.value + "t = " + t.value)
+
+println(s"objective: $objectiveValue")
+println(s"x = ${x.value} y = ${y.value} z = ${z.value} t = ${t.value}")
 ```
 
 Finally, don't forget to release the memory used by the internal solver:
