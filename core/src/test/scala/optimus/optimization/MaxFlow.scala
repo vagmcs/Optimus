@@ -77,7 +77,7 @@ trait MaxFlow extends FunSpec with Matchers {
     }
 
     it(s"$solver objective value should be 29") {
-      objectiveValue shouldBe 29
+      objectiveValue shouldBe 29.0 +- 1e-2
     }
 
     it("all variables should have a value") {

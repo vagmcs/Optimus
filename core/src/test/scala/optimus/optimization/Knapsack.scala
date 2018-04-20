@@ -71,7 +71,7 @@ trait Knapsack extends FunSpec with Matchers {
 
     start()
 
-    val selected = items.filter(item => item.x.value.get == 1)
+    val selected = items.filter(item => item.x.value.get.toInt == 1)
     val totalWeight = selected.map(item => item.weight).sum
 
     it(s"$solver solution should be optimal") {
@@ -79,7 +79,7 @@ trait Knapsack extends FunSpec with Matchers {
     }
 
     it(s"$solver total utility should be 55") {
-      objectiveValue shouldEqual 55
+      objectiveValue shouldEqual 55.0 +- 1e-2
     }
 
     it(s"$solver total weight should be 100") {

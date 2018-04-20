@@ -940,12 +940,16 @@ final class GurobiSpecTest extends FunSpec with Matchers {
       objectiveValue shouldEqual 0.41 +- 1e-2
     }
 
-    it("x should be equal to 1") {
+    it("x should be equal to 0.46") {
       x.value.get shouldEqual 0.46 +- 1e-2
     }
 
-    it("y should be equal to 0") {
+    it("y should be equal to 0.01") {
       y.value.get shouldEqual 0.01 +- 1e-2
+    }
+
+    it("z should be equal to 0.72") {
+      z.value.get shouldEqual 0.72 +- 1e-2
     }
 
     release()

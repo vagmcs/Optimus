@@ -30,7 +30,7 @@
 package optimus.optimization
 
 import optimus.optimization.enums.{PreSolve, SolutionStatus, SolverLib}
-import optimus.optimization.model.{MPConstraint, MPFloatVar}
+import optimus.optimization.model.{MPConstraint, MPFloatVar, MPIntVar}
 import org.scalatest.{FunSpec, Matchers}
 
 final class MosekSpecTest extends FunSpec with Matchers {
@@ -483,10 +483,10 @@ final class MosekSpecTest extends FunSpec with Matchers {
 
       start()
 
-      w.value.get should equal(12.5 +- 1e-2)
+      w.value.get should equal(8.65 +- 1e-2)
       x.value.get should equal(15.0 +- 1e-2)
-      y.value.get should equal(12.5 +- 1e-2)
-      z.value.get should equal(0.0 +- 1e-2)
+      y.value.get should equal(8.65 +- 1e-2)
+      z.value.get should equal(7.7 +- 1e-2)
       objectiveValue shouldBe (115.0 +- 1e-2)
 
       cons(0).isTight() shouldBe true
@@ -543,6 +543,117 @@ final class MosekSpecTest extends FunSpec with Matchers {
 
     it("objective value should be equal to 2.0") {
       objectiveValue shouldEqual 2.0
+    }
+
+    release()
+  }
+
+  // Mixed-integer objective function tests
+
+  describe("Mixed-Integer Program (1)") {
+
+    implicit val mip: MPModel = MPModel(SolverLib.Mosek)
+
+    val x0 = MPFloatVar("x0", 0, 40)
+    val x1 = MPIntVar("x1", 0 to 1000)
+    val x2 = MPIntVar("x2", 0 until 18)
+    val x3 = MPFloatVar("x3", 2, 3)
+
+    maximize(x0 + 2*x1 + 3*x2 + x3)
+
+    subjectTo(
+      -1*x0 + x1 + x2 + 10*x3 <:= 20,
+      x0 - 3.0*x1 + x2 <:= 30,
+      x1 - 3.5*x3 := 0
+    )
+
+    start()
+
+    it("solution should be optimal") {
+      status shouldBe SolutionStatus.OPTIMAL
+    }
+
+    it("x0 should be equal to 39.9") {
+      x0.value.get shouldEqual 39.99 +- 1e-2
+    }
+
+    it("x1 should be equal to 10") {
+      x1.value.get shouldEqual 10
+    }
+
+    it("x2 should be equal to 17") {
+      x2.value.get shouldEqual 17
+    }
+
+    it("x3 should be equal to 2.85") {
+      x3.value.get shouldEqual 2.85 +- 1e-2
+    }
+
+    it("objective value should be equal to 113.85") {
+      objectiveValue shouldEqual 113.85 +- 1e-2
+    }
+
+    release()
+  }
+
+  describe("Mixed-Integer Program (2)") {
+
+    implicit val mip: MPModel = MPModel(SolverLib.Mosek)
+
+    val x = MPFloatVar("x", 0, 100)
+    val y = MPIntVar("y", 0 to 100)
+
+    maximize(8 * x + 12 * y)
+    add(10 * x + 20 * y <:= 140)
+    add(6 * x + 8 * y <:= 72)
+
+    start()
+
+    it("solution should be optimal") {
+      status shouldBe SolutionStatus.OPTIMAL
+    }
+
+    it("x should be equal to 8") {
+      x.value.get shouldEqual 8.0 +- 1e-2
+    }
+
+    it("y should be equal to 3") {
+      y.value.get shouldEqual 3
+    }
+
+    it("objective value should be equal to 100") {
+      objectiveValue shouldEqual 100.0 +- 1e-2
+    }
+
+    release()
+  }
+
+  describe("Mixed-Integer Program (3)") {
+
+    implicit val mip: MPModel = MPModel(SolverLib.Mosek)
+
+    val x = Array.tabulate(6)(j => MPIntVar(s"x$j", 0 to 1))
+
+    val z = 3 * x(0) + 5 * x(1) + 6 * x(2) + 9 * x(3) + 10 * x(4) + 10 * x(5)
+
+    minimize(z)
+
+    add(-2 * x(0) + 6 * x(1) - 3 * x(2) + 4 * x(3) + x(4) - 2 * x(5) >:= 2)
+    add(-5 * x(0) - 3 * x(1) + x(2) + 3 * x(3) - 2 * x(4) + x(5) >:= -2)
+    add(5 * x(0) - x(1) + 4 * x(2) -2 * x(3) + 2 * x(4) - x(5) >:= 3)
+
+    it ("all variables should be binary") {
+      x.foreach(_.isBinary shouldBe true)
+    }
+
+    start()
+
+    it("solution should be optimal") {
+      status shouldBe SolutionStatus.OPTIMAL
+    }
+
+    it("objective value should be equal to 11") {
+      objectiveValue shouldEqual 11
     }
 
     release()
@@ -810,7 +921,7 @@ final class MosekSpecTest extends FunSpec with Matchers {
     }
 
     it("x should be equal to 1") {
-      x.value.get shouldEqual 1.0
+      x.value.get shouldEqual 1.0 +- 1e-2
     }
 
     it("y should be equal to 0") {
@@ -841,12 +952,16 @@ final class MosekSpecTest extends FunSpec with Matchers {
       objectiveValue shouldEqual 0.41 +- 1e-2
     }
 
-    it("x should be equal to 1") {
+    it("x should be equal to 0.46") {
       x.value.get shouldEqual 0.46 +- 1e-2
     }
 
-    it("y should be equal to 0") {
+    it("y should be equal to 0.01") {
       y.value.get shouldEqual 0.01 +- 1e-2
+    }
+
+    it("z should be equal to 0.72") {
+      z.value.get shouldEqual 0.72 +- 1e-2
     }
 
     release()

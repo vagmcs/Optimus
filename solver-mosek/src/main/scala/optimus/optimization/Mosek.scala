@@ -34,12 +34,15 @@ import optimus.algebra._
 import optimus.optimization.enums.{PreSolve, SolutionStatus}
 import optimus.optimization.model.MPConstraint
 
+import scala.util.{Failure, Success, Try}
+
 final class Mosek extends MPSolver {
 
   type Solver = Task
 
   private val env = new Env
   protected var underlyingSolver: Solver = new Task(env)
+  private var solutionType = soltype.itr
 
   /**
     * Problem builder, should configure the solver and append
@@ -59,12 +62,6 @@ final class Mosek extends MPSolver {
 
     this.numberOfVars = numberOfVars
     underlyingSolver.appendvars(numberOfVars)
-
-    val cols = (0 until numberOfVars).toArray
-
-    underlyingSolver.putvarnamelist(cols, cols.map(i => s"x$i"))
-    underlyingSolver.putvartypelist(cols, cols.map(_ => variabletype.type_cont))
-    underlyingSolver.putvarboundlist(cols, cols.map(_ => boundkey.up), cols.map(_ => 0.0), cols.map(_ => Double.MaxValue))
   }
 
   /**
@@ -105,7 +102,7 @@ final class Mosek extends MPSolver {
     * @param colId position of the variable
     */
   def setUnboundLowerBound(colId: Int): Unit =
-    underlyingSolver.putvarbound(colId, boundkey.up, 0, Double.MaxValue)
+    underlyingSolver.putvarbound(colId, boundkey.up, Double.MinValue, 0)
 
   /**
     * Set the column/variable as an integer variable
@@ -152,6 +149,12 @@ final class Mosek extends MPSolver {
           val indexes = decode(iterator.key)
           if (indexes.length == 1)
             underlyingSolver.putcj(indexes.head, iterator.value)
+          else if (indexes.head == indexes(1))
+            underlyingSolver.putqobjij(
+              indexes.head,
+              indexes.head,
+              2 * iterator.value
+            )
           else underlyingSolver.putqobjij(
             Math.max(indexes.head, indexes(1)),
             Math.min(indexes.head, indexes(1)),
@@ -176,9 +179,7 @@ final class Mosek extends MPSolver {
     */
   def addConstraint(mpConstraint: MPConstraint): Unit = {
 
-    // TODO fix that
-    underlyingSolver.appendcons(numberOfCons + 1)
-    println(underlyingSolver.getnumcon())
+    underlyingSolver.appendcons(1)
 
     val lhs = mpConstraint.constraint.lhs - mpConstraint.constraint.rhs
     val rhs = -lhs.constant
@@ -196,17 +197,24 @@ final class Mosek extends MPSolver {
         var quadraticValues = Array.emptyDoubleArray
 
         val iterator = lhs.terms.iterator
-        while(iterator.hasNext) {
+        while (iterator.hasNext) {
           iterator.advance()
           val indexes = decode(iterator.key)
-          if(indexes.length == 1) {
+          if (indexes.length == 1) {
             linearIndexes :+= indexes.head
             linearValues :+= iterator.value
           }
           else {
-            rowIndexes :+= Math.max(indexes.head, indexes(1))
-            colsIndexes :+= Math.min(indexes.head, indexes(1))
-            quadraticValues :+= iterator.value()
+            if (indexes.head == indexes(1)) {
+              rowIndexes :+= indexes.head
+              colsIndexes :+= indexes.head
+              quadraticValues :+= 2 * iterator.value
+            }
+            else {
+              rowIndexes :+= Math.max(indexes.head, indexes(1))
+              colsIndexes :+= Math.min(indexes.head, indexes(1))
+              quadraticValues :+= iterator.value
+            }
           }
         }
         underlyingSolver.putarow(numberOfCons, linearIndexes, linearValues)
@@ -242,17 +250,22 @@ final class Mosek extends MPSolver {
     _solutionStatus = optimizationStatus match {
       case rescode.ok =>
         val solutionStatus = new Array[solsta](1)
-        underlyingSolver.getsolsta(soltype.itr, solutionStatus)
+        Try(underlyingSolver.getsolsta(soltype.itr, solutionStatus)) match {
+          case Success(_) =>
+          case Failure(_) =>
+            solutionType = soltype.itg
+            underlyingSolver.getsolsta(soltype.itg, solutionStatus)
+        }
 
         solutionStatus.head match {
-          case solsta.optimal =>
-            underlyingSolver.getxx(soltype.itr, _solution)
-            _objectiveValue = Some(underlyingSolver.getprimalobj(soltype.itr))
+          case solsta.optimal | solsta.integer_optimal =>
+            underlyingSolver.getxx(solutionType, _solution)
+            _objectiveValue = Some(underlyingSolver.getprimalobj(solutionType))
             SolutionStatus.OPTIMAL
 
-          case solsta.near_optimal =>
-            underlyingSolver.getxx(soltype.itr, _solution)
-            _objectiveValue = Some(underlyingSolver.getprimalobj(soltype.itr))
+          case solsta.near_optimal | solsta.near_integer_optimal =>
+            underlyingSolver.getxx(solutionType, _solution)
+            _objectiveValue = Some(underlyingSolver.getprimalobj(solutionType))
             SolutionStatus.SUBOPTIMAL
 
           case solsta.dual_infeas_cer |
