@@ -15,10 +15,8 @@ lib/
 
 **Step 3.** To build the Optimus distribution type the following command:
 ```
-$ sbt dist
+$ sbt build
 ```
-
-After a successful compilation, the distribution modules (`core`, `solver-oj`, `solver-lp`, `solver-gurobi`, `solver-mosek`) are located inside the `./target/universal/optimus-*.zip` archive of each module folder. The distribution contains all library dependencies and requires only Java 8 (or higher). Sources, documentation and the compiled library (without dependencies) are archived as jar files into the `./target/scala-2.11/` or `./target/scala-2.12/` directory.
 
 ## Optional LPSolve Installation
 
