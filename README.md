@@ -34,6 +34,7 @@ See [Building and Linking](docs/building_and_linking.md)
 - [Linear Programming](docs/linear.md)
 - [Quadratic Programming](docs/quadratic.md)
 - [Mixed Integer Programming](docs/mixed_integer.md)
+- [Model Specification](docs/model_spec.md)
 
 ## Contributions
 
