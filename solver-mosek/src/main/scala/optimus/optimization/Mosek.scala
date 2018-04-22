@@ -83,7 +83,11 @@ final class Mosek extends MPSolver {
   def setBounds(colId: Int, lower: Double, upper: Double): Unit =
     underlyingSolver.putvarbound(colId, boundkey.ra, lower, upper)
 
-
+  /**
+    * Set bot upper and lower bounds to unbounded (infinite).
+    *
+    * @param colId position of the variable
+    */
   override def setDoubleUnbounded(colId: Int): Unit =
     underlyingSolver.putvarbound(colId, boundkey.fr, Double.MinValue, Double.MaxValue)
 

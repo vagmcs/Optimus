@@ -161,7 +161,6 @@ trait MPSolver extends StrictLogging {
       addConstraint(constraints(idx))
       idx += 1
     }
-    logger.info(s"Added $len constraints.")
   }
 
   /**

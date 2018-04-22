@@ -55,6 +55,14 @@ case class MPModel(solverLib: SolverLib = SolverLib.oJSolver) extends StrictLogg
 
   protected lazy val solver: MPSolver = SolverFactory.instantiate(solverLib)
 
+  protected def optimize(expression: Expression,
+                         minimize: Boolean): MPModel = {
+    reOptimize = false
+    objective = expression
+    this.minimize = minimize
+    this
+  }
+
   /**
     * Register a variable to the model
     *
@@ -105,89 +113,83 @@ case class MPModel(solverLib: SolverLib = SolverLib.oJSolver) extends StrictLogg
   def objectiveValue: Double = solver.objectiveValue.get
 
   /**
-    * @param expression
-    * @return
+    * @param expression an expression to minimize
+    * @return the model
     */
   def minimize(expression: Expression): MPModel = optimize(expression, minimize = true)
 
   /**
-    * @param expression
-    * @return
+    * @param expression an expression to maximize
+    * @return the model
     */
   def maximize(expression: Expression): MPModel = optimize(expression, minimize = false)
 
-  protected def optimize(expression: Expression, minimize: Boolean): MPModel = {
-    reOptimize = false
-    objective = expression
-    this.minimize = minimize
-    this
-  }
-
+  /**
+    * Start the underlying solver.
+    *
+    * @see [[optimus.optimization.enums.PreSolve]]
+    *
+    * @param timeLimit a time limit for the solver
+    * @param preSolve a pre solve strategy
+    * @return true if there is a solution, false otherwise
+    */
   def start(timeLimit: Int = Int.MaxValue, preSolve: PreSolve = DISABLED): Boolean = {
 
     if (!reOptimize) {
       solver.buildModel(variables.size)
 
-      logger.info("Configuring variables...")
-      for (x <- variables) {
-        if (x.isUnbounded) solver.setDoubleUnbounded(x.index)
-        else solver.setBounds(x.index, x.lowerBound, x.upperBound)
+      measureTime(s"Variables (${variables.length}) configured in:") {
+        for (x <- variables) {
+          if (x.isUnbounded) solver.setDoubleUnbounded(x.index)
+          else solver.setBounds(x.index, x.lowerBound, x.upperBound)
 
-        if (x.isBinary) solver.setBinary(x.index)
-        else if(x.isInteger) solver.setInteger(x.index)
+          if (x.isBinary) solver.setBinary(x.index)
+          else if (x.isInteger) solver.setInteger(x.index)
+        }
       }
 
-      measureTime("Objective function added in: ") {
+      measureTime("Objective function added in:") {
         solver.setObjective(objective, minimize)
       }
 
-      measureTime("Constraints created in: ") {
+      measureTime(s"Constraints (${constraints.length}) created in:") {
         solver.addAllConstraints(constraints)
       }
 
       reOptimize = true
     }
-    else logger.info("Re-optimize")
+    else logger.info("Re-optimizing...")
 
     if (timeLimit < Int.MaxValue)
       solver.setTimeout(timeLimit)
 
-    logger.info("Solving...")
-    val status = solver.solve(preSolve)
+    val status = measureTime("Solution found in:") {
+      solver.solve(preSolve)
+    }
 
     if ( (status == SolutionStatus.OPTIMAL) || (status == SolutionStatus.SUBOPTIMAL) )
       variables.indices foreach { i => solution(i) = solver.getVarValue(i) }
 
-    logger.info("Solution status is " + status)
-
-    //val status = solveProblem(preSolve)
+    logger.info(s"Solution status is $status.")
     (status == SolutionStatus.OPTIMAL) || (status == SolutionStatus.SUBOPTIMAL)
   }
 
-  def solveProblem(preSolve: PreSolve): SolutionStatus = {
-    logger.info("Solving...")
-    val status = solver.solve(preSolve)
-
-    if ( (status == SolutionStatus.OPTIMAL) || (status == SolutionStatus.SUBOPTIMAL) )
-      variables.indices foreach { i => solution(i) = solver.getVarValue(i) }
-
-    logger.info("Solution status is " + status)
-    status
-  }
-
   /**
-    * @param tol
-    * @return
+    * Check if all constraints in the model are satisfied by
+    * the given solution.
+    *
+    * @param tol a tolerance threshold
+    * @return true if all constraints are satisfied, false otherwise
     */
   def checkConstraints(tol: Double = 10e-6): Boolean = constraints.forall(_.check(tol))
 
   /**
-    * @return
+    * @return the status of the solution found for the model
     */
   def getStatus: SolutionStatus = solver.solutionStatus
 
   /**
-    *
+    * Release the memory of the underlying solver.
     */
   def release(): Unit = solver.release()
 }
