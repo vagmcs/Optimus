@@ -215,7 +215,7 @@ final class LPSolve extends MPSolver {
         SolutionStatus.UNBOUNDED
 
       case LpSolve.TIMEOUT =>
-        logger.info("LPSolve timed out before solution was reached!")
+        logger.warn("LPSolve timed out before solution was reached!")
         SolutionStatus.NOT_SOLVED
 
       case _ =>

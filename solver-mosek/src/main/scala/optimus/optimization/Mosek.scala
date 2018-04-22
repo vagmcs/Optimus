@@ -248,6 +248,9 @@ final class Mosek extends MPSolver {
     */
   def solve(preSolve: PreSolve): SolutionStatus = {
 
+    if (preSolve != PreSolve.DISABLED)
+      logger.warn("Mosek pre-solving is not currently supported!")
+
     _solution = Array.ofDim(numberOfVars)
     val optimizationStatus = underlyingSolver.optimize()
 
@@ -282,7 +285,7 @@ final class Mosek extends MPSolver {
             SolutionStatus.NOT_SOLVED
         }
       case _ =>
-        logger.info(s"Optimization failed with rescode = $optimizationStatus")
+        logger.error(s"Optimization failed with code = $optimizationStatus")
         SolutionStatus.NOT_SOLVED
     }
 

@@ -157,15 +157,17 @@ final class oJSolver extends MPSolver {
     if (objective.getOrder == GENERIC)
       throw new IllegalArgumentException("ojSolver cannot handle expressions of higher order!")
 
-    val objectiveFunction = underlyingSolver.addExpression("objective")
+    val objectiveFunction = underlyingSolver.addExpression()
     objectiveFunction.weight(BigMath.ONE)
 
     val iterator = objective.terms.iterator
     while (iterator.hasNext) {
       iterator.advance()
       val indexes = decode(iterator.key)
-      if(indexes.length == 1) objectiveFunction.set(underlyingSolver.getVariable(indexes.head), iterator.value)
-      else objectiveFunction.set(underlyingSolver.getVariable(indexes.head), underlyingSolver.getVariable(indexes(1)), iterator.value)
+      if (indexes.length == 1) objectiveFunction
+        .set(underlyingSolver.getVariable(indexes.head), iterator.value)
+      else objectiveFunction
+        .set(underlyingSolver.getVariable(indexes.head), underlyingSolver.getVariable(indexes(1)), iterator.value)
     }
     _objectiveConstant = objective.constant
 
@@ -184,14 +186,16 @@ final class oJSolver extends MPSolver {
     val lhs = mpConstraint.constraint.lhs - mpConstraint.constraint.rhs
     val operator = mpConstraint.constraint.operator
 
-    val constraint = underlyingSolver.addExpression(mpConstraint.index.toString)
+    val constraint = underlyingSolver.addExpression()
 
     val iterator = lhs.terms.iterator
     while (iterator.hasNext) {
       iterator.advance()
       val indexes = decode(iterator.key)
-      if (indexes.length == 1) constraint.set(underlyingSolver.getVariable(indexes.head), iterator.value)
-      else constraint.set(underlyingSolver.getVariable(indexes.head), underlyingSolver.getVariable(indexes(1)), iterator.value)
+      if (indexes.length == 1) constraint
+        .set(underlyingSolver.getVariable(indexes.head), iterator.value)
+      else constraint
+        .set(underlyingSolver.getVariable(indexes.head), underlyingSolver.getVariable(indexes(1)), iterator.value)
     }
 
     operator match {
@@ -208,9 +212,12 @@ final class oJSolver extends MPSolver {
    */
   def solve(preSolve: PreSolve = PreSolve.DISABLED): SolutionStatus = {
 
-    if (preSolve != PreSolve.DISABLED) logger.warn("ojSolver does not support pre-solving!")
+    if (preSolve != PreSolve.DISABLED)
+      logger.warn("ojSolver does not support pre-solving!")
 
-    val result = if (this.minimize) underlyingSolver.minimise() else underlyingSolver.maximise()
+    val result =
+      if (this.minimize) underlyingSolver.minimise()
+      else underlyingSolver.maximise()
 
     _solutionStatus = result.getState match {
 
