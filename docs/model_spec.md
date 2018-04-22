@@ -8,7 +8,7 @@ import optimus.optimization.model._
 
 Extend your object or class using ``ModelSpec``:
 
-```
+```scala
 object Test extends ModelSpec(SolverLib.oJSolver) with App {
 
   val x = MPFloatVar(100, 200)
