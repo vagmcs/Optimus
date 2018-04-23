@@ -31,6 +31,7 @@ package optimus.algebra
 
 import com.typesafe.scalalogging.LazyLogging
 import optimus.algebra.ConstraintRelation._
+import optimus.algebra.AlgebraOps._
 
 /**
   * Expression abstraction, should be extended by anything that is
@@ -313,7 +314,7 @@ abstract class BinaryOp(val a: Expression, val b: Expression) extends Expression
     }
 
     // 3. Filter out zero terms
-    result.retainEntries((_, v: Double) => v != 0d)
+    result.retainEntries((_: UniqueId, v: Double) => v != 0d)
     result
   }
 }
@@ -386,7 +387,7 @@ case class Product(override val a: Expression, override val b: Expression) exten
     }
 
     // 4. Filter out zero terms
-    result.retainEntries((_, v: Double) => v != 0d)
+    result.retainEntries((_: UniqueId, v: Double) => v != 0d)
     result
   }
 }

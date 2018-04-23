@@ -29,7 +29,15 @@
 
 package optimus.algebra
 
+import gnu.trove.procedure.TLongDoubleProcedure
+import scala.language.implicitConversions
+
 object AlgebraOps {
+
+  implicit def function2TLongDoubleProcedure(f: (Long, Double) => Boolean): TLongDoubleProcedure =
+    new TLongDoubleProcedure {
+      override def execute(x: UniqueId, y: Double): Boolean = f(x, y)
+    }
 
   // Functions over iterable data structures of expressions
 
@@ -47,7 +55,7 @@ object AlgebraOps {
         resultedTerms.adjustOrPutValue(iterator.key, scalar, scalar)
       }
     }
-    resultedTerms.retainEntries((_, v: Double) => v != 0d)
+    resultedTerms.retainEntries((_: Long, v: Double) => v != 0d)
 
     new Expression {
       override val constant: Double = const
