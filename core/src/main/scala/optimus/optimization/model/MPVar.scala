@@ -103,23 +103,46 @@ object MPFloatVar {
     new MPFloatVar(INFINITE, INFINITE, symbol)
 
   /**
+    * Creates a positive variable.
+    *
     * @see [[optimus.optimization.model.MPVar]]
     *
-    * @param lowerBound the lower bound in the domain
     * @return a upper unbounded anonymous float variable
     */
-  def apply(lowerBound: Double)(implicit model: MPModel) =
-    new MPFloatVar(lowerBound, INFINITE, ANONYMOUS)
+  def positive()(implicit model: MPModel) =
+    new MPFloatVar(0, INFINITE, ANONYMOUS)
 
   /**
+    * Creates a positive variable.
+    *
     * @see [[optimus.optimization.model.MPVar]]
     *
     * @param symbol the symbol of the variable
-    * @param lowerBound the lower bound of variable domain
     * @return a upper unbounded float variable
     */
-  def apply(symbol: String, lowerBound: Double)(implicit model: MPModel) =
-    new MPFloatVar(lowerBound, INFINITE, symbol)
+  def positive(symbol: String)(implicit model: MPModel) =
+    new MPFloatVar(0, INFINITE, symbol)
+
+  /**
+    * Creates a negative variable.
+    *
+    * @see [[optimus.optimization.model.MPVar]]
+    *
+    * @return a upper unbounded anonymous float variable
+    */
+  def negative()(implicit model: MPModel) =
+    new MPFloatVar(INFINITE, 0, ANONYMOUS)
+
+  /**
+    * Creates a negative variable.
+    *
+    * @see [[optimus.optimization.model.MPVar]]
+    *
+    * @param symbol the symbol of the variable
+    * @return a upper unbounded float variable
+    */
+  def negative(symbol: String)(implicit model: MPModel) =
+    new MPFloatVar(INFINITE, 0, symbol)
 
   /**
     * @see [[optimus.optimization.model.MPVar]]

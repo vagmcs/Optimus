@@ -32,7 +32,7 @@ package optimus.optimization
 import org.scalatest.{FunSpec, Matchers}
 import optimus.algebra.AlgebraOps._
 import optimus.optimization.enums.{SolutionStatus, SolverLib}
-import optimus.optimization.model.MPIntVar
+import optimus.optimization.model.MPBinaryVar
 import scala.util.Random
 
 /**
@@ -47,7 +47,7 @@ trait Knapsack extends FunSpec with Matchers {
 
   def solver: SolverLib
 
-  case class Item(weight: Int, utility: Int, x: MPIntVar)
+  case class Item(weight: Int, utility: Int, x: MPBinaryVar)
 
   describe("Knapsack having a couple of items") {
 
@@ -58,7 +58,7 @@ trait Knapsack extends FunSpec with Matchers {
     implicit val knapsackProblem: MPModel = MPModel(solver)
 
     val items = Array.tabulate(weights.length) { i =>
-      Item(weights(i), utility(i), MPIntVar(s"x$i", 0 to 1))
+      Item(weights(i), utility(i), MPBinaryVar(s"x$i"))
     }
 
     // Maximize the total utility
@@ -103,7 +103,7 @@ trait Knapsack extends FunSpec with Matchers {
     implicit val knapsackProblem: MPModel = MPModel(solver)
 
     val items = Array.tabulate(weights.length) { i =>
-      Item(weights(i), utility(i), MPIntVar(s"x$i", 0 to 1))
+      Item(weights(i), utility(i), MPBinaryVar(s"x$i"))
     }
 
     // Maximize the total utility

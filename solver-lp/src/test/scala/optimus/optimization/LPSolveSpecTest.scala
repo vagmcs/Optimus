@@ -30,7 +30,7 @@
 package optimus.optimization
 
 import optimus.optimization.enums.{SolutionStatus, SolverLib}
-import optimus.optimization.model.{MPConstraint, MPFloatVar, MPIntVar}
+import optimus.optimization.model.{MPBinaryVar, MPConstraint, MPFloatVar, MPIntVar}
 import org.scalatest.{FunSpec, Matchers}
 
 /**
@@ -360,9 +360,9 @@ final class LPSolveSpecTest extends FunSpec with Matchers {
 
     implicit val lp: MPModel = MPModel(SolverLib.LpSolve)
 
-    val x = MPFloatVar("x", 0, Double.PositiveInfinity)
-    val y = MPFloatVar("y", 0, Double.PositiveInfinity)
-    val z = MPFloatVar("z", 0, Double.PositiveInfinity)
+    val x = MPFloatVar.positive("x")
+    val y = MPFloatVar.positive("y")
+    val z = MPFloatVar.positive("z")
 
     var cons: Vector[MPConstraint] = Vector()
 
@@ -422,10 +422,10 @@ final class LPSolveSpecTest extends FunSpec with Matchers {
 
     implicit val lp: MPModel = MPModel(SolverLib.LpSolve)
 
-    val w = MPFloatVar("w", 0, Double.PositiveInfinity)
-    val x = MPFloatVar("x", 0, Double.PositiveInfinity)
-    val y = MPFloatVar("y", 0, Double.PositiveInfinity)
-    val z = MPFloatVar("z", 0, Double.PositiveInfinity)
+    val w = MPFloatVar.positive("w")
+    val x = MPFloatVar.positive("x")
+    val y = MPFloatVar.positive("y")
+    val z = MPFloatVar.positive("z")
 
     var cons: Vector[MPConstraint] = Vector()
 
@@ -588,7 +588,7 @@ final class LPSolveSpecTest extends FunSpec with Matchers {
 
     implicit val mip: MPModel = MPModel(SolverLib.LpSolve)
 
-    val x = Array.tabulate(6)(j => MPIntVar(s"x$j", 0 to 1))
+    val x = Array.tabulate(6)(j => MPBinaryVar(s"x$j"))
 
     val z = 3 * x(0) + 5 * x(1) + 6 * x(2) + 9 * x(3) + 10 * x(4) + 10 * x(5)
 

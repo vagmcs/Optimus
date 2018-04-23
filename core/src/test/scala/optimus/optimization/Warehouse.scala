@@ -32,7 +32,7 @@ package optimus.optimization
 import org.scalatest.{FunSpec, Matchers}
 import optimus.algebra.AlgebraOps._
 import optimus.optimization.enums.{SolutionStatus, SolverLib}
-import optimus.optimization.model.{MPFloatVar, MPIntVar}
+import optimus.optimization.model.{MPBinaryVar, MPFloatVar, MPIntVar}
 
 /**
   * Facility Location Problem
@@ -77,7 +77,7 @@ trait Warehouse extends FunSpec with Matchers {
     val warehouses = demand.indices
 
     // For each plant whether it is open (1) or not (0)
-    val open = plants.map(p => MPIntVar(s"open$p", 0 to 1))
+    val open = plants.map(p => MPBinaryVar(s"open$p"))
 
     // Transportation decision variables: how much to transport from a plant 'p' to a warehouse 'w'
     val transport = Array.tabulate(warehouses.length, plants.length)(

@@ -32,7 +32,7 @@ package optimus.optimization
 import org.scalatest.{FunSpec, Matchers}
 import optimus.algebra.AlgebraOps._
 import optimus.optimization.enums.{SolutionStatus, SolverLib}
-import optimus.optimization.model.MPIntVar
+import optimus.optimization.model.MPBinaryVar
 
 /**
   * Assign workers to shifts while satisfying requirements for that day.
@@ -68,7 +68,7 @@ trait Workforce extends FunSpec with Matchers {
     )
 
     val assigned = Array.tabulate(workers.size, shifts.size)(
-      (i, j) => MPIntVar(s"x($i,$j)", 0 to 1)
+      (i, j) => MPBinaryVar(s"x($i,$j)")
     )
 
     minimize(sum(workers, shifts)((w, s) => assigned(w)(s) * pay(w).toDouble))
