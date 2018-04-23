@@ -15,8 +15,9 @@ implicit val model = MPModel(SolverLib.oJSolver)
 
 Ok! Let's create a couple of variables:
 ```scala
-val x = MPFloatVar("x", 0, Double.PositiveInfinity)
-val y = MPFloatVar("y", 0, Double.PositiveInfinity)
+// Both variables are positive, that is, bounds are in [0, +inf]
+val x = MPFloatVar.positive("x")
+val y = MPFloatVar.positive("y")
 ```
 
 Then we can define our optimization problem subject to a couple of constraints using our known maths:
