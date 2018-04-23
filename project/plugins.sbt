@@ -9,3 +9,5 @@ addSbtPlugin("com.scalapenos" % "sbt-prompt" % "1.0.2")
 addSbtPlugin("com.github.gseitz" % "sbt-release" % "1.0.6")
 
 addSbtPlugin("de.heikoseeberger" % "sbt-header" % "5.0.0")
+
+addSbtPlugin("com.typesafe.sbt" % "sbt-git" % "0.9.3")

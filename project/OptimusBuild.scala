@@ -117,21 +117,16 @@ object OptimusBuild extends AutoPlugin {
           <url>https://www.gnu.org/licenses/lgpl-3.0.en.html</url>
         </license>
       </licenses>
-      <scm>
-        <connection>scm:git:github.com/vagmcs/Optimus.git</connection>
-        <developerConnection>scm:git:git@github.com:vagmcs/Optimus.git</developerConnection>
-        <url>github.com/vagmcs/Optimus</url>
-      </scm>
       <developers>
         <developer>
           <id>vagmcs</id>
           <name>Evangelos Michelioudakis</name>
-          <url>http://users.iit.demokritos.gr/~vagmcs/</url>
+          <url>https://users.iit.demokritos.gr/~vagmcs/</url>
         </developer>
         <developer>
           <id>anskarl</id>
           <name>Anastasios Skarlatidis</name>
-          <url>http://users.iit.demokritos.gr/~anskarl/</url>
+          <url>https://users.iit.demokritos.gr/~anskarl/</url>
         </developer>
       </developers>
   )

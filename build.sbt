@@ -11,12 +11,12 @@ useGpg := true
 
 lazy val root = project.in(file("."))
   .aggregate(core, oj, lpsolve, gurobi, mosek)
-  .settings(publish := { }, publishLocal := { })
+  .settings(skip in publish := true)
 
-publishArtifact in root := false
+//publishArtifact in root := false
 
 // Build settings for Optimus core
-val core = project.in(file("core"))
+lazy val core = project.in(file("core"))
   .enablePlugins(AutomateHeaderPlugin)
   .settings(headerLicense := OptimusBuild.projectHeaders)
   .settings(logLevel in Test := Level.Info)
@@ -29,7 +29,7 @@ val core = project.in(file("core"))
   ))
 
 // Build settings for Optimus oj solver
-val oj = Project("solver-oj", file("solver-oj"))
+lazy val oj = Project("solver-oj", file("solver-oj"))
   .dependsOn(core % "compile->compile ; test->test")
   .enablePlugins(AutomateHeaderPlugin)
   .settings(headerLicense := OptimusBuild.projectHeaders)
@@ -37,7 +37,7 @@ val oj = Project("solver-oj", file("solver-oj"))
   .settings(libraryDependencies += Dependencies.ojAlgorithms)
 
 // Build settings for Optimus lp solver
-val lpsolve = Project("solver-lp", file("solver-lp"))
+lazy val lpsolve = Project("solver-lp", file("solver-lp"))
   .dependsOn(core % "compile->compile ; test->test")
   .enablePlugins(AutomateHeaderPlugin)
   .settings(headerLicense := OptimusBuild.projectHeaders)
@@ -45,7 +45,7 @@ val lpsolve = Project("solver-lp", file("solver-lp"))
   .settings(libraryDependencies += Dependencies.LpSolve)
 
 // Build settings for Optimus gurobi solver
-val gurobi = if (file("lib/gurobi.jar").exists)
+lazy val gurobi = if (file("lib/gurobi.jar").exists)
   Project("solver-gurobi", file("solver-gurobi"))
     .dependsOn(core % "compile->compile ; test->test")
     .enablePlugins(AutomateHeaderPlugin)
@@ -61,7 +61,7 @@ else
     })
 
 // Build settings for Optimus mosek solver
-val mosek = if (file("lib/mosek.jar").exists)
+lazy val mosek = if (file("lib/mosek.jar").exists)
     Project("solver-mosek", file("solver-mosek"))
       .dependsOn(core % "compile->compile ; test->test")
       .enablePlugins(AutomateHeaderPlugin)
