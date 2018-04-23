@@ -42,14 +42,14 @@ final class AlgebraSpecTest extends FunSpec with Matchers {
   implicit val model: MPModel = MPModel()
 
   // Definition of float variables
-  val x = MPFloatVar("x", 0.0, 1.0)
-  val y = MPFloatVar("y", 3.5, 100)
-  val z = MPFloatVar("z")
-  val t = MPFloatVar("t", 0)
+  private val x = MPFloatVar("x", 0, 1)
+  private val y = MPFloatVar("y", 3.5, 100)
+  private val z = MPFloatVar("z")
+  private val t = MPFloatVar.positive("t")
 
   // Definition of integer variables
-  val p = MPIntVar(5 until 10)
-  val k = MPIntVar("k", 0 to 1)
+  private val p = MPIntVar(5 until 10)
+  private val k = MPIntVar("k", 0 to 1)
 
   describe("Domain of variables") {
 

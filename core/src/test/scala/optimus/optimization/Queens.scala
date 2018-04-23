@@ -32,7 +32,7 @@ package optimus.optimization
 import org.scalatest.{FunSpec, Matchers}
 import optimus.algebra.AlgebraOps._
 import optimus.optimization.enums.{SolutionStatus, SolverLib}
-import optimus.optimization.model.MPIntVar
+import optimus.optimization.model.MPBinaryVar
 
 /**
   * N-Queens puzzle: Place n chess queens on an n×n chessboard so that no two
@@ -51,7 +51,7 @@ trait Queens extends FunSpec with Matchers {
     val lines = 0 until n
     val columns = 0 until n
 
-    val x = Array.tabulate(n, n)((l, c) => MPIntVar(s"x($l,$c)", 0 to 1))
+    val x = Array.tabulate(n, n)((l, c) => MPBinaryVar(s"x($l,$c)"))
 
     maximize(sum(lines, columns) { (l, c) => x(l)(c) })
 
@@ -105,7 +105,7 @@ trait Queens extends FunSpec with Matchers {
     val lines = 0 until n
     val columns = 0 until n
 
-    val x = Array.tabulate(n, n)((l, c) => MPIntVar(s"x($l,$c)", 0 to 1))
+    val x = Array.tabulate(n, n)((l, c) => MPBinaryVar(s"x($l,$c)"))
 
     maximize(sum(lines, columns) { (l, c) => x(l)(c) })
 

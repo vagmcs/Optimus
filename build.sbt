@@ -9,7 +9,7 @@ sonatypeProfileName := "com.github.vagmcs"
 
 useGpg := true
 
-val root = project.in(file("."))
+lazy val root = project.in(file("."))
   .aggregate(core, oj, lpsolve, gurobi, mosek)
   .settings(publish := { }, publishLocal := { })
 
@@ -45,7 +45,7 @@ val lpsolve = Project("solver-lp", file("solver-lp"))
   .settings(libraryDependencies += Dependencies.LpSolve)
 
 // Build settings for Optimus gurobi solver
- val gurobi = if (file("lib/gurobi.jar").exists)
+val gurobi = if (file("lib/gurobi.jar").exists)
   Project("solver-gurobi", file("solver-gurobi"))
     .dependsOn(core % "compile->compile ; test->test")
     .enablePlugins(AutomateHeaderPlugin)

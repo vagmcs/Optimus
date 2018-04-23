@@ -32,7 +32,7 @@ package optimus.optimization
 import org.scalatest.{FunSpec, Matchers}
 import optimus.algebra.AlgebraOps._
 import optimus.optimization.enums.{SolutionStatus, SolverLib}
-import optimus.optimization.model.MPIntVar
+import optimus.optimization.model.MPBinaryVar
 
 /**
   * Sudoku is a logic-based combinatorial number-placement puzzle. The objective
@@ -52,7 +52,7 @@ trait Sudoku extends FunSpec with Matchers {
     val n = 9
     val N = 0 until n
     val x = Array.tabulate(n, n, n)(
-      (l, c, n) => MPIntVar(s"x($l, $c, $n)", 0 to 1)
+      (l, c, n) => MPBinaryVar(s"x($l, $c, $n)")
     )
 
     maximize(0)

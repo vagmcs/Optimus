@@ -30,7 +30,7 @@
 package optimus.optimization
 
 import optimus.optimization.enums.{PreSolve, SolutionStatus, SolverLib}
-import optimus.optimization.model.{MPConstraint, MPFloatVar, MPIntVar}
+import optimus.optimization.model.{MPBinaryVar, MPConstraint, MPFloatVar, MPIntVar}
 import org.scalatest.{FunSpec, Matchers}
 
 /**
@@ -364,9 +364,9 @@ final class OJAlgorithmsSpecTest extends FunSpec with Matchers {
 
     implicit val lp: MPModel = MPModel(SolverLib.oJSolver)
 
-    val x = MPFloatVar("x", 0, Double.PositiveInfinity)
-    val y = MPFloatVar("y", 0, Double.PositiveInfinity)
-    val z = MPFloatVar("z", 0, Double.PositiveInfinity)
+    val x = MPFloatVar.positive("x")
+    val y = MPFloatVar.positive("y")
+    val z = MPFloatVar.positive("z")
 
     var cons = Vector.empty[MPConstraint]
 
@@ -426,10 +426,10 @@ final class OJAlgorithmsSpecTest extends FunSpec with Matchers {
 
     implicit val lp: MPModel = MPModel(SolverLib.oJSolver)
 
-    val w = MPFloatVar("w", 0, Double.PositiveInfinity)
-    val x = MPFloatVar("x", 0, Double.PositiveInfinity)
-    val y = MPFloatVar("y", 0, Double.PositiveInfinity)
-    val z = MPFloatVar("z", 0, Double.PositiveInfinity)
+    val w = MPFloatVar.positive("w")
+    val x = MPFloatVar.positive("x")
+    val y = MPFloatVar.positive("y")
+    val z = MPFloatVar.positive("z")
 
     var cons = Vector.empty[MPConstraint]
 
@@ -621,7 +621,7 @@ final class OJAlgorithmsSpecTest extends FunSpec with Matchers {
 
     implicit val mip: MPModel = MPModel(SolverLib.oJSolver)
 
-    val x = Array.tabulate(6)(j => MPIntVar(s"x$j", 0 to 1))
+    val x = Array.tabulate(6)(j => MPBinaryVar(s"x$j"))
 
     val z = 3 * x(0) + 5 * x(1) + 6 * x(2) + 9 * x(3) + 10 * x(4) + 10 * x(5)
 
@@ -656,8 +656,8 @@ final class OJAlgorithmsSpecTest extends FunSpec with Matchers {
 
     var cons = Vector.empty[MPConstraint]
 
-    val x = MPFloatVar("x", 0, Double.PositiveInfinity)
-    val y = MPFloatVar("y", 0, Double.PositiveInfinity)
+    val x = MPFloatVar.positive("x")
+    val y = MPFloatVar.positive("y")
 
     minimize(-8*x - 16*y + x*x + 4*y*y)
 
@@ -701,8 +701,8 @@ final class OJAlgorithmsSpecTest extends FunSpec with Matchers {
 
     var cons = Vector.empty[MPConstraint]
 
-    val x = MPFloatVar("x", 0, Double.PositiveInfinity)
-    val y = MPFloatVar("y", 0, Double.PositiveInfinity)
+    val x = MPFloatVar.positive("x")
+    val y = MPFloatVar.positive("y")
 
     minimize(2*x*x + y*y + x*y + x + y)
 
@@ -749,8 +749,8 @@ final class OJAlgorithmsSpecTest extends FunSpec with Matchers {
 
     var cons = Vector.empty[MPConstraint]
 
-    val x = MPFloatVar("x", 0, Double.PositiveInfinity)
-    val y = MPFloatVar("y", 0, Double.PositiveInfinity)
+    val x = MPFloatVar.positive("x")
+    val y = MPFloatVar.positive("y")
 
     minimize(x*x + x*x + y*y - y*y + y*y + 7*x*y - 6*y*x + x*x - x*x + x - 99.9e-9*y + 1.0000000999*y)
 
@@ -795,8 +795,8 @@ final class OJAlgorithmsSpecTest extends FunSpec with Matchers {
 
     implicit val qp: MPModel = MPModel(SolverLib.oJSolver)
 
-    val x = MPFloatVar("x", 0, Double.PositiveInfinity)
-    val y = MPFloatVar("y", 0, Double.PositiveInfinity)
+    val x = MPFloatVar.positive("x")
+    val y = MPFloatVar.positive("y")
 
     minimize(-8*x - 16*y + x*x + 4*y*y)
     subjectTo (
@@ -835,10 +835,10 @@ final class OJAlgorithmsSpecTest extends FunSpec with Matchers {
 
     implicit val qp: MPModel = MPModel(SolverLib.oJSolver)
 
-    val w0 = MPFloatVar("w0", Double.NegativeInfinity, Double.PositiveInfinity)
-    val w1 = MPFloatVar("w1", Double.NegativeInfinity, Double.PositiveInfinity)
-    val w2 = MPFloatVar("w2", Double.NegativeInfinity, Double.PositiveInfinity)
-    val slack = MPFloatVar("slack", 0, Double.PositiveInfinity)
+    val w0 = MPFloatVar("w0")
+    val w1 = MPFloatVar("w1")
+    val w2 = MPFloatVar("w2")
+    val slack = MPFloatVar.positive("slack")
 
     minimize(0.5*(w0*w0 + w1*w1 + w2*w2) + 1000*slack)
     add(-2.0*w2 + 0.0 >:= -1.0*slack + 16.0)
