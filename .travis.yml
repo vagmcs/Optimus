@@ -1,0 +1,17 @@
+sudo: required
+dist: trusty
+language: scala
+scala:
+  - 2.11.12
+  - 2.12.6
+env:
+  - JDK=openjdk8
+  - JDK=oraclejdk8
+before_install:
+  - sudo apt-get -qq update
+  - sudo apt-get install -y lp-solve liblpsolve55-dev
+before_script:
+  - jdk_switcher use $JDK
+script:
+  - sbt "++${TRAVIS_SCALA_VERSION}!" "testOnly optimus.optimization.LPSolve* optimus.optimization.OJ*"
+  - git diff --exit-code

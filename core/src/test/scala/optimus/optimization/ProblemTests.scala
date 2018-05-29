@@ -24,7 +24,7 @@
  *
  * You should have received a copy of the GNU Lesser General Public License
  * along with Optimus. If not, see <http://www.gnu.org/licenses/>.
- *       
+ *
  */
 
 package optimus.optimization
@@ -37,10 +37,10 @@ import optimus.optimization.enums.SolverLib
   */
 trait MIPProblemTests
   extends Knapsack
-    with Queens
-    with Sudoku
-    with Warehouse
-    with Workforce {
+  with Queens
+  with Sudoku
+  with Warehouse
+  with Workforce {
 
   def solver: SolverLib
 }
@@ -51,8 +51,8 @@ trait MIPProblemTests
   */
 trait LPProblemTests
   extends Diet
-    with MaxFlow
-    with ProductionPlanning {
+  with MaxFlow
+  with ProductionPlanning {
 
   def solver: SolverLib
 }

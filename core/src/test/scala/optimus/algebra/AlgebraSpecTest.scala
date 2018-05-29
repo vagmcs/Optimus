@@ -24,15 +24,15 @@
  *
  * You should have received a copy of the GNU Lesser General Public License
  * along with Optimus. If not, see <http://www.gnu.org/licenses/>.
- *       
+ *
  */
 
 package optimus.algebra
 
-import org.scalatest.{FunSpec, Matchers}
+import org.scalatest.{ FunSpec, Matchers }
 import optimus.optimization.MPModel
 import optimus.algebra.AlgebraOps._
-import optimus.optimization.model.{INFINITE, MPFloatVar, MPIntVar}
+import optimus.optimization.model.{ INFINITE, MPFloatVar, MPIntVar }
 
 /**
   * Specification test for algebra.
@@ -124,11 +124,11 @@ final class AlgebraSpecTest extends FunSpec with Matchers {
     }
 
     it("x should be equal to -(-x)") {
-      1.0*x shouldEqual -(-x)
+      1.0 * x shouldEqual -(-x)
     }
 
     it("x * (-1) should be equal to -x") {
-      x*(-1.0) shouldEqual -x
+      x * (-1.0) shouldEqual -x
     }
 
     it("0 - x should be equal to -x") {
@@ -199,7 +199,7 @@ final class AlgebraSpecTest extends FunSpec with Matchers {
   describe("Simplification of expressions") {
 
     it("5*(x + y*z - t) + 3 should be simplified to 5*z*y + 5*x - 5*t + 3") {
-      5*(x + y * z - t) + 3 shouldEqual 5 * z * y + 5 * x - 5 * t + 3
+      5 * (x + y * z - t) + 3 shouldEqual 5 * z * y + 5 * x - 5 * t + 3
     }
 
     it("x - x should equal to 0") {
@@ -211,7 +211,7 @@ final class AlgebraSpecTest extends FunSpec with Matchers {
     }
 
     it("-x + x + y should equal to 1*y") {
-      -x + x + y shouldEqual 1*y
+      -x + x + y shouldEqual 1 * y
     }
 
     it("x + x should equal to 2*x") {
@@ -251,10 +251,10 @@ final class AlgebraSpecTest extends FunSpec with Matchers {
     }
 
     it("(x + 5) * (x + 4) should equal to x*x + 9*x + 20") {
-      (x + 5) * (x + 4) shouldEqual x*x + 9*x + 20
+      (x + 5) * (x + 4) shouldEqual x * x + 9 * x + 20
     }
 
-    val expr_0 = -2*z - 2*x - y + z + x - 1 + 1*z // equals -x - y - 1
+    val expr_0 = -2 * z - 2 * x - y + z + x - 1 + 1 * z // equals -x - y - 1
     it("expr_0 = -2*z - 2*x - y + z + x - 1 + 1*z should equal to -x - y - 1") {
       expr_0.equals(-x - y - 1) shouldEqual true
     }
@@ -267,7 +267,7 @@ final class AlgebraSpecTest extends FunSpec with Matchers {
     val expr_2 = -expr_1 // -4 - x - y
     it("expr_2 = -expr_1 should be equal to -4 - x - y") {
       expr_2.equals(-4 - x - y) shouldEqual true
-      expr_2.equals( -4 - sum(Vector(x, y)) ) shouldEqual true
+      expr_2.equals(-4 - sum(Vector(x, y))) shouldEqual true
     }
   }
 
@@ -278,15 +278,15 @@ final class AlgebraSpecTest extends FunSpec with Matchers {
     }
 
     it("x*x - (x*x + y) order should be linear") {
-      (x*x - (x*x + y)).getOrder shouldEqual ExpressionType.LINEAR
+      (x * x - (x * x + y)).getOrder shouldEqual ExpressionType.LINEAR
     }
 
     it("x + t + -5*y + 2*t + -3.2*z order should be linear") {
-      (x + t + -5*y + 2*t + -3.2*z).getOrder shouldEqual ExpressionType.LINEAR
+      (x + t + -5 * y + 2 * t + -3.2 * z).getOrder shouldEqual ExpressionType.LINEAR
     }
 
     it("x*y + z*t + 5*y + 2*x*t + z*z order should be quadratic") {
-      (x*y + z*t + 5*y + 2*x*t + z*z).getOrder shouldEqual ExpressionType.QUADRATIC
+      (x * y + z * t + 5 * y + 2 * x * t + z * z).getOrder shouldEqual ExpressionType.QUADRATIC
     }
   }
 
@@ -301,7 +301,7 @@ final class AlgebraSpecTest extends FunSpec with Matchers {
     info("Summation of " + variables1.length + " variables took " + (System.currentTimeMillis() - startSum) + "ms to calculate")
 
     val startProd = System.currentTimeMillis()
-    val expr = (x + y + x + y + t + z + t + z + 4.1*y + x + 5) * (x + y + x + y + t + z + t + z + y + x + 2)
+    val expr = (x + y + x + y + t + z + t + z + 4.1 * y + x + 5) * (x + y + x + y + t + z + t + z + y + x + 2)
     info("Product of " + expr + " took " + (System.currentTimeMillis() - startProd) + "ms to calculate")
     it("Checking product of expressions") {
       expr shouldEqual 12 * x * z + 18.2 * y * t + 4 * z * z + 4 * t * t + 44 * t +
@@ -312,23 +312,23 @@ final class AlgebraSpecTest extends FunSpec with Matchers {
 
   describe("Constraints") {
 
-    val constraint_1 = x*z + 5.7*x - 34*t >:= x
-    val constraint_2 = x*x + z*t + 9.1 := y*t + 8.7*z
+    val constraint_1 = x * z + 5.7 * x - 34 * t >:= x
+    val constraint_2 = x * x + z * t + 9.1 := y * t + 8.7 * z
 
     it("constraint_1 = x*z + 5.7*x -34*t >= x should be equal to itself") {
-      constraint_1.equals(x*z + 5.7*x - 34*t >:= x) shouldEqual true
+      constraint_1.equals(x * z + 5.7 * x - 34 * t >:= x) shouldEqual true
     }
 
     it("constraint_1 = x*z + 5.7*x -34*t >= x should be equal to x*z + 5.7*x -34*t - x >= 0") {
-      constraint_1.equals(x*z + 5.7*x - 34*t - x >:= 0) shouldEqual true
+      constraint_1.equals(x * z + 5.7 * x - 34 * t - x >:= 0) shouldEqual true
     }
 
     it("constraint_2 = x*x + z*t + 9.1 = y*t + 8.7*z should be equal to itself") {
-      constraint_2.equals(x*x + z*t + 9.1 := y*t + 8.7*z) shouldEqual true
+      constraint_2.equals(x * x + z * t + 9.1 := y * t + 8.7 * z) shouldEqual true
     }
 
     it("constraint_2 = x*x + z*t + 9.1 = y*t + 8.7*z should be equal to y*t + 8.7*z - x*x - z*t - 9.1 = 0") {
-      constraint_2.equals(y*t + 8.7*z - x*x - z*t - 9.1 := 0) shouldEqual true
+      constraint_2.equals(y * t + 8.7 * z - x * x - z * t - 9.1 := 0) shouldEqual true
     }
 
     it("constraint_1 should NOT be equal to constraint_2") {
