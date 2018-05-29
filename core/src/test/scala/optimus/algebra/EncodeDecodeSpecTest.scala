@@ -24,14 +24,14 @@
  *
  * You should have received a copy of the GNU Lesser General Public License
  * along with Optimus. If not, see <http://www.gnu.org/licenses/>.
- *       
+ *
  */
 
 package optimus.algebra
 
 import org.scalacheck.Gen
 import org.scalatest.prop.PropertyChecks
-import org.scalatest.{FunSpec, Matchers}
+import org.scalatest.{ FunSpec, Matchers }
 
 final class EncodeDecodeSpecTest extends FunSpec with Matchers with PropertyChecks {
 

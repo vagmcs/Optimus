@@ -24,14 +24,14 @@
  *
  * You should have received a copy of the GNU Lesser General Public License
  * along with Optimus. If not, see <http://www.gnu.org/licenses/>.
- *       
+ *
  */
 
 package optimus.optimization
 
-import org.scalatest.{FunSpec, Matchers}
+import org.scalatest.{ FunSpec, Matchers }
 import optimus.algebra.AlgebraOps._
-import optimus.optimization.enums.{SolutionStatus, SolverLib}
+import optimus.optimization.enums.{ SolutionStatus, SolverLib }
 import optimus.optimization.model.MPFloatVar
 
 /**

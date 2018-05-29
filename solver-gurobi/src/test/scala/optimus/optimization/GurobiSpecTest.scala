@@ -24,14 +24,14 @@
  *
  * You should have received a copy of the GNU Lesser General Public License
  * along with Optimus. If not, see <http://www.gnu.org/licenses/>.
- *       
+ *
  */
 
 package optimus.optimization
 
-import optimus.optimization.enums.{PreSolve, SolutionStatus, SolverLib}
-import optimus.optimization.model.{MPBinaryVar, MPConstraint, MPFloatVar, MPIntVar}
-import org.scalatest.{FunSpec, Matchers}
+import optimus.optimization.enums.{ PreSolve, SolutionStatus, SolverLib }
+import optimus.optimization.model.{ MPBinaryVar, MPConstraint, MPFloatVar, MPIntVar }
+import org.scalatest.{ FunSpec, Matchers }
 
 /**
   * Specification for Gurobi solver.
@@ -370,11 +370,11 @@ final class GurobiSpecTest extends FunSpec with Matchers {
 
     var cons = Vector.empty[MPConstraint]
 
-    maximize(2*x + 4*y + 3*z)
+    maximize(2 * x + 4 * y + 3 * z)
 
-    cons = cons :+ add(3*x + 4*y + 2*z <:= 60)
-    cons = cons :+ add(2*x + y + 2*z <:= 40)
-    cons = cons :+ add(x + 3*y + 2*z <:= 80)
+    cons = cons :+ add(3 * x + 4 * y + 2 * z <:= 60)
+    cons = cons :+ add(2 * x + y + 2 * z <:= 40)
+    cons = cons :+ add(x + 3 * y + 2 * z <:= 80)
     cons = cons :+ add(x >:= -80)
     cons = cons :+ add(y >:= -50)
     cons = cons :+ add(z >:= -0.005)
@@ -433,10 +433,10 @@ final class GurobiSpecTest extends FunSpec with Matchers {
 
     var cons: Vector[MPConstraint] = Vector()
 
-    maximize(3*w - 8*w + 10*w + 0.001*x - (-0.999*x) - 0.3*10*(-y) - 4*0.0006*0*(w - x - z) + 2*z - 2*z + 4*z)
+    maximize(3 * w - 8 * w + 10 * w + 0.001 * x - (-0.999 * x) - 0.3 * 10 * (-y) - 4 * 0.0006 * 0 * (w - x - z) + 2 * z - 2 * z + 4 * z)
 
     cons = cons :+ add(w + x + y + z <:= 40)
-    cons = cons :+ add(2*w + x - y - z >:= 10)
+    cons = cons :+ add(2 * w + x - y - z >:= 10)
 
     start()
 
@@ -547,12 +547,12 @@ final class GurobiSpecTest extends FunSpec with Matchers {
     val x2 = MPIntVar("x2", 0 until 18)
     val x3 = MPFloatVar("x3", 2, 3)
 
-    maximize(x0 + 2*x1 + 3*x2 + x3)
+    maximize(x0 + 2 * x1 + 3 * x2 + x3)
 
     subjectTo(
-      -1*x0 + x1 + x2 + 10*x3 <:= 20,
-      x0 - 3.0*x1 + x2 <:= 30,
-      x1 - 3.5*x3 := 0
+      -1 * x0 + x1 + x2 + 10 * x3 <:= 20,
+      x0 - 3.0 * x1 + x2 <:= 30,
+      x1 - 3.5 * x3 := 0
     )
 
     start()
@@ -628,7 +628,7 @@ final class GurobiSpecTest extends FunSpec with Matchers {
 
     add(-2 * x(0) + 6 * x(1) - 3 * x(2) + 4 * x(3) + x(4) - 2 * x(5) >:= 2)
     add(-5 * x(0) - 3 * x(1) + x(2) + 3 * x(3) - 2 * x(4) + x(5) >:= -2)
-    add(5 * x(0) - x(1) + 4 * x(2) -2 * x(3) + 2 * x(4) - x(5) >:= 3)
+    add(5 * x(0) - x(1) + 4 * x(2) - 2 * x(3) + 2 * x(4) - x(5) >:= 3)
 
     it ("all variables should be binary") {
       x.foreach(_.isBinary shouldBe true)
@@ -658,7 +658,7 @@ final class GurobiSpecTest extends FunSpec with Matchers {
     val x = MPFloatVar.positive("x")
     val y = MPFloatVar.positive("y")
 
-    minimize(-8*x - 16*y + x*x + 4*y*y)
+    minimize(-8 * x - 16 * y + x * x + 4 * y * y)
 
     cons = cons :+ add(x + y <:= 5)
     cons = cons :+ add(x <:= 3)
@@ -703,7 +703,7 @@ final class GurobiSpecTest extends FunSpec with Matchers {
     val x = MPFloatVar.positive("x")
     val y = MPFloatVar.positive("y")
 
-    minimize(2*x*x + y*y + x*y + x + y)
+    minimize(2 * x * x + y * y + x * y + x + y)
 
     cons = cons :+ add(x + y := 1)
     cons = cons :+ add(x >:= -3)
@@ -751,7 +751,7 @@ final class GurobiSpecTest extends FunSpec with Matchers {
     val x = MPFloatVar.positive("x")
     val y = MPFloatVar.positive("y")
 
-    minimize(x*x + x*x + y*y - y*y + y*y + 7*x*y - 6*y*x + x*x - x*x + x - 99.9e-9*y + 1.0000000999*y)
+    minimize(x * x + x * x + y * y - y * y + y * y + 7 * x * y - 6 * y * x + x * x - x * x + x - 99.9e-9 * y + 1.0000000999 * y)
 
     cons = cons :+ add(x + y := 1)
     cons = cons :+ add(x >:= -3)
@@ -797,7 +797,7 @@ final class GurobiSpecTest extends FunSpec with Matchers {
     val x = MPFloatVar.positive("x")
     val y = MPFloatVar.positive("y")
 
-    minimize(-8*x - 16*y + x*x + 4*y*y)
+    minimize(-8 * x - 16 * y + x * x + 4 * y * y)
     subjectTo (
       x + y <:= 5,
       x <:= 3,
@@ -839,8 +839,8 @@ final class GurobiSpecTest extends FunSpec with Matchers {
     val w2 = MPFloatVar("w2")
     val slack = MPFloatVar.positive("slack")
 
-    minimize(0.5*(w0*w0 + w1*w1 + w2*w2) + 1000*slack)
-    add(-2.0*w2 + 0.0 >:= -1.0*slack + 16.0)
+    minimize(0.5 * (w0 * w0 + w1 * w1 + w2 * w2) + 1000 * slack)
+    add(-2.0 * w2 + 0.0 >:= -1.0 * slack + 16.0)
 
     start()
 
@@ -871,7 +871,7 @@ final class GurobiSpecTest extends FunSpec with Matchers {
 
     it("Add a couple of constraints and re-optimize") {
 
-      add(-2.0*w1 + -2.0*w0 + 6.0*w2 + 0.0 >:= -1.0*slack + 6.0)
+      add(-2.0 * w1 + -2.0 * w0 + 6.0 * w2 + 0.0 >:= -1.0 * slack + 6.0)
       start()
 
       status shouldBe SolutionStatus.OPTIMAL
@@ -896,7 +896,7 @@ final class GurobiSpecTest extends FunSpec with Matchers {
     val y = MPFloatVar("y", -0.5, 0.5)
 
     maximize(x)
-    add(x*x + y*y <:= 1)
+    add(x * x + y * y <:= 1)
 
     start()
 
@@ -927,8 +927,8 @@ final class GurobiSpecTest extends FunSpec with Matchers {
     val y = MPFloatVar.positive("y")
     val z = MPFloatVar.positive("z")
 
-    minimize(x*x + 0.1*y*y + z*z - x*z + y)
-    add(x + y + z - x*x - y*y - 0.1*z*z + 0.2*x*z >:= 1)
+    minimize(x * x + 0.1 * y * y + z * z - x * z + y)
+    add(x + y + z - x * x - y * y - 0.1 * z * z + 0.2 * x * z >:= 1)
 
     start()
 
