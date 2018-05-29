@@ -39,14 +39,3 @@ See [Building and Linking](docs/building_and_linking.md)
 ## Contributions
 
 Contributions are welcome, for details see [CONTRIBUTING.md](CONTRIBUTING.md).
-
-## Reference in Scientific Publications
-Please use the following BibTeX entry when you cite Optimus in your papers:
-
-```
-@misc{Optimus,
-      author = {Evangelos Michelioudakis and Anastasios Skarlatidis},
-      title = {Optimus: an open-source mathematical optimization library},
-      url = {https://github.com/vagmcs/Optimus}
-}
-```

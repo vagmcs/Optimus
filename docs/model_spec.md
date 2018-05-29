@@ -2,8 +2,9 @@
 
 Import the following optimization packages:
 ```scala
-import optimus.optimization.enums._
-import optimus.optimization.model._
+import optimus.optimization._
+import optimus.optimization.enums.SolverLib
+import optimus.optimization.model.MPFloatVar
 ```
 
 Extend your object or class using ``ModelSpec``:
