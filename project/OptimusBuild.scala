@@ -31,30 +31,30 @@ import sbt._
 import sbt.Keys._
 import sbt.plugins.JvmPlugin
 import de.heikoseeberger.sbtheader.HeaderPlugin
-import de.heikoseeberger.sbtheader.AutomateHeaderPlugin
-import de.heikoseeberger.sbtheader.{FileType, CommentStyle}
 import de.heikoseeberger.sbtheader.HeaderPlugin.autoImport._
 
 object OptimusBuild extends AutoPlugin {
 
   private val logger = ConsoleLogger()
 
-  println {
+  final val logo =
     """
-      |   /\\\\\
-      |  /\\\///\\\
-      | /\\\/  \///\\\    /\\\\\\\\\     /\\\       /\\\
-      | /\\\      \//\\\  /\\\/////\\\ /\\\\\\\\\\\ \///    /\\\\\  /\\\\\     /\\\    /\\\  /\\\\\\\\\\
-      | \/\\\       \/\\\ \/\\\\\\\\\\ \////\\\////   /\\\  /\\\///\\\\\///\\\ \/\\\   \/\\\ \/\\\//////
-      |  \//\\\      /\\\  \/\\\//////     \/\\\      \/\\\ \/\\\ \//\\\  \/\\\ \/\\\   \/\\\ \/\\\\\\\\\\
-      |    \///\\\  /\\\    \/\\\           \/\\\_/\\  \/\\\ \/\\\  \/\\\  \/\\\ \/\\\   \/\\\ \////////\\\
-      |       \///\\\\\/     \/\\\           \//\\\\\   \/\\\ \/\\\  \/\\\  \/\\\ \//\\\\\\\\\  /\\\\\\\\\\
-      |          \/////       \///             \/////    \///  \///   \///   \///  \/////////   \//////////
+      |  /\\\\\
+      | /\\\///\\\
+      |/\\\/  \///\\\    /\\\\\\\\\     /\\\       /\\\
+      |/\\\      \//\\\  /\\\/////\\\ /\\\\\\\\\\\ \///    /\\\\\  /\\\\\     /\\\    /\\\  /\\\\\\\\\\
+      |\/\\\       \/\\\ \/\\\\\\\\\\ \////\\\////   /\\\  /\\\///\\\\\///\\\ \/\\\   \/\\\ \/\\\//////
+      | \//\\\      /\\\  \/\\\//////     \/\\\      \/\\\ \/\\\ \//\\\  \/\\\ \/\\\   \/\\\ \/\\\\\\\\\\
+      |   \///\\\  /\\\    \/\\\           \/\\\_/\\  \/\\\ \/\\\  \/\\\  \/\\\ \/\\\   \/\\\ \////////\\\
+      |      \///\\\\\/     \/\\\           \//\\\\\   \/\\\ \/\\\  \/\\\  \/\\\ \//\\\\\\\\\  /\\\\\\\\\\
+      |         \/////       \///             \/////    \///  \///   \///   \///  \/////////   \//////////
+      |
+      |The mathematical programming library for Scala.
     """.stripMargin
-  }
 
-  override def requires: Plugins =
-    JvmPlugin && HeaderPlugin && AutomateHeaderPlugin
+  logger.info(logo)
+
+  override def requires: Plugins = JvmPlugin && HeaderPlugin
 
   // Allow the plug-in to be included automatically
   override def trigger: PluginTrigger = allRequirements
@@ -77,9 +77,9 @@ object OptimusBuild extends AutoPlugin {
 
     description := "Optimus is a mathematical programming library for Scala",
 
-    headerLicense := projectHeaders,
+    headerLicense := Some(HeaderLicense.Custom(logo)),
 
-    headerMappings := headerMappings.value + (FileType.scala -> CommentStyle.cStyleBlockComment),
+    headerMappings := headerMappings.value + (HeaderFileType.scala -> HeaderCommentStyle.cStyleBlockComment),
 
     scalaVersion := "2.12.6",
 
@@ -172,36 +172,5 @@ object OptimusBuild extends AutoPlugin {
         case _ => sys.error(s"Unsupported version of Scala '${scalaBinaryVersion.value}'")
       }
     }
-  )
-
-  lazy val projectHeaders = Some(
-    HeaderLicense.Custom(
-      """
-        |  /\\\\\
-        | /\\\///\\\
-        |/\\\/  \///\\\    /\\\\\\\\\     /\\\       /\\\
-        |/\\\      \//\\\  /\\\/////\\\ /\\\\\\\\\\\ \///    /\\\\\  /\\\\\     /\\\    /\\\  /\\\\\\\\\\
-        |\/\\\       \/\\\ \/\\\\\\\\\\ \////\\\////   /\\\  /\\\///\\\\\///\\\ \/\\\   \/\\\ \/\\\//////
-        | \//\\\      /\\\  \/\\\//////     \/\\\      \/\\\ \/\\\ \//\\\  \/\\\ \/\\\   \/\\\ \/\\\\\\\\\\
-        |   \///\\\  /\\\    \/\\\           \/\\\_/\\  \/\\\ \/\\\  \/\\\  \/\\\ \/\\\   \/\\\ \////////\\\
-        |      \///\\\\\/     \/\\\           \//\\\\\   \/\\\ \/\\\  \/\\\  \/\\\ \//\\\\\\\\\  /\\\\\\\\\\
-        |         \/////       \///             \/////    \///  \///   \///   \///  \/////////   \//////////
-        |
-        |Copyright (C) 2014 Evangelos Michelioudakis, Anastasios Skarlatidis
-        |
-        |Optimus is free software: you can redistribute it and/or modify it
-        |under the terms of the GNU Lesser General Public License as published
-        |by the Free Software Foundation, either version 3 of the License,
-        |or (at your option) any later version.
-        |
-        |Optimus is distributed in the hope that it will be useful, but WITHOUT
-        |ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-        |or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public
-        |License for more details.
-        |
-        |You should have received a copy of the GNU Lesser General Public License
-        |along with Optimus. If not, see <http://www.gnu.org/licenses/>.
-      """.stripMargin
-    )
   )
 }
