@@ -2,6 +2,7 @@
 
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.vagmcs/optimus_2.11/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.github.vagmcs/optimus_2.11)
 [![License: LGPL v3](https://img.shields.io/badge/License-LGPL%20v3-blue.svg)](https://www.gnu.org/licenses/lgpl-3.0)
+[![Build Status](https://travis-ci.org/vagmcs/Optimus.svg?branch=develop)](https://travis-ci.org/vagmcs/Optimus)
 
 Optimus is a library for Linear and Quadratic mathematical optimization written in [Scala programming language](http://scala-lang.org).
 

@@ -1,10 +1,19 @@
-sudo: required
-dist: trusty
 branches:
   only:
     - master
     - release
     - develop
+sudo: required
+dist: trusty
+before_install:
+  - sudo apt-get -qq update
+  - sudo apt-get install -y lp-solve
+  - sudo wget https://sourceforge.net/projects/lpsolve/files/lpsolve/5.5.2.5/lp_solve_5.5.2.5_java.zip
+  - unzip lp_solve_5.5.2.5_java.zip
+  - sudo cp lp_solve_5.5_java/lib/ux64/liblpsolve55j.so /usr/lib/lp_solve
+  - sudo ldconfig
+  - LD_LIBRARY_PATH="/usr/lib/lp_solve:$LD_LIBRARY_PATH"
+  - export LD_LIBRARY_PATH
 language: scala
 scala:
   - 2.11.12
@@ -12,15 +21,8 @@ scala:
 env:
   - JDK=openjdk8
   - JDK=oraclejdk8
-before_install:
-  - sudo apt-get -qq update
-  - sudo apt-get install -y lp-solve liblpsolve55-dev unzip
-  - sudo wget https://sourceforge.net/projects/lpsolve/files/lpsolve/5.5.2.5/lp_solve_5.5.2.5_java.zip
-  - unzip lp_solve_5.5.2.5_java.zip
-  - sudo cp lp_solve_5.5_java/lib/ux64/liblpsolve55j.so /usr/lib/lp_solve
-  - sudo ldconfig
 before_script:
   - jdk_switcher use $JDK
 script:
-  - sbt "++${TRAVIS_SCALA_VERSION}" "core/test" "solver-oj/testOnly optimus.optimization.OJ*" "solver-oj/testOnly optimus.optimization.LP*"
+  - sbt "++${TRAVIS_SCALA_VERSION}" "core/test" "solver-oj/testOnly optimus.optimization.OJ*" "solver-lp/testOnly optimus.optimization.LP*"
   - git diff --exit-code
