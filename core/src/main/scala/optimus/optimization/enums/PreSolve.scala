@@ -24,7 +24,7 @@
  *
  * You should have received a copy of the GNU Lesser General Public License
  * along with Optimus. If not, see <http://www.gnu.org/licenses/>.
- *       
+ *
  */
 
 package optimus.optimization.enums
@@ -38,7 +38,7 @@ object PreSolve extends Enum[PreSolve] {
 
   val values: IndexedSeq[PreSolve] = findValues
 
-  case object DISABLED      extends PreSolve("Disabled")
-  case object CONSERVATIVE  extends PreSolve("Conservative")
-  case object AGGRESSIVE    extends PreSolve("Aggressive")
+  case object DISABLED extends PreSolve("Disabled")
+  case object CONSERVATIVE extends PreSolve("Conservative")
+  case object AGGRESSIVE extends PreSolve("Aggressive")
 }

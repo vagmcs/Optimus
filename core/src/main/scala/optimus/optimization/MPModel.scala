@@ -24,7 +24,7 @@
  *
  * You should have received a copy of the GNU Lesser General Public License
  * along with Optimus. If not, see <http://www.gnu.org/licenses/>.
- *       
+ *
  */
 
 package optimus.optimization
@@ -33,8 +33,8 @@ import com.typesafe.scalalogging.StrictLogging
 import optimus.algebra._
 import optimus.common.Measure._
 import optimus.optimization.enums.PreSolve.DISABLED
-import optimus.optimization.enums.{PreSolve, SolutionStatus, SolverLib}
-import optimus.optimization.model.{MPConstraint, MPVar}
+import optimus.optimization.enums.{ PreSolve, SolutionStatus, SolverLib }
+import optimus.optimization.model.{ MPConstraint, MPVar }
 import scala.collection.mutable
 import scala.collection.mutable.ArrayBuffer
 import scala.util.Try
@@ -55,8 +55,7 @@ case class MPModel(solverLib: SolverLib = SolverLib.oJSolver) extends StrictLogg
 
   protected lazy val solver: MPSolver = SolverFactory.instantiate(solverLib)
 
-  protected def optimize(expression: Expression,
-                         minimize: Boolean): MPModel = {
+  protected def optimize(expression: Expression, minimize: Boolean): MPModel = {
     reOptimize = false
     objective = expression
     this.minimize = minimize
@@ -92,7 +91,6 @@ case class MPModel(solverLib: SolverLib = SolverLib.oJSolver) extends StrictLogg
     */
   def getVarValue(idx: Int): Option[Double] =
     solution.get(idx)
-
 
   /**
     * @see [[optimus.algebra.Constraint]]
@@ -157,8 +155,7 @@ case class MPModel(solverLib: SolverLib = SolverLib.oJSolver) extends StrictLogg
       }
 
       reOptimize = true
-    }
-    else logger.info("Re-optimizing...")
+    } else logger.info("Re-optimizing...")
 
     if (timeLimit < Int.MaxValue)
       solver.setTimeout(timeLimit)
@@ -167,7 +164,7 @@ case class MPModel(solverLib: SolverLib = SolverLib.oJSolver) extends StrictLogg
       solver.solve(preSolve)
     }
 
-    if ( (status == SolutionStatus.OPTIMAL) || (status == SolutionStatus.SUBOPTIMAL) )
+    if ((status == SolutionStatus.OPTIMAL) || (status == SolutionStatus.SUBOPTIMAL))
       variables.indices foreach { i => solution(i) = solver.getVarValue(i) }
 
     logger.info(s"Solution status is $status.")

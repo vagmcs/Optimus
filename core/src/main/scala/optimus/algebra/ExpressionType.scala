@@ -24,7 +24,7 @@
  *
  * You should have received a copy of the GNU Lesser General Public License
  * along with Optimus. If not, see <http://www.gnu.org/licenses/>.
- *       
+ *
  */
 
 package optimus.algebra
@@ -38,8 +38,8 @@ object ExpressionType extends Enum[ExpressionType] {
 
   val values: IndexedSeq[ExpressionType] = findValues
 
-  case object CONSTANT    extends ExpressionType
-  case object LINEAR      extends ExpressionType
-  case object QUADRATIC   extends ExpressionType
-  case object GENERIC     extends ExpressionType
+  case object CONSTANT extends ExpressionType
+  case object LINEAR extends ExpressionType
+  case object QUADRATIC extends ExpressionType
+  case object GENERIC extends ExpressionType
 }

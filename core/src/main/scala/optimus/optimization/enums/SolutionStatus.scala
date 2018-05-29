@@ -24,7 +24,7 @@
  *
  * You should have received a copy of the GNU Lesser General Public License
  * along with Optimus. If not, see <http://www.gnu.org/licenses/>.
- *       
+ *
  */
 
 package optimus.optimization.enums
@@ -38,9 +38,9 @@ object SolutionStatus extends Enum[SolutionStatus] {
 
   val values: IndexedSeq[SolutionStatus] = findValues
 
-  case object NOT_SOLVED   extends SolutionStatus("Not solved")
-  case object OPTIMAL      extends SolutionStatus("Optimal")
-  case object SUBOPTIMAL   extends SolutionStatus("Suboptimal")
-  case object UNBOUNDED    extends SolutionStatus("Unbounded")
-  case object INFEASIBLE   extends SolutionStatus("Infeasible")
+  case object NOT_SOLVED extends SolutionStatus("Not solved")
+  case object OPTIMAL extends SolutionStatus("Optimal")
+  case object SUBOPTIMAL extends SolutionStatus("Suboptimal")
+  case object UNBOUNDED extends SolutionStatus("Unbounded")
+  case object INFEASIBLE extends SolutionStatus("Infeasible")
 }

@@ -24,12 +24,12 @@
  *
  * You should have received a copy of the GNU Lesser General Public License
  * along with Optimus. If not, see <http://www.gnu.org/licenses/>.
- *       
+ *
  */
 
 package optimus.optimization.model
 
-import optimus.algebra.{ANONYMOUS, LongDoubleMap, Var}
+import optimus.algebra.{ ANONYMOUS, LongDoubleMap, Var }
 import optimus.optimization.MPModel
 
 /**
@@ -40,10 +40,11 @@ import optimus.optimization.MPModel
   * @param symbol the symbol of the variable
   * @param model the model that the variable belongs
   */
-class MPVar private[optimization](val lowerBound: Double,
-                                  val upperBound: Double,
-                                  override val symbol: String)
-                                 (implicit model: MPModel) extends Var(symbol) {
+class MPVar private[optimization] (
+    val lowerBound: Double,
+    val upperBound: Double,
+    override val symbol: String)
+  (implicit model: MPModel) extends Var(symbol) {
 
   // A variable alone has a coefficient value of 1 in front of her
   val index: Int = model.register(this)
@@ -166,13 +167,13 @@ object MPFloatVar {
     new MPFloatVar(lowerBound, upperBound, symbol)
 }
 
-class MPIntVar private[optimization](lowerBound: Int, upperBound: Int, override val symbol: String)
-                                    (implicit model: MPModel) extends MPVar(lowerBound, upperBound, symbol)(model) {
+class MPIntVar private[optimization] (lowerBound: Int, upperBound: Int, override val symbol: String)
+  (implicit model: MPModel) extends MPVar(lowerBound, upperBound, symbol)(model) {
   override def isInteger: Boolean = true
 }
 
-class MPBinaryVar private[optimization](override val symbol: String)
-                                       (implicit model: MPModel) extends MPIntVar(0, 1, symbol)(model) {
+class MPBinaryVar private[optimization] (override val symbol: String)
+  (implicit model: MPModel) extends MPIntVar(0, 1, symbol)(model) {
   override def isBinary: Boolean = true
 }
 

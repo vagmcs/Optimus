@@ -66,7 +66,7 @@ object OptimusBuild extends AutoPlugin {
   private lazy val settings: Seq[Setting[_]] = {
     logger.info(s"Loading settings for Java $javaVersion or higher.")
     if (javaVersion < 1.8) sys.error("Java 8 or higher is required for building Optimus.")
-    else commonSettings ++ JavaSettings ++ ScalaSettings
+    else commonSettings ++ JavaSettings ++ ScalaSettings ++ Reform.formatSettings
   }
 
   private val commonSettings: Seq[Setting[_]] = Seq(

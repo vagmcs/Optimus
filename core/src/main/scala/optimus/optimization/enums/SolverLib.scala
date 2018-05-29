@@ -24,7 +24,7 @@
  *
  * You should have received a copy of the GNU Lesser General Public License
  * along with Optimus. If not, see <http://www.gnu.org/licenses/>.
- *       
+ *
  */
 
 package optimus.optimization.enums
@@ -38,8 +38,8 @@ object SolverLib extends Enum[SolverLib] {
 
   val values: IndexedSeq[SolverLib] = findValues
 
-  case object oJSolver  extends SolverLib
-  case object LpSolve   extends SolverLib
-  case object Gurobi    extends SolverLib
-  case object Mosek     extends SolverLib
+  case object oJSolver extends SolverLib
+  case object LpSolve extends SolverLib
+  case object Gurobi extends SolverLib
+  case object Mosek extends SolverLib
 }

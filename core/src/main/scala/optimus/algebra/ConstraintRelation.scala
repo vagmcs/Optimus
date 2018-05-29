@@ -24,7 +24,7 @@
  *
  * You should have received a copy of the GNU Lesser General Public License
  * along with Optimus. If not, see <http://www.gnu.org/licenses/>.
- *       
+ *
  */
 
 package optimus.algebra
@@ -38,7 +38,7 @@ object ConstraintRelation extends Enum[ConstraintRelation] {
 
   val values: IndexedSeq[ConstraintRelation] = findValues
 
-  case object GE  extends ConstraintRelation(">=")
-  case object LE  extends ConstraintRelation("<=")
-  case object EQ  extends ConstraintRelation("=")
+  case object GE extends ConstraintRelation(">=")
+  case object LE extends ConstraintRelation("<=")
+  case object EQ extends ConstraintRelation("=")
 }
