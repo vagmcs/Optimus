@@ -22,5 +22,5 @@ before_install:
 before_script:
   - jdk_switcher use $JDK
 script:
-  - sbt "++${TRAVIS_SCALA_VERSION}" "testOnly optimus.optimization.LPSolve* optimus.optimization.OJ*"
+  - sbt "++${TRAVIS_SCALA_VERSION}" "core/test" "solver-oj/testOnly optimus.optimization.OJ*" "solver-oj/testOnly optimus.optimization.LP*"
   - git diff --exit-code
