@@ -11,7 +11,7 @@
  *          \/////       \///             \/////    \///  \///   \///   \///  \/////////   \//////////
  *
  * The mathematical programming library for Scala.
- *     
+ *
  */
 
 package optimus.optimization.enums
