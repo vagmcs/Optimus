@@ -24,7 +24,7 @@
  *
  * You should have received a copy of the GNU Lesser General Public License
  * along with Optimus. If not, see <http://www.gnu.org/licenses/>.
- *       
+ *
  */
 
 package optimus.algebra
@@ -74,7 +74,7 @@ abstract class Expression extends LazyLogging {
   @inline private def order: Int = {
     var order = 0
     val iterator = terms.iterator
-    while(iterator.hasNext) {
+    while (iterator.hasNext) {
       iterator.advance()
       order = Math.max(order, decode(iterator.key).length)
     }
@@ -89,9 +89,10 @@ abstract class Expression extends LazyLogging {
   }
 
   override def toString: String = (terms.keys zip terms.values)
-    .map { case (i, scalar) =>
-      s"$scalar*${decode(i).map(x => s"x@$x").mkString("*")}"
-    }.mkString(" + ") + ( if (constant != 0) " + " + constant else "" )
+    .map {
+      case (i, scalar) =>
+        s"$scalar*${decode(i).map(x => s"x@$x").mkString("*")}"
+    }.mkString(" + ") + (if (constant != 0) " + " + constant else "")
 
   /**
     * @param obj an object to compare
@@ -379,10 +380,10 @@ case class Product(override val a: Expression, override val b: Expression) exten
         assert(variablesProduct.length <= 2, "Algebra cannot handle expressions of higher order!")
 
         val variables = encode(variablesProduct.head, variablesProduct.last)
-        result.adjustOrPutValue(variables, cA*cB, cA*cB)
+        result.adjustOrPutValue(variables, cA * cB, cA * cB)
 
         // 3. Calculate products involving terms only from expression B and the constant of A
-        result.adjustOrPutValue(variablesB, cB*a.constant, cB*a.constant)
+        result.adjustOrPutValue(variablesB, cB * a.constant, cB * a.constant)
       }
     }
 

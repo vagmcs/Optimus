@@ -24,17 +24,16 @@
  *
  * You should have received a copy of the GNU Lesser General Public License
  * along with Optimus. If not, see <http://www.gnu.org/licenses/>.
- *       
+ *
  */
 
 package optimus.optimization
 
 import mosek._
 import optimus.algebra._
-import optimus.optimization.enums.{PreSolve, SolutionStatus}
+import optimus.optimization.enums.{ PreSolve, SolutionStatus }
 import optimus.optimization.model.MPConstraint
-
-import scala.util.{Failure, Success, Try}
+import scala.util.{ Failure, Success, Try }
 
 final class Mosek extends MPSolver {
 
@@ -52,12 +51,13 @@ final class Mosek extends MPSolver {
     */
   def buildModel(numberOfVars: Int): Unit = {
 
-    logger.info { "\n" +
-      """     __  ___                __   """ + "\n" +
-      """    /  |/  /___  ________  / /__ """ + "\n" +
-      """   / /|_/ / __ \/ ___/ _ \/ //_/ """ + "\n" +
-      """  / /  / / /_/ (__  )  __/ ,<    """ + "\n" +
-      """ /_/  /_/\____/____/\___/_/|_|   """ + "\n"
+    logger.info {
+      "\n" +
+        """     __  ___                __   """ + "\n" +
+        """    /  |/  /___  ________  / /__ """ + "\n" +
+        """   / /|_/ / __ \/ ___/ _ \/ //_/ """ + "\n" +
+        """  / /  / / /_/ (__  )  __/ ,<    """ + "\n" +
+        """ /_/  /_/\____/____/\___/_/|_|   """ + "\n"
     }
 
     this.numberOfVars = numberOfVars
@@ -207,14 +207,12 @@ final class Mosek extends MPSolver {
           if (indexes.length == 1) {
             linearIndexes :+= indexes.head
             linearValues :+= iterator.value
-          }
-          else {
+          } else {
             if (indexes.head == indexes(1)) {
               rowIndexes :+= indexes.head
               colsIndexes :+= indexes.head
               quadraticValues :+= 2 * iterator.value
-            }
-            else {
+            } else {
               rowIndexes :+= Math.max(indexes.head, indexes(1))
               colsIndexes :+= Math.min(indexes.head, indexes(1))
               quadraticValues :+= iterator.value
@@ -276,9 +274,9 @@ final class Mosek extends MPSolver {
             SolutionStatus.SUBOPTIMAL
 
           case solsta.dual_infeas_cer |
-               solsta.prim_infeas_cer |
-               solsta.near_dual_infeas_cer |
-               solsta.near_prim_infeas_cer =>
+            solsta.prim_infeas_cer |
+            solsta.near_dual_infeas_cer |
+            solsta.near_prim_infeas_cer =>
             SolutionStatus.INFEASIBLE
 
           case _ =>

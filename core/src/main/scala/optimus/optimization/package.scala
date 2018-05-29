@@ -24,13 +24,13 @@
  *
  * You should have received a copy of the GNU Lesser General Public License
  * along with Optimus. If not, see <http://www.gnu.org/licenses/>.
- *       
+ *
  */
 
 package optimus
 
-import optimus.algebra.{Constraint, Expression}
-import optimus.optimization.enums.{PreSolve, SolutionStatus}
+import optimus.algebra.{ Constraint, Expression }
+import optimus.optimization.enums.{ PreSolve, SolutionStatus }
 import optimus.optimization.model.MPConstraint
 
 package object optimization {
@@ -39,8 +39,10 @@ package object optimization {
 
   def subjectTo(constraints: Constraint*)(implicit model: MPModel): Unit = constraints.foreach(add)
 
-  def start(preSolve: PreSolve = PreSolve.DISABLED,
-            timeLimit: Int = Int.MaxValue)(implicit model: MPModel): Boolean = model.start(timeLimit, preSolve)
+  def start(
+      preSolve: PreSolve = PreSolve.DISABLED,
+      timeLimit: Int = Int.MaxValue)
+    (implicit model: MPModel): Boolean = model.start(timeLimit, preSolve)
 
   def minimize(expression: Expression)(implicit model: MPModel): MPModel = model.minimize(expression)
 

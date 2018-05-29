@@ -24,7 +24,7 @@
  *
  * You should have received a copy of the GNU Lesser General Public License
  * along with Optimus. If not, see <http://www.gnu.org/licenses/>.
- *       
+ *
  */
 
 package optimus.optimization
@@ -34,7 +34,7 @@ import com.typesafe.scalalogging.StrictLogging
 import optimus.algebra.Expression
 import optimus.optimization.enums.PreSolve.DISABLED
 import optimus.optimization.enums.SolutionStatus.NOT_SOLVED
-import optimus.optimization.enums.{PreSolve, SolutionStatus}
+import optimus.optimization.enums.{ PreSolve, SolutionStatus }
 import optimus.optimization.model.MPConstraint
 
 /**

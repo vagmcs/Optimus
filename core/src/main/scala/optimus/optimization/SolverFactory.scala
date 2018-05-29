@@ -24,7 +24,7 @@
  *
  * You should have received a copy of the GNU Lesser General Public License
  * along with Optimus. If not, see <http://www.gnu.org/licenses/>.
- *       
+ *
  */
 
 package optimus.optimization
@@ -32,8 +32,7 @@ package optimus.optimization
 import com.typesafe.scalalogging.StrictLogging
 import optimus.optimization.enums.SolverLib
 import optimus.optimization.enums.SolverLib._
-
-import scala.util.{Success, Try}
+import scala.util.{ Success, Try }
 
 object SolverFactory extends StrictLogging {
 

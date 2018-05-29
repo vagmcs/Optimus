@@ -24,16 +24,16 @@
  *
  * You should have received a copy of the GNU Lesser General Public License
  * along with Optimus. If not, see <http://www.gnu.org/licenses/>.
- *       
+ *
  */
 
 package optimus.optimization.model
 
 import com.typesafe.scalalogging.StrictLogging
 import optimus.algebra.ConstraintRelation._
-import optimus.algebra.{Constraint, decode}
+import optimus.algebra.{ Constraint, decode }
 import optimus.optimization.MPModel
-import scala.util.{Failure, Success, Try}
+import scala.util.{ Failure, Success, Try }
 
 /**
   * Mathematical programming model constraint.

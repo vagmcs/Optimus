@@ -24,15 +24,15 @@
  *
  * You should have received a copy of the GNU Lesser General Public License
  * along with Optimus. If not, see <http://www.gnu.org/licenses/>.
- *       
+ *
  */
 
 package optimus.optimization
 
 import lpsolve.LpSolve
-import optimus.algebra.ExpressionType.{GENERIC, QUADRATIC}
+import optimus.algebra.ExpressionType.{ GENERIC, QUADRATIC }
 import optimus.algebra._
-import optimus.optimization.enums.{PreSolve, SolutionStatus}
+import optimus.optimization.enums.{ PreSolve, SolutionStatus }
 import optimus.optimization.model.MPConstraint
 
 /**
@@ -70,79 +70,79 @@ final class LPSolve extends MPSolver {
   }
 
   /**
-   * Get value of the variable in the specified position. Solution
-   * should exist in order for a value to exist.
-   *
-   * @param colId position of the variable
-   * @return the value of the variable in the solution
-   */
+    * Get value of the variable in the specified position. Solution
+    * should exist in order for a value to exist.
+    *
+    * @param colId position of the variable
+    * @return the value of the variable in the solution
+    */
   def getVarValue(colId: Int): Double = {
     if (_solution.isEmpty || colId < 0 || colId >= numberOfVars) 0
     else solution(colId)
   }
 
   /**
-   * Set bounds of variable in the specified position.
-   *
-   * @param colId position of the variable
-   * @param lower domain lower bound
-   * @param upper domain upper bound
-   */
+    * Set bounds of variable in the specified position.
+    *
+    * @param colId position of the variable
+    * @param lower domain lower bound
+    * @param upper domain upper bound
+    */
   def setBounds(colId: Int, lower: Double, upper: Double): Unit = {
     underlyingSolver.setBounds(colId + 1, lower, upper)
   }
 
   /**
-   * Set upper bound to unbounded (infinite)
-   *
-   * @param colId position of the variable
-   */
+    * Set upper bound to unbounded (infinite)
+    *
+    * @param colId position of the variable
+    */
   def setUnboundUpperBound(colId: Int): Unit = {
     underlyingSolver.setUpbo(colId + 1, underlyingSolver.getInfinite)
   }
 
   /**
-   * Set lower bound to unbounded (infinite)
-   *
-   * @param colId position of the variable
-   */
+    * Set lower bound to unbounded (infinite)
+    *
+    * @param colId position of the variable
+    */
   def setUnboundLowerBound(colId: Int): Unit = {
     underlyingSolver.setLowbo(colId + 1, -underlyingSolver.getInfinite)
   }
 
   /**
-   * Set the column/variable as an integer variable
-   *
-   * @param colId position of the variable
-   */
+    * Set the column/variable as an integer variable
+    *
+    * @param colId position of the variable
+    */
   def setInteger(colId: Int): Unit = {
     underlyingSolver.setInt(colId + 1, true)
   }
 
   /**
-   * Set the column / variable as an binary integer variable
-   *
-   * @param colId position of the variable
-   */
+    * Set the column / variable as an binary integer variable
+    *
+    * @param colId position of the variable
+    */
   def setBinary(colId: Int): Unit = {
     underlyingSolver.setBinary(colId + 1, true)
   }
 
   /**
-   * Set the column/variable as a float variable
-   *
-   * @param colId position of the variable
-   */
+    * Set the column/variable as a float variable
+    *
+    * @param colId position of the variable
+    */
   def setFloat(colId: Int): Unit = {
     underlyingSolver.setInt(colId + 1, false)
   }
 
   /**
-   * Add objective expression to be optimized by the solver.
-   *
-   * @param objective the expression to be optimized
-   * @param minimize flag for minimization instead of maximization
-   */
+    * Add objective expression to be optimized by the solver.
+    *
+    * @param objective the expression to be optimized
+    * @param minimize flag for minimization instead of maximization
+    */
   def setObjective(objective: Expression, minimize: Boolean): Unit = {
 
     if (objective.getOrder == QUADRATIC || objective.getOrder == GENERIC)
@@ -156,10 +156,10 @@ final class LPSolve extends MPSolver {
   }
 
   /**
-   * Add a mathematical programming constraint to the solver.
-   *
-   * @param mpConstraint the mathematical programming constraint
-   */
+    * Add a mathematical programming constraint to the solver.
+    *
+    * @param mpConstraint the mathematical programming constraint
+    */
   def addConstraint(mpConstraint: MPConstraint): Unit = {
     numberOfCons += 1
 
@@ -183,10 +183,10 @@ final class LPSolve extends MPSolver {
   }
 
   /**
-   * Solve the problem.
-   *
-   * @return status code indicating the nature of the solution
-   */
+    * Solve the problem.
+    *
+    * @return status code indicating the nature of the solution
+    */
   def solve(preSolve: PreSolve = PreSolve.DISABLED): SolutionStatus = {
 
     if (preSolve == PreSolve.CONSERVATIVE)
@@ -227,19 +227,19 @@ final class LPSolve extends MPSolver {
   }
 
   /**
-   * Release the memory of this solver
-   */
+    * Release the memory of this solver
+    */
   def release(): Unit = {
     underlyingSolver.deleteLp()
   }
 
   /**
-   * Set a time limit for solver optimization. After the limit
-   * is reached the solver stops running.
-   *
-   * @param limit the time limit
-   */
-  def setTimeout(limit: Int): Unit =  {
+    * Set a time limit for solver optimization. After the limit
+    * is reached the solver stops running.
+    *
+    * @param limit the time limit
+    */
+  def setTimeout(limit: Int): Unit = {
     require(0 <= limit)
     underlyingSolver.setTimeout(limit)
   }

@@ -24,18 +24,18 @@
  *
  * You should have received a copy of the GNU Lesser General Public License
  * along with Optimus. If not, see <http://www.gnu.org/licenses/>.
- *       
+ *
  */
 
 package optimus.optimization
 
 import optimus.algebra.ExpressionType.GENERIC
 import optimus.algebra._
-import optimus.algebra.{ConstraintRelation, Expression}
+import optimus.algebra.{ ConstraintRelation, Expression }
 import org.ojalgo.constant.BigMath
-import org.ojalgo.optimisation.{ExpressionsBasedModel, Optimisation, Variable}
+import org.ojalgo.optimisation.{ ExpressionsBasedModel, Optimisation, Variable }
 import optimus.optimization.model.INFINITE
-import optimus.optimization.enums.{PreSolve, SolutionStatus}
+import optimus.optimization.enums.{ PreSolve, SolutionStatus }
 import optimus.optimization.model.MPConstraint
 
 /**
@@ -59,13 +59,14 @@ final class oJSolver extends MPSolver {
     */
   def buildModel(numberOfVars: Int): Unit = {
 
-    logger.info { "\n" +
-      """        _________      ______               """ + "\n" +
-      """  ____________  /_____ ___  /______ ______  """ + "\n" +
-      """  _  __ \__ _  /_  __  /_  /__  __  /  __ \ """ + "\n" +
-      """  / /_/ / /_/ / / /_/ /_  / _  /_/ // /_/ / """ + "\n" +
-      """  \____/\____/  \__._/ /_/  _\__. / \____/  """ + "\n" +
-      """                            /____/          """ + "\n"
+    logger.info {
+      "\n" +
+        """        _________      ______               """ + "\n" +
+        """  ____________  /_____ ___  /______ ______  """ + "\n" +
+        """  _  __ \__ _  /_  __  /_  /__  __  /  __ \ """ + "\n" +
+        """  / /_/ / /_/ / / /_/ /_  / _  /_/ // /_/ / """ + "\n" +
+        """  \____/\____/  \__._/ /_/  _\__. / \____/  """ + "\n" +
+        """                            /____/          """ + "\n"
     }
 
     this.numberOfVars = numberOfVars
@@ -78,21 +79,21 @@ final class oJSolver extends MPSolver {
   }
 
   /**
-   * Get value of the variable in the specified position. Solution
-   * should exist in order for a value to exist.
-   *
-   * @param colId position of the variable
-   * @return the value of the variable in the solution
-   */
+    * Get value of the variable in the specified position. Solution
+    * should exist in order for a value to exist.
+    *
+    * @param colId position of the variable
+    * @return the value of the variable in the solution
+    */
   def getVarValue(colId: Int): Double = solution(colId)
 
   /**
-   * Set bounds of variable in the specified position.
-   *
-   * @param colId position of the variable
-   * @param lower domain lower bound
-   * @param upper domain upper bound
-   */
+    * Set bounds of variable in the specified position.
+    *
+    * @param colId position of the variable
+    * @param lower domain lower bound
+    * @param upper domain upper bound
+    */
   def setBounds(colId: Int, lower: Double, upper: Double): Unit = {
     if (upper == INFINITE) underlyingSolver.getVariable(colId).upper(null)
     else underlyingSolver.getVariable(colId).upper(upper)
@@ -102,56 +103,56 @@ final class oJSolver extends MPSolver {
   }
 
   /**
-   * Set lower bound to unbounded (infinite)
-   *
-   * @param colId position of the variable
-   */
+    * Set lower bound to unbounded (infinite)
+    *
+    * @param colId position of the variable
+    */
   def setUnboundUpperBound(colId: Int): Unit = {
     underlyingSolver.getVariable(colId).upper(null)
   }
 
   /**
-   * Set upper bound to unbounded (infinite)
-   *
-   * @param colId position of the variable
-   */
+    * Set upper bound to unbounded (infinite)
+    *
+    * @param colId position of the variable
+    */
   def setUnboundLowerBound(colId: Int): Unit = {
     underlyingSolver.getVariable(colId).lower(null)
   }
 
   /**
-   * Set the column/variable as an integer variable
-   *
-   * @param colId position of the variable
-   */
+    * Set the column/variable as an integer variable
+    *
+    * @param colId position of the variable
+    */
   def setInteger(colId: Int): Unit = {
     underlyingSolver.getVariable(colId).integer(true)
   }
 
   /**
-   * Set the column / variable as an binary integer variable
-   *
-   * @param colId position of the variable
-   */
+    * Set the column / variable as an binary integer variable
+    *
+    * @param colId position of the variable
+    */
   def setBinary(colId: Int): Unit = {
     underlyingSolver.getVariable(colId).binary()
   }
 
   /**
-   * Set the column/variable as a float variable
-   *
-   * @param colId position of the variable
-   */
+    * Set the column/variable as a float variable
+    *
+    * @param colId position of the variable
+    */
   def setFloat(colId: Int): Unit = {
     underlyingSolver.getVariable(colId).integer(false)
   }
 
   /**
-   * Add objective expression to be optimized by the solver.
-   *
-   * @param objective the expression to be optimized
-   * @param minimize flag for minimization instead of maximization
-   */
+    * Add objective expression to be optimized by the solver.
+    *
+    * @param objective the expression to be optimized
+    * @param minimize flag for minimization instead of maximization
+    */
   def setObjective(objective: Expression, minimize: Boolean): Unit = {
 
     if (objective.getOrder == GENERIC)
@@ -175,10 +176,10 @@ final class oJSolver extends MPSolver {
   }
 
   /**
-   * Add a mathematical programming constraint to the solver.
-   *
-   * @param mpConstraint the mathematical programming constraint
-   */
+    * Add a mathematical programming constraint to the solver.
+    *
+    * @param mpConstraint the mathematical programming constraint
+    */
   def addConstraint(mpConstraint: MPConstraint): Unit = {
 
     numberOfCons += 1
@@ -206,10 +207,10 @@ final class oJSolver extends MPSolver {
   }
 
   /**
-   * Solve the problem.
-   *
-   * @return status code indicating the nature of the solution
-   */
+    * Solve the problem.
+    *
+    * @return status code indicating the nature of the solution
+    */
   def solve(preSolve: PreSolve = PreSolve.DISABLED): SolutionStatus = {
 
     if (preSolve != PreSolve.DISABLED)
@@ -241,18 +242,18 @@ final class oJSolver extends MPSolver {
   }
 
   /**
-   * Release the memory of this solver
-   */
+    * Release the memory of this solver
+    */
   def release(): Unit = {
     underlyingSolver.dispose()
   }
 
   /**
-   * Set a time limit for solver optimization. After the limit
-   * is reached the solver stops running.
-   *
-   * @param limit the time limit
-   */
+    * Set a time limit for solver optimization. After the limit
+    * is reached the solver stops running.
+    *
+    * @param limit the time limit
+    */
   def setTimeout(limit: Int): Unit = {
     require(0 <= limit)
     underlyingSolver.options.time_abort = limit
