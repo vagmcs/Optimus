@@ -36,7 +36,7 @@ object Dependencies {
   final val ScalaTestVersion = "3.0.5"
   final val ScalaCheckVersion = "1.13.4"
   final val LpSolveVersion = "5.5.2.0"
-  final val ojAlgorithmsVersion = "45.0.0"
+  final val ojAlgorithmsVersion = "46.2.0"
   final val troveVersion = "3.0.3"
   final val scalaXML = "1.0.6"
   final val enumVersion = "1.5.13"
