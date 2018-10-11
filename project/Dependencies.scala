@@ -37,7 +37,7 @@ object Dependencies {
   final val ScalaCheckVersion = "1.13.4"
   final val LpSolveVersion = "5.5.2.0"
   final val ojAlgorithmsVersion = "46.2.0"
-  final val troveVersion = "3.0.3"
+  final val troveVersion = "3.1.0"
   final val scalaXML = "1.0.6"
   final val enumVersion = "1.5.13"
 
@@ -56,7 +56,7 @@ object Dependencies {
   // GNU Trove collections and other tools
   lazy val Tools = Seq(
     "org.scala-lang.modules" %% "scala-xml" % scalaXML,
-    "net.sf.trove4j" % "trove4j" % troveVersion,
+    "net.sf.trove4j" % "core" % troveVersion,
     "com.beachape" %% "enumeratum" % enumVersion
   )
 
