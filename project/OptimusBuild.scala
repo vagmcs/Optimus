@@ -108,6 +108,10 @@ object OptimusBuild extends AutoPlugin {
         Some("releases" at nexus + "service/local/staging/deploy/maven2")
     },
 
+    scmInfo := Some(
+      ScmInfo(url("https://github.com/vagmcs/Optimus"), "scm:git:git@github.com:vagmcs/Optimus.git")
+    ),
+
     // Information required in order to sync in Maven Central
     pomExtra :=
       <url>https://github.com/vagmcs</url>
