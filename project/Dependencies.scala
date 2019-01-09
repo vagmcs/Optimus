@@ -36,25 +36,25 @@ object Dependencies {
   final val ScalaTestVersion = "3.0.5"
   final val ScalaCheckVersion = "1.13.4"
   final val LpSolveVersion = "5.5.2.0"
-  final val ojAlgorithmsVersion = "46.2.0"
+  final val ojAlgorithmsVersion = "47.0.0"
   final val troveVersion = "3.1.0"
   final val scalaXML = "1.0.6"
   final val enumVersion = "1.5.13"
 
   // Logging using slf4j and logback
-  lazy val Logging = Seq(
+  lazy val Logging: Seq[ModuleID] = Seq(
     "ch.qos.logback" % "logback-classic" % LogbackVersion,
     "com.typesafe.scala-logging" %% "scala-logging" % ScalaLogging
   )
 
   // ScalaTest and ScalaCheck for UNIT testing
-  lazy val ScalaTest = Seq(
+  lazy val ScalaTest: Seq[ModuleID] = Seq(
     "org.scalatest" %% "scalatest" % ScalaTestVersion % "test",
     "org.scalacheck" %% "scalacheck" % ScalaCheckVersion % "test"
   )
 
   // GNU Trove collections and other tools
-  lazy val Tools = Seq(
+  lazy val Tools: Seq[ModuleID] = Seq(
     "org.scala-lang.modules" %% "scala-xml" % scalaXML,
     "net.sf.trove4j" % "core" % troveVersion,
     "com.beachape" %% "enumeratum" % enumVersion
