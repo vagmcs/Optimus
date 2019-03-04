@@ -57,7 +57,7 @@ $ sudo port install lp_solve
 
 [Homebrew](http://brew.sh):
 ```bash
-$ brew tap homebrew/science
+$ brew tap brewsci/science
 $ brew install lp_solve
 ```
 
