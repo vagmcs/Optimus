@@ -81,9 +81,9 @@ object OptimusBuild extends AutoPlugin {
 
     headerMappings := headerMappings.value + (HeaderFileType.scala -> HeaderCommentStyle.cStyleBlockComment),
 
-    scalaVersion := "2.12.8",
+    scalaVersion := "2.13.0",
 
-    crossScalaVersions := Seq("2.12.8", "2.11.12"),
+    crossScalaVersions := Seq("2.13.0", "2.12.8", "2.11.12"),
 
     autoScalaLibrary := true,
 
@@ -165,6 +165,16 @@ object OptimusBuild extends AutoPlugin {
 
         case "2.12" =>
           // Scala compiler settings for Scala 2.12.x
+          Seq(
+            "-deprecation",       // Emit warning and location for usages of deprecated APIs.
+            "-unchecked",         // Enable additional warnings where generated code depends on assumptions.
+            "-feature",           // Emit warning and location for usages of features that should be imported explicitly.
+            "-target:jvm-1.8",    // Target JVM version 1.8
+            "-Ywarn-dead-code"    // Warn when dead code is identified.
+          )
+
+        case "2.13" =>
+          // Scala compiler settings for Scala 2.13.x
           Seq(
             "-deprecation",       // Emit warning and location for usages of deprecated APIs.
             "-unchecked",         // Enable additional warnings where generated code depends on assumptions.

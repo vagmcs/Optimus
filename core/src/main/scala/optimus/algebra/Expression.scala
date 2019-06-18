@@ -18,7 +18,6 @@ package optimus.algebra
 
 import com.typesafe.scalalogging.LazyLogging
 import optimus.algebra.ConstraintRelation._
-import optimus.algebra.AlgebraOps._
 
 /**
   * Expression abstraction, should be extended by anything that is
@@ -172,7 +171,7 @@ case class Term(scalar: Const, vars: Vector[Var]) extends Expression {
 
   override def unary_-(): Expression = Term(Const(-scalar.value), vars)
 
-  override def toString: String = scalar + vars.mkString("*")
+  override def toString: String = s"$scalar${vars.mkString("*")}"
 }
 
 /**

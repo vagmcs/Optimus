@@ -117,8 +117,8 @@ trait Sudoku extends FunSpec with Matchers {
     // Print solution
     for (l <- N) {
       for (c <- N; n <- N; if x(l)(c)(n).value.get == 1) {
-        if ((c + 1) % 3 == 0) print(n + 1 + " | ")
-        else print(n + 1 + " ")
+        if ((c + 1) % 3 == 0) print(s"${n + 1} | ")
+        else print(s"${n + 1} ")
       }
       println
     }

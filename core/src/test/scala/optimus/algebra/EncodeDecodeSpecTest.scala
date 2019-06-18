@@ -17,10 +17,10 @@
 package optimus.algebra
 
 import org.scalacheck.Gen
-import org.scalatest.prop.PropertyChecks
 import org.scalatest.{ FunSpec, Matchers }
+import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 
-final class EncodeDecodeSpecTest extends FunSpec with Matchers with PropertyChecks {
+final class EncodeDecodeSpecTest extends FunSpec with Matchers with ScalaCheckPropertyChecks {
 
   describe("Encode and decode a single number") {
 

@@ -32,13 +32,13 @@ import sbt._
 object Dependencies {
 
   final val LogbackVersion = "1.2.3"
-  final val ScalaLogging = "3.9.0"
-  final val ScalaTestVersion = "3.0.5"
-  final val ScalaCheckVersion = "1.13.4"
+  final val ScalaLogging = "3.9.2"
+  final val ScalaTestVersion = "3.0.8"
+  final val ScalaCheckVersion = "1.14.0"
   final val LpSolveVersion = "5.5.2.0"
   final val ojAlgorithmsVersion = "47.0.0"
   final val troveVersion = "3.1.0"
-  final val scalaXML = "1.0.6"
+  final val scalaXML = "1.2.0"
   final val enumVersion = "1.5.13"
 
   // Logging using slf4j and logback
