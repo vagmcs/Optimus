@@ -1,6 +1,6 @@
 # Building and Linking Optimus
 
-Optimus is builds for both Scala 2.11 and 2.12. In order to build Optimus modules (`core`, `solver-oj`, `solver-lp`, `solver-gurobi`, `solver-mosek`) from source you need to have Java SE version 8 or higher and [SBT](http://www.scala-sbt.org/) installed in your system. Optimus build optionally depends on [Gurobi](http://www.gurobi.com/) and [Mosek](https://www.mosek.com/) solvers. In case the dependencies for Gurobi or Mosek are not included, Optimus would build a minimal version having only lp solve and oj solver.
+Optimus is builds for Scala 2.11, 2.12 and 2.13. In order to build Optimus modules (`core`, `solver-oj`, `solver-lp`, `solver-gurobi`, `solver-mosek`) from source you need to have Java 8 or higher and [SBT](http://www.scala-sbt.org/) installed in your system. Optimus build optionally depends on [Gurobi](http://www.gurobi.com/) and [Mosek](https://www.mosek.com/) solvers. In case the dependencies for Gurobi or Mosek are not included, Optimus would build a minimal version having only lp solve and oj solver.
 
 ## Instructions to build Optimus from source
 
@@ -96,19 +96,19 @@ $ sbt +publishLocal
 
 ## Usage of Optimus through Maven Central
 
-Optimus is published into the Maven Central. In order to link Optimus `core` module (e.g., version 3.0.0) to your [SBT](http://www.scala-sbt.org/) project, add the following dependency:
+Optimus is published into the Maven Central. In order to link Optimus `core` module (e.g., version 3.2.0) to your [SBT](http://www.scala-sbt.org/) project, add the following dependency:
 
 ```sbt
-libraryDependencies += "com.github.vagmcs" %% "optimus" % "3.1.2"
+libraryDependencies += "com.github.vagmcs" %% "optimus" % "3.2.0"
 ```
 
 Moreover you can link your project to each solver module that you additionally require by adding some or all of the following dependencies:
 
 ```sbt
-libraryDependencies += "com.github.vagmcs" %% "optimus-solver-oj" % "3.1.2"
-libraryDependencies += "com.github.vagmcs" %% "optimus-solver-lp" % "3.1.2"
-libraryDependencies += "com.github.vagmcs" %% "optimus-solver-gurobi" % "3.1.2"
-libraryDependencies += "com.github.vagmcs" %% "optimus-solver-mosek" % "3.1.2"
+libraryDependencies += "com.github.vagmcs" %% "optimus-solver-oj" % "3.2.0"
+libraryDependencies += "com.github.vagmcs" %% "optimus-solver-lp" % "3.2.0"
+libraryDependencies += "com.github.vagmcs" %% "optimus-solver-gurobi" % "3.2.0"
+libraryDependencies += "com.github.vagmcs" %% "optimus-solver-mosek" % "3.2.0"
 ```
 
 Likewise in an [Apache Maven](https://maven.apache.org/) pom xml file add:
@@ -118,22 +118,22 @@ Likewise in an [Apache Maven](https://maven.apache.org/) pom xml file add:
     <dependency>
       <groupId>com.github.vagmcs</groupId>
       <artifactId>optimus_2.11</artifactId>
-      <version>3.1.2</version>
+      <version>3.2.0</version>
     </dependency>
     <dependency>
       <groupId>com.github.vagmcs</groupId>
       <artifactId>optimus-solver-oj_2.11</artifactId>
-      <version>3.1.2</version>
+      <version>3.2.0</version>
     </dependency>
     <dependency>
       <groupId>com.github.vagmcs</groupId>
       <artifactId>optimus-solver-lp_2.11</artifactId>
-      <version>3.1.2</version>
+      <version>3.2.0</version>
     </dependency>
     <dependency>
       <groupId>com.github.vagmcs</groupId>
       <artifactId>optimus-solver-gurobi_2.11</artifactId>
-      <version>3.1.2</version>
+      <version>3.2.0</version>
     </dependency>
 </dependencies>
 ```
@@ -144,22 +144,49 @@ or
     <dependency>
       <groupId>com.github.vagmcs</groupId>
       <artifactId>optimus_2.12</artifactId>
-      <version>3.1.2</version>
+      <version>3.2.0</version>
     </dependency>
     <dependency>
       <groupId>com.github.vagmcs</groupId>
       <artifactId>optimus-solver-oj_2.12</artifactId>
-      <version>3.1.2</version>
+      <version>3.2.0</version>
     </dependency>
     <dependency>
       <groupId>com.github.vagmcs</groupId>
       <artifactId>optimus-solver-lp_2.12</artifactId>
-      <version>3.1.2</version>
+      <version>3.2.0</version>
     </dependency>
     <dependency>
       <groupId>com.github.vagmcs</groupId>
       <artifactId>optimus-solver-gurobi_2.12</artifactId>
-      <version>3.1.2</version>
+      <version>3.2.0</version>
+    </dependency>
+</dependencies>
+```
+
+or
+
+```xml
+<dependencies>
+    <dependency>
+      <groupId>com.github.vagmcs</groupId>
+      <artifactId>optimus_2.13</artifactId>
+      <version>3.2.0</version>
+    </dependency>
+    <dependency>
+      <groupId>com.github.vagmcs</groupId>
+      <artifactId>optimus-solver-oj_2.13</artifactId>
+      <version>3.2.0</version>
+    </dependency>
+    <dependency>
+      <groupId>com.github.vagmcs</groupId>
+      <artifactId>optimus-solver-lp_2.13</artifactId>
+      <version>3.2.0</version>
+    </dependency>
+    <dependency>
+      <groupId>com.github.vagmcs</groupId>
+      <artifactId>optimus-solver-gurobi_2.13</artifactId>
+      <version>3.2.0</version>
     </dependency>
 </dependencies>
 ```
