@@ -18,6 +18,7 @@ package optimus.algebra
 
 import com.typesafe.scalalogging.LazyLogging
 import optimus.algebra.ConstraintRelation._
+import optimus.algebra.AlgebraOps._
 
 /**
   * Expression abstraction, should be extended by anything that is
