@@ -48,7 +48,8 @@ Optionally, you can also add the following extra dependencies for proprietary so
 "com.github.vagmcs" %% "optimus-solver-mosek" % "3.2.0"
 ```
 
-For more information see [Building and Linking](docs/building_and_linking.md)
+For more information see [Building and Linking](docs/building_and_linking.md),
+[Using mosek](docs/mosek.md)
 
 ## Documentation
 - [Linear Programming](docs/linear.md)
