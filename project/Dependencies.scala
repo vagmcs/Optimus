@@ -42,7 +42,7 @@ object Dependencies {
     final val ojAlgorithms = "47.0.0"
     final val Trove = "3.1.0"
     final val ScalaXML = "1.2.0"
-    final val Enums = "1.5.13"
+    final val Enums = "1.5.14"
   }
 
   // Logging using slf4j and logback

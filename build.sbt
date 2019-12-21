@@ -7,13 +7,9 @@ val logger = ConsoleLogger()
 
 sonatypeProfileName := "com.github.vagmcs"
 
-useGpg := true
-
 lazy val root = project.in(file("."))
   .aggregate(core, oj, lpsolve, gurobi, mosek)
   .settings(skip in publish := true)
-
-//publishArtifact in root := false
 
 // Build settings for Optimus core
 lazy val core = project.in(file("core"))

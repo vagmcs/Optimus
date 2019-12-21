@@ -81,9 +81,9 @@ object OptimusBuild extends AutoPlugin {
 
     headerMappings := headerMappings.value + (HeaderFileType.scala -> HeaderCommentStyle.cStyleBlockComment),
 
-    scalaVersion := "2.13.0",
+    scalaVersion := "2.13.1",
 
-    crossScalaVersions := Seq("2.13.0", "2.12.8", "2.11.12"),
+    crossScalaVersions := Seq("2.13.1", "2.12.9", "2.11.12"),
 
     autoScalaLibrary := true,
 
