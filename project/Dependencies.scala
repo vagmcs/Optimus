@@ -26,7 +26,7 @@ object Dependencies {
     final val ScalaCheck = "1.14.0"
 
     final val LpSolve = "5.5.2.0"
-    final val ojAlgorithms = "47.0.0"
+    final val ojAlgorithms = "47.1.2"
     final val Trove = "3.1.0"
     final val ScalaXML = "1.2.0"
     final val Enums = "1.5.14"
