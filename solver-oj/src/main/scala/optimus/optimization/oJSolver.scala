@@ -244,6 +244,5 @@ final class oJSolver extends MPSolver {
   def setTimeout(limit: Int): Unit = {
     require(0 <= limit)
     underlyingSolver.options.time_abort = limit
-    underlyingSolver.options.time_suffice = limit
   }
 }
