@@ -19,7 +19,7 @@ package optimus.optimization
 import optimus.algebra.ExpressionType.GENERIC
 import optimus.algebra._
 import optimus.algebra.{ ConstraintRelation, Expression }
-import org.ojalgo.constant.BigMath
+import org.ojalgo.function.constant.BigMath
 import org.ojalgo.optimisation.{ ExpressionsBasedModel, Optimisation, Variable }
 import optimus.optimization.model.INFINITE
 import optimus.optimization.enums.{ PreSolve, SolutionStatus }
