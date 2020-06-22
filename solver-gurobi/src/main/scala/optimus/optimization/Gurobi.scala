@@ -252,13 +252,10 @@ final class Gurobi extends MPSolver {
   }
 
   /**
-    * Release memory associated to the problem and the environment as well as
-    * the gurobi license.
+    * Release memory associated to the problem.
     */
   def release(): Unit = {
     underlyingSolver.dispose()
-    underlyingSolver.getEnv.release()
-    underlyingSolver.getEnv.dispose()
   }
 
   /**

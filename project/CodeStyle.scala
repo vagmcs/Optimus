@@ -1,11 +1,27 @@
-import sbt._
+/*
+ *
+ *   /\\\\\
+ *  /\\\///\\\
+ * /\\\/  \///\\\    /\\\\\\\\\     /\\\       /\\\
+ * /\\\      \//\\\  /\\\/////\\\ /\\\\\\\\\\\ \///    /\\\\\  /\\\\\     /\\\    /\\\  /\\\\\\\\\\
+ * \/\\\       \/\\\ \/\\\\\\\\\\ \////\\\////   /\\\  /\\\///\\\\\///\\\ \/\\\   \/\\\ \/\\\//////
+ *  \//\\\      /\\\  \/\\\//////     \/\\\      \/\\\ \/\\\ \//\\\  \/\\\ \/\\\   \/\\\ \/\\\\\\\\\\
+ *    \///\\\  /\\\    \/\\\           \/\\\_/\\  \/\\\ \/\\\  \/\\\  \/\\\ \/\\\   \/\\\ \////////\\\
+ *       \///\\\\\/     \/\\\           \//\\\\\   \/\\\ \/\\\  \/\\\  \/\\\ \//\\\\\\\\\  /\\\\\\\\\\
+ *          \/////       \///             \/////    \///  \///   \///   \///  \/////////   \//////////
+ *
+ * The mathematical programming library for Scala.
+ *
+ */
+
+import sbt.{Def, _}
 import com.typesafe.sbt.SbtScalariform.ScalariformKeys
 import scalariform.formatter.preferences.AlignSingleLineCaseStatements.MaxArrowIndent
 import scalariform.formatter.preferences._
 
-object Reform {
+object CodeStyle {
 
-  lazy val formatSettings = Seq(
+  lazy val formatSettings: Seq[Def.Setting[IFormattingPreferences]] = Seq(
     ScalariformKeys.preferences := setPreferences(ScalariformKeys.preferences.value),
     ScalariformKeys.preferences in Compile := setPreferences(ScalariformKeys.preferences.value),
     ScalariformKeys.preferences in Test := setPreferences(ScalariformKeys.preferences.value)

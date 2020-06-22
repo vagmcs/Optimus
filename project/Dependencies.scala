@@ -10,20 +10,7 @@
  *       \///\\\\\/     \/\\\           \//\\\\\   \/\\\ \/\\\  \/\\\  \/\\\ \//\\\\\\\\\  /\\\\\\\\\\
  *          \/////       \///             \/////    \///  \///   \///   \///  \/////////   \//////////
  *
- * Copyright (C) 2014 Evangelos Michelioudakis, Anastasios Skarlatidis
- *
- * Optimus is free software: you can redistribute it and/or modify it
- * under the terms of the GNU Lesser General Public License as published
- * by the Free Software Foundation, either version 3 of the License,
- * or (at your option) any later version.
- *
- * Optimus is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public
- * License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public License
- * along with Optimus. If not, see <http://www.gnu.org/licenses/>.
+ * The mathematical programming library for Scala.
  *
  */
 
@@ -31,38 +18,42 @@ import sbt._
 
 object Dependencies {
 
-  final val LogbackVersion = "1.2.3"
-  final val ScalaLogging = "3.9.0"
-  final val ScalaTestVersion = "3.0.5"
-  final val ScalaCheckVersion = "1.13.4"
-  final val LpSolveVersion = "5.5.2.0"
-  final val ojAlgorithmsVersion = "48.2.0"
-  final val troveVersion = "3.1.0"
-  final val scalaXML = "1.0.6"
-  final val enumVersion = "1.5.13"
+  object v {
+    final val Logback = "1.2.3"
+    final val ScalaLogging = "3.9.2"
+
+    final val ScalaTest = "3.0.8"
+    final val ScalaCheck = "1.14.0"
+
+    final val LpSolve = "5.5.2.0"
+    final val ojAlgorithms = "48.2.0"
+    final val Trove = "3.1.0"
+    final val ScalaXML = "1.2.0"
+    final val Enums = "1.5.14"
+  }
 
   // Logging using slf4j and logback
-  lazy val Logging = Seq(
-    "ch.qos.logback" % "logback-classic" % LogbackVersion,
-    "com.typesafe.scala-logging" %% "scala-logging" % ScalaLogging
+  lazy val Logging: Seq[ModuleID] = Seq(
+    "ch.qos.logback" % "logback-classic" % v.Logback,
+    "com.typesafe.scala-logging" %% "scala-logging" % v.ScalaLogging
   )
 
   // ScalaTest and ScalaCheck for UNIT testing
-  lazy val ScalaTest = Seq(
-    "org.scalatest" %% "scalatest" % ScalaTestVersion % "test",
-    "org.scalacheck" %% "scalacheck" % ScalaCheckVersion % "test"
+  lazy val ScalaTest: Seq[ModuleID] = Seq(
+    "org.scalatest" %% "scalatest" % v.ScalaTest % "test",
+    "org.scalacheck" %% "scalacheck" % v.ScalaCheck % "test"
   )
 
   // GNU Trove collections and other tools
-  lazy val Tools = Seq(
-    "org.scala-lang.modules" %% "scala-xml" % scalaXML,
-    "net.sf.trove4j" % "core" % troveVersion,
-    "com.beachape" %% "enumeratum" % enumVersion
+  lazy val Tools: Seq[ModuleID] = Seq(
+    "org.scala-lang.modules" %% "scala-xml" % v.ScalaXML,
+    "net.sf.trove4j" % "core" % v.Trove,
+    "com.beachape" %% "enumeratum" % v.Enums
   )
 
   // LpSolve library for linear programming
-  lazy val LpSolve: ModuleID = "com.datumbox" % "lpsolve" % LpSolveVersion
+  lazy val LpSolve: ModuleID = "com.datumbox" % "lpsolve" % v.LpSolve
 
   // oj! Algorithms library for linear and quadratic programming
-  lazy val ojAlgorithms: ModuleID = "org.ojalgo" % "ojalgo" % ojAlgorithmsVersion
+  lazy val ojAlgorithms: ModuleID = "org.ojalgo" % "ojalgo" % v.ojAlgorithms
 }

@@ -3,6 +3,7 @@
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.vagmcs/optimus_2.11/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.github.vagmcs/optimus_2.11)
 [![License: LGPL v3](https://img.shields.io/badge/License-LGPL%20v3-blue.svg)](https://www.gnu.org/licenses/lgpl-3.0)
 [![Build Status](https://travis-ci.org/vagmcs/Optimus.svg?branch=develop)](https://travis-ci.org/vagmcs/Optimus)
+[![javadoc](https://javadoc.io/badge2/com.github.vagmcs/optimus_2.13/javadoc.svg)](https://javadoc.io/doc/com.github.vagmcs/optimus_2.13)
 
 Optimus is a library for Linear and Quadratic mathematical optimization written in [Scala programming language](http://scala-lang.org).
 
@@ -27,9 +28,28 @@ This program comes with ABSOLUTELY NO WARRANTY. This is free software, and you a
   * Proprietary solver [Gurobi](http://www.gurobi.com/) can be used for efficiently solving LP, QP, QCQP and MIP.
   * Proprietary solver [Mosek](https://www.mosek.com/) can be used for efficiently solving LP, QP, QCQP and MIP.
 
-## Building
+## How to get Optimus
 
-See [Building and Linking](docs/building_and_linking.md)
+Optimus is published to Maven Central for Scala 2.11, 2.12 and 2.13. 
+
+Add the following dependencies to your SBT build file in order to get started:
+
+```sbt
+libraryDependencies ++= Seq(
+    "com.github.vagmcs" %% "optimus" % "3.2.0",
+    "com.github.vagmcs" %% "optimus-solver-oj" % "3.2.0",
+    "com.github.vagmcs" %% "optimus-solver-lp" % "3.2.0"
+)
+```
+
+Optionally, you can also add the following extra dependencies for proprietary solvers:
+
+```sbt
+"com.github.vagmcs" %% "optimus-solver-gurobi" % "3.2.0",
+"com.github.vagmcs" %% "optimus-solver-mosek" % "3.2.0"
+```
+
+For more information see [Building and Linking](docs/building_and_linking.md)
 
 ## Documentation
 - [Linear Programming](docs/linear.md)

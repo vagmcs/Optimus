@@ -10,20 +10,7 @@
  *       \///\\\\\/     \/\\\           \//\\\\\   \/\\\ \/\\\  \/\\\  \/\\\ \//\\\\\\\\\  /\\\\\\\\\\
  *          \/////       \///             \/////    \///  \///   \///   \///  \/////////   \//////////
  *
- * Copyright (C) 2014 Evangelos Michelioudakis, Anastasios Skarlatidis
- *
- * Optimus is free software: you can redistribute it and/or modify it
- * under the terms of the GNU Lesser General Public License as published
- * by the Free Software Foundation, either version 3 of the License,
- * or (at your option) any later version.
- *
- * Optimus is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public
- * License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public License
- * along with Optimus. If not, see <http://www.gnu.org/licenses/>.
+ * The mathematical programming library for Scala.
  *
  */
 
@@ -66,7 +53,7 @@ object OptimusBuild extends AutoPlugin {
   private lazy val settings: Seq[Setting[_]] = {
     logger.info(s"Loading settings for Java $javaVersion or higher.")
     if (javaVersion < 1.8) sys.error("Java 8 or higher is required for building Optimus.")
-    else commonSettings ++ JavaSettings ++ ScalaSettings ++ Reform.formatSettings
+    else commonSettings ++ JavaSettings ++ ScalaSettings ++ CodeStyle.formatSettings
   }
 
   private val commonSettings: Seq[Setting[_]] = Seq(
@@ -81,9 +68,9 @@ object OptimusBuild extends AutoPlugin {
 
     headerMappings := headerMappings.value + (HeaderFileType.scala -> HeaderCommentStyle.cStyleBlockComment),
 
-    scalaVersion := "2.12.7",
+    scalaVersion := "2.13.1",
 
-    crossScalaVersions := Seq("2.12.7", "2.11.12"),
+    crossScalaVersions := Seq("2.13.1", "2.12.10", "2.11.12"),
 
     autoScalaLibrary := true,
 
@@ -165,6 +152,16 @@ object OptimusBuild extends AutoPlugin {
 
         case "2.12" =>
           // Scala compiler settings for Scala 2.12.x
+          Seq(
+            "-deprecation",       // Emit warning and location for usages of deprecated APIs.
+            "-unchecked",         // Enable additional warnings where generated code depends on assumptions.
+            "-feature",           // Emit warning and location for usages of features that should be imported explicitly.
+            "-target:jvm-1.8",    // Target JVM version 1.8
+            "-Ywarn-dead-code"    // Warn when dead code is identified.
+          )
+
+        case "2.13" =>
+          // Scala compiler settings for Scala 2.13.x
           Seq(
             "-deprecation",       // Emit warning and location for usages of deprecated APIs.
             "-unchecked",         // Enable additional warnings where generated code depends on assumptions.

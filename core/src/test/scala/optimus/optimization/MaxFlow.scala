@@ -79,7 +79,7 @@ trait MaxFlow extends FunSpec with Matchers {
     // Print solution
     for (l <- lines) {
       for (c <- columns)
-        print(x(l)(c).value.get + "  ")
+        print(s"${x(l)(c).value.get} ")
       println
     }
 
