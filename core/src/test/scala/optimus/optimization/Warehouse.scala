@@ -92,7 +92,7 @@ trait Warehouse extends FunSpec with Matchers {
     }
 
     it(s"$solver objective value should be 210500") {
-      objectiveValue shouldBe 210500
+      objectiveValue shouldBe 210500.0 +- 1e-8
     }
 
     it("all variables should have a value") {
