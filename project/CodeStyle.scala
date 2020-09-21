@@ -40,6 +40,7 @@ object CodeStyle {
     .setPreference(DoubleIndentMethodDeclaration, true)
     .setPreference(FirstArgumentOnNewline, Preserve)
     .setPreference(FirstParameterOnNewline, Force)
+    .setPreference(FormatXml, true)
     .setPreference(IndentLocalDefs, true)
     .setPreference(IndentPackageBlocks, true)
     .setPreference(IndentSpaces, 2)
@@ -55,6 +56,7 @@ object CodeStyle {
     .setPreference(SpaceInsideBrackets, false)
     .setPreference(SpaceInsideParentheses, false)
     .setPreference(SpacesWithinPatternBinders, true)
+    .setPreference(UseUnicodeArrows, false)
 }
 
 
