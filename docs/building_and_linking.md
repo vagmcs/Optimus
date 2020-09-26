@@ -96,19 +96,19 @@ $ sbt +publishLocal
 
 ## Usage of Optimus through Maven Central
 
-Optimus is published into the Maven Central. In order to link Optimus `core` module (e.g., version 3.2.0) to your [SBT](http://www.scala-sbt.org/) project, add the following dependency:
+Optimus is published into the Maven Central. In order to link Optimus `core` module (e.g., version 3.2.4) to your [SBT](http://www.scala-sbt.org/) project, add the following dependency:
 
 ```sbt
-libraryDependencies += "com.github.vagmcs" %% "optimus" % "3.2.0"
+libraryDependencies += "com.github.vagmcs" %% "optimus" % "3.2.4"
 ```
 
 Moreover you can link your project to each solver module that you additionally require by adding some or all of the following dependencies:
 
 ```sbt
-libraryDependencies += "com.github.vagmcs" %% "optimus-solver-oj" % "3.2.0"
-libraryDependencies += "com.github.vagmcs" %% "optimus-solver-lp" % "3.2.0"
-libraryDependencies += "com.github.vagmcs" %% "optimus-solver-gurobi" % "3.2.0"
-libraryDependencies += "com.github.vagmcs" %% "optimus-solver-mosek" % "3.2.0"
+libraryDependencies += "com.github.vagmcs" %% "optimus-solver-oj" % "3.2.4"
+libraryDependencies += "com.github.vagmcs" %% "optimus-solver-lp" % "3.2.4"
+libraryDependencies += "com.github.vagmcs" %% "optimus-solver-gurobi" % "3.2.4"
+libraryDependencies += "com.github.vagmcs" %% "optimus-solver-mosek" % "3.2.4"
 ```
 
 Likewise in an [Apache Maven](https://maven.apache.org/) pom xml file add:
@@ -118,22 +118,22 @@ Likewise in an [Apache Maven](https://maven.apache.org/) pom xml file add:
     <dependency>
       <groupId>com.github.vagmcs</groupId>
       <artifactId>optimus_2.11</artifactId>
-      <version>3.2.0</version>
+      <version>3.2.4</version>
     </dependency>
     <dependency>
       <groupId>com.github.vagmcs</groupId>
       <artifactId>optimus-solver-oj_2.11</artifactId>
-      <version>3.2.0</version>
+      <version>3.2.4</version>
     </dependency>
     <dependency>
       <groupId>com.github.vagmcs</groupId>
       <artifactId>optimus-solver-lp_2.11</artifactId>
-      <version>3.2.0</version>
+      <version>3.2.4</version>
     </dependency>
     <dependency>
       <groupId>com.github.vagmcs</groupId>
       <artifactId>optimus-solver-gurobi_2.11</artifactId>
-      <version>3.2.0</version>
+      <version>3.2.4</version>
     </dependency>
 </dependencies>
 ```
@@ -144,22 +144,22 @@ or
     <dependency>
       <groupId>com.github.vagmcs</groupId>
       <artifactId>optimus_2.12</artifactId>
-      <version>3.2.0</version>
+      <version>3.2.4</version>
     </dependency>
     <dependency>
       <groupId>com.github.vagmcs</groupId>
       <artifactId>optimus-solver-oj_2.12</artifactId>
-      <version>3.2.0</version>
+      <version>3.2.4</version>
     </dependency>
     <dependency>
       <groupId>com.github.vagmcs</groupId>
       <artifactId>optimus-solver-lp_2.12</artifactId>
-      <version>3.2.0</version>
+      <version>3.2.4</version>
     </dependency>
     <dependency>
       <groupId>com.github.vagmcs</groupId>
       <artifactId>optimus-solver-gurobi_2.12</artifactId>
-      <version>3.2.0</version>
+      <version>3.2.4</version>
     </dependency>
 </dependencies>
 ```
@@ -171,22 +171,22 @@ or
     <dependency>
       <groupId>com.github.vagmcs</groupId>
       <artifactId>optimus_2.13</artifactId>
-      <version>3.2.0</version>
+      <version>3.2.4</version>
     </dependency>
     <dependency>
       <groupId>com.github.vagmcs</groupId>
       <artifactId>optimus-solver-oj_2.13</artifactId>
-      <version>3.2.0</version>
+      <version>3.2.4</version>
     </dependency>
     <dependency>
       <groupId>com.github.vagmcs</groupId>
       <artifactId>optimus-solver-lp_2.13</artifactId>
-      <version>3.2.0</version>
+      <version>3.2.4</version>
     </dependency>
     <dependency>
       <groupId>com.github.vagmcs</groupId>
       <artifactId>optimus-solver-gurobi_2.13</artifactId>
-      <version>3.2.0</version>
+      <version>3.2.4</version>
     </dependency>
 </dependencies>
 ```
