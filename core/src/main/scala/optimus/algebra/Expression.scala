@@ -17,6 +17,7 @@
 package optimus.algebra
 
 import com.typesafe.scalalogging.LazyLogging
+import gnu.trove.procedure.TLongDoubleProcedure
 import optimus.algebra.ConstraintRelation._
 import optimus.algebra.AlgebraOps._
 
@@ -51,11 +52,11 @@ abstract class Expression extends LazyLogging {
 
   def unary_-(): Expression = Minus(0, this)
 
-  def <:=(that: Expression) = Constraint(this, LE, that)
+  def <:=(that: Expression): Constraint = Constraint(this, LE, that)
 
-  def >:=(that: Expression) = Constraint(this, GE, that)
+  def >:=(that: Expression): Constraint = Constraint(this, GE, that)
 
-  def :=(that: Expression) = Constraint(this, EQ, that)
+  def :=(that: Expression): Constraint = Constraint(this, EQ, that)
 
   // Order of the expression (e.g linear) maybe is a little slow
   @inline private def order: Int = {
@@ -153,7 +154,7 @@ case class Term(scalar: Const, vars: Vector[Var]) extends Expression {
   require(vars.length < 3,
     throw new UnsupportedOperationException("Only up to quadratic expressions are supported!"))
 
-  override val terms = LongDoubleMap(scalar, vars)
+  override val terms: LongDoubleMap = LongDoubleMap(scalar, vars)
 
   override def *(that: Expression): Expression = that match {
 
@@ -200,7 +201,7 @@ class Const(val value: Double) extends Expression {
     case _ => Const(value * other.value)
   }
 
-  def *(x: Var) = Term(this, Vector(x))
+  def *(x: Var): Term = Term(this, Vector(x))
 
   def *(term: Term): Term = Term(this * term.scalar, term.vars)
 
@@ -249,7 +250,7 @@ case object One extends Const(1) {
 
   override def *(expression: Expression): Expression = this
 
-  override def unary_-() = Const(-1)
+  override def unary_-(): Const = Const(-1)
 }
 
 /**
@@ -345,6 +346,7 @@ case class Product(override val a: Expression, override val b: Expression) exten
 
   override protected def merge: LongDoubleMap = {
 
+    var isTraversed = false
     val result = LongDoubleMap.empty
 
     val iteratorA = a.terms.iterator
@@ -370,8 +372,10 @@ case class Product(override val a: Expression, override val b: Expression) exten
         result.adjustOrPutValue(variables, cA * cB, cA * cB)
 
         // 3. Calculate products involving terms only from expression B and the constant of A
-        result.adjustOrPutValue(variablesB, cB * a.constant, cB * a.constant)
+        if (!isTraversed) result.adjustOrPutValue(variablesB, cB * a.constant, cB * a.constant)
       }
+
+      isTraversed = true
     }
 
     // 4. Filter out zero terms

@@ -291,9 +291,9 @@ final class AlgebraSpecTest extends FunSpec with Matchers {
     val expr = (x + y + x + y + t + z + t + z + 4.1 * y + x + 5) * (x + y + x + y + t + z + t + z + y + x + 2)
     info("Product of " + expr + " took " + (System.currentTimeMillis() - startProd) + "ms to calculate")
     it("Checking product of expressions") {
-      expr shouldEqual 12 * x * z + 18.2 * y * t + 4 * z * z + 4 * t * t + 44 * t +
-        12 * x * t + 18.2 * y * z + 44 * z + 8 * z * t + 18.299999999999997 * y * y +
-        72.2 * y + 27.299999999999997 * x * y + 66 * x + 9 * x * x + 10
+      expr shouldEqual 12 * x * z + 18.2 * y * t + 4 * z * z + 4 * t * t + 14 * t +
+        12 * x * t + 18.2 * y * z + 14 * z + 8 * z * t + 18.299999999999997 * y * y +
+        27.2 * y + 27.299999999999997 * x * y + 21 * x + 9 * x * x + 10
     }
   }
 
