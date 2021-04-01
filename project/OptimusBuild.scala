@@ -17,6 +17,7 @@
 import sbt._
 import sbt.Keys._
 import sbt.plugins.JvmPlugin
+import scoverage.ScoverageKeys._
 import de.heikoseeberger.sbtheader.HeaderPlugin
 import de.heikoseeberger.sbtheader.HeaderPlugin.autoImport._
 
@@ -75,6 +76,10 @@ object OptimusBuild extends AutoPlugin {
     autoScalaLibrary := true,
 
     managedScalaInstance := true,
+
+    coverageMinimum := 75,
+    coverageEnabled := true,
+    coverageHighlighting := true,
 
     publishMavenStyle := true,
     publishArtifact in Test := false,

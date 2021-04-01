@@ -15,7 +15,6 @@ lazy val root = project.in(file("."))
 lazy val core = project.in(file("core"))
   .enablePlugins(AutomateHeaderPlugin)
   .settings(logLevel in Test := Level.Info)
-  .settings(logLevel in Compile := Level.Error)
   .settings(name := "optimus")
   .settings(Seq(
     libraryDependencies ++= Dependencies.Logging,
