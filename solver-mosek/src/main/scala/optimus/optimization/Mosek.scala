@@ -21,6 +21,7 @@ import optimus.algebra._
 import optimus.optimization.enums.{ PreSolve, SolutionStatus }
 import optimus.optimization.model.MPConstraint
 import scala.util.{ Failure, Success, Try }
+import optimus.optimization.model.INFINITE
 
 final class Mosek extends MPSolver {
 
@@ -67,8 +68,14 @@ final class Mosek extends MPSolver {
     * @param lower domain lower bound
     * @param upper domain upper bound
     */
-  def setBounds(colId: Int, lower: Double, upper: Double): Unit =
-    underlyingSolver.putvarbound(colId, boundkey.ra, lower, upper)
+  def setBounds(colId: Int, lower: Double, upper: Double): Unit = {
+    if (upper == INFINITE)
+      underlyingSolver.putvarbound(colId, boundkey.lo, lower, Double.MaxValue)
+    else if (lower == INFINITE)
+      underlyingSolver.putvarbound(colId, boundkey.up, Double.MinValue, upper)
+    else
+      underlyingSolver.putvarbound(colId, boundkey.ra, lower, upper)
+  }
 
   /**
     * Set bot upper and lower bounds to unbounded (infinite).
@@ -255,15 +262,12 @@ final class Mosek extends MPSolver {
             _objectiveValue = Some(underlyingSolver.getprimalobj(solutionType))
             SolutionStatus.OPTIMAL
 
-          case solsta.near_optimal | solsta.near_integer_optimal =>
+          case solsta.prim_feas | solsta.dual_feas =>
             underlyingSolver.getxx(solutionType, _solution)
             _objectiveValue = Some(underlyingSolver.getprimalobj(solutionType))
             SolutionStatus.SUBOPTIMAL
 
-          case solsta.dual_infeas_cer |
-            solsta.prim_infeas_cer |
-            solsta.near_dual_infeas_cer |
-            solsta.near_prim_infeas_cer =>
+          case solsta.prim_infeas_cer | solsta.dual_infeas_cer =>
             SolutionStatus.INFEASIBLE
 
           case _ =>

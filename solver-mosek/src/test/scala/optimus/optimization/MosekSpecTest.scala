@@ -471,10 +471,10 @@ final class MosekSpecTest extends AnyFunSpec with Matchers {
 
       start()
 
-      w.value.get should equal(8.65 +- 1e-2)
+      w.value.get should equal(8.77 +- 1e-2)
       x.value.get should equal(15.0 +- 1e-2)
-      y.value.get should equal(8.65 +- 1e-2)
-      z.value.get should equal(7.7 +- 1e-2)
+      y.value.get should equal(8.77 +- 1e-2)
+      z.value.get should equal(7.45 +- 1e-2)
       objectiveValue shouldBe (115.0 +- 1e-2)
 
       cons(0).isTight() shouldBe true
@@ -606,7 +606,7 @@ final class MosekSpecTest extends AnyFunSpec with Matchers {
     }
 
     it("y should be equal to 3") {
-      y.value.get shouldEqual 3
+      y.value.get shouldEqual 3.0 +- 1e-2
     }
 
     it("objective value should be equal to 100") {

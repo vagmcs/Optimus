@@ -35,7 +35,7 @@ class MPVar private[optimization] (
 
   // A variable alone has a coefficient value of 1 in front of her
   val index: Int = model.register(this)
-  override val terms = LongDoubleMap(this)
+  override val terms: LongDoubleMap = LongDoubleMap(this)
 
   /**
     * @return the value of the variable (integer rounded if the variable is integer).
