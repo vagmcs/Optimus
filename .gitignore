@@ -18,6 +18,7 @@ project/boot/
 .cache
 lib/
 project/project/
+/.bsp/
 
 ### Mac OSX
 Icon
