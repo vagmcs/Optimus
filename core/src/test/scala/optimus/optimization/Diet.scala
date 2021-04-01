@@ -16,10 +16,11 @@
 
 package optimus.optimization
 
+import org.scalatest.funspec.AnyFunSpec
+import org.scalatest.matchers.should.Matchers
 import optimus.algebra.AlgebraOps._
 import optimus.optimization.enums.{ SolutionStatus, SolverLib }
 import optimus.optimization.model.MPFloatVar
-import org.scalatest.{ FunSpec, Matchers }
 
 /**
   * The goal of the diet problem is to find the cheapest combination of foods
@@ -30,7 +31,7 @@ import org.scalatest.{ FunSpec, Matchers }
   * We include constraints that regulate the number of calories and the amounts
   * of vitamins, minerals, fats, sodium and cholesterol in the diet.
   */
-trait Diet extends FunSpec with Matchers {
+trait Diet extends AnyFunSpec with Matchers {
 
   def solver: SolverLib
 

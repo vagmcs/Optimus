@@ -16,7 +16,8 @@
 
 package optimus.optimization
 
-import org.scalatest.{ FunSpec, Matchers }
+import org.scalatest.funspec.AnyFunSpec
+import org.scalatest.matchers.should.Matchers
 import optimus.algebra.AlgebraOps._
 import optimus.optimization.enums.{ SolutionStatus, SolverLib }
 import optimus.optimization.model.MPFloatVar
@@ -29,7 +30,7 @@ import optimus.optimization.model.MPFloatVar
   * per unit produced. The objective is to maximize the total profit, while
   * satisfying these capacity constraints.
   */
-trait ProductionPlanning extends FunSpec with Matchers {
+trait ProductionPlanning extends AnyFunSpec with Matchers {
 
   def solver: SolverLib
 

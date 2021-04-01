@@ -16,7 +16,8 @@
 
 package optimus.algebra
 
-import org.scalatest.{ FunSpec, Matchers }
+import org.scalatest.funspec.AnyFunSpec
+import org.scalatest.matchers.should.Matchers
 import optimus.optimization.MPModel
 import optimus.algebra.AlgebraOps._
 import optimus.optimization.model.{ INFINITE, MPFloatVar, MPIntVar }
@@ -24,7 +25,7 @@ import optimus.optimization.model.{ INFINITE, MPFloatVar, MPIntVar }
 /**
   * Specification test for algebra.
   */
-final class AlgebraSpecTest extends FunSpec with Matchers {
+final class AlgebraSpecTest extends AnyFunSpec with Matchers {
 
   implicit val model: MPModel = MPModel()
 

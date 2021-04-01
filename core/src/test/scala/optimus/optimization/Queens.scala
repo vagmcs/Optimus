@@ -16,7 +16,8 @@
 
 package optimus.optimization
 
-import org.scalatest.{ FunSpec, Matchers }
+import org.scalatest.funspec.AnyFunSpec
+import org.scalatest.matchers.should.Matchers
 import optimus.algebra.AlgebraOps._
 import optimus.optimization.enums.{ SolutionStatus, SolverLib }
 import optimus.optimization.model.MPBinaryVar
@@ -26,7 +27,7 @@ import optimus.optimization.model.MPBinaryVar
   * queens threaten each other. Thus, a solution requires that no two queens
   * share the same row, column, or diagonal.
   */
-trait Queens extends FunSpec with Matchers {
+trait Queens extends AnyFunSpec with Matchers {
 
   def solver: SolverLib
 
@@ -49,16 +50,16 @@ trait Queens extends FunSpec with Matchers {
     for (c <- columns) add(sum(lines)(l => x(l)(c)) <:= 1)
 
     // At most one queen can be placed in each /-diagonal upper half
-    for (i <- 1 until n) add(sum(0 to i)((j) => x(i - j)(j)) <:= 1)
+    for (i <- 1 until n) add(sum(0 to i)(j => x(i - j)(j)) <:= 1)
 
     // At most one queen can be placed in each /-diagonal lower half
-    for (i <- 1 until n) add(sum(i until n)((j) => x(j)(n - 1 - j + i)) <:= 1)
+    for (i <- 1 until n) add(sum(i until n)(j => x(j)(n - 1 - j + i)) <:= 1)
 
     // At most one queen can be placed in each /-diagonal upper half
-    for (i <- 0 until n) add(sum(0 until n - i)((j) => x(j)(j + i)) <:= 1)
+    for (i <- 0 until n) add(sum(0 until n - i)(j => x(j)(j + i)) <:= 1)
 
     // At most one queen can be placed in each /-diagonal lower half
-    for (i <- 1 until n) add(sum(0 until n - i)((j) => x(j + i)(j)) <:= 1)
+    for (i <- 1 until n) add(sum(0 until n - i)(j => x(j + i)(j)) <:= 1)
 
     start()
 
@@ -103,16 +104,16 @@ trait Queens extends FunSpec with Matchers {
     for (c <- columns) add(sum(lines)(l => x(l)(c)) <:= 1)
 
     // At most one queen can be placed in each /-diagonal upper half
-    for (i <- 1 until n) add(sum(0 to i)((j) => x(i - j)(j)) <:= 1)
+    for (i <- 1 until n) add(sum(0 to i)(j => x(i - j)(j)) <:= 1)
 
     // At most one queen can be placed in each /-diagonal lower half
-    for (i <- 1 until n) add(sum(i until n)((j) => x(j)(n - 1 - j + i)) <:= 1)
+    for (i <- 1 until n) add(sum(i until n)(j => x(j)(n - 1 - j + i)) <:= 1)
 
     // At most one queen can be placed in each /-diagonal upper half
-    for (i <- 0 until n) add(sum(0 until n - i)((j) => x(j)(j + i)) <:= 1)
+    for (i <- 0 until n) add(sum(0 until n - i)(j => x(j)(j + i)) <:= 1)
 
     // At most one queen can be placed in each /-diagonal lower half
-    for (i <- 1 until n) add(sum(0 until n - i)((j) => x(j + i)(j)) <:= 1)
+    for (i <- 1 until n) add(sum(0 until n - i)(j => x(j + i)(j)) <:= 1)
 
     start()
 

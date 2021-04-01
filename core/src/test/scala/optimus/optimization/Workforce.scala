@@ -16,7 +16,8 @@
 
 package optimus.optimization
 
-import org.scalatest.{ FunSpec, Matchers }
+import org.scalatest.funspec.AnyFunSpec
+import org.scalatest.matchers.should.Matchers
 import optimus.algebra.AlgebraOps._
 import optimus.optimization.enums.{ SolutionStatus, SolverLib }
 import optimus.optimization.model.MPBinaryVar
@@ -26,7 +27,7 @@ import optimus.optimization.model.MPBinaryVar
   * Each worker may or may not be available on a particular day and therefore
   * the objective is to minimize the total payment costs.
   */
-trait Workforce extends FunSpec with Matchers {
+trait Workforce extends AnyFunSpec with Matchers {
 
   def solver: SolverLib
 

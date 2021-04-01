@@ -16,7 +16,8 @@
 
 package optimus.optimization
 
-import org.scalatest.{ FunSpec, Matchers }
+import org.scalatest.funspec.AnyFunSpec
+import org.scalatest.matchers.should.Matchers
 import optimus.algebra.AlgebraOps._
 import optimus.optimization.enums.{ SolutionStatus, SolverLib }
 import optimus.optimization.model.MPBinaryVar
@@ -28,7 +29,7 @@ import optimus.optimization.model.MPBinaryVar
   * of the digits from 1 to 9. The puzzle setter provides a partially completed grid,
   * which for a well-posed puzzle has a unique optimal solution.
   */
-trait Sudoku extends FunSpec with Matchers {
+trait Sudoku extends AnyFunSpec with Matchers {
 
   def solver: SolverLib
 
@@ -46,15 +47,15 @@ trait Sudoku extends FunSpec with Matchers {
 
     // each cell must be assigned exactly one integer
     for (l <- N; c <- N)
-      add(sum(N)((n) => x(l)(c)(n)) := 1)
+      add(sum(N)(n => x(l)(c)(n)) := 1)
 
     // cells in the same row must be assigned distinct numbers
     for (l <- N; n <- N)
-      add(sum(N)((c) => x(l)(c)(n)) := 1)
+      add(sum(N)(c => x(l)(c)(n)) := 1)
 
     // cells in the same column must be assigned distinct numbers
     for (c <- N; n <- N)
-      add(sum(N)((l) => x(l)(c)(n)) := 1)
+      add(sum(N)(l => x(l)(c)(n)) := 1)
 
     // cells in the same region must be assigned distinct numbers
     for (l1 <- 0 until 3; c1 <- 0 until 3; n <- N)

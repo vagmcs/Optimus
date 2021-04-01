@@ -20,13 +20,14 @@ object Dependencies {
 
   object v {
     final val Logback = "1.2.3"
-    final val ScalaLogging = "3.9.2"
+    final val ScalaLogging = "3.9.3"
 
-    final val ScalaTest = "3.0.8"
-    final val ScalaCheck = "1.14.0"
+    final val ScalaTest = "3.2.5"
+    final val ScalaCheck = "1.15.3"
+    final val ScalaTestPlus = "3.2.6.0"
 
     final val LpSolve = "5.5.2.0"
-    final val ojAlgorithms = "48.3.0"
+    final val ojAlgorithms = "48.3.1"
     final val Trove = "3.1.0"
     final val ScalaXML = "1.3.0"
     final val Enums = "1.6.1"
@@ -41,6 +42,7 @@ object Dependencies {
   // ScalaTest and ScalaCheck for UNIT testing
   lazy val ScalaTest: Seq[ModuleID] = Seq(
     "org.scalatest" %% "scalatest" % v.ScalaTest % "test",
+    "org.scalatestplus" %% "scalacheck-1-15" % v.ScalaTestPlus % "test",
     "org.scalacheck" %% "scalacheck" % v.ScalaCheck % "test"
   )
 

@@ -16,7 +16,8 @@
 
 package optimus.optimization
 
-import org.scalatest.{ FunSpec, Matchers }
+import org.scalatest.funspec.AnyFunSpec
+import org.scalatest.matchers.should.Matchers
 import optimus.algebra.AlgebraOps._
 import optimus.optimization.enums.{ SolutionStatus, SolverLib }
 import optimus.optimization.model.MPFloatVar
@@ -27,7 +28,7 @@ import optimus.optimization.model.MPFloatVar
   * node s (source) to another given node t (sink) subject to conservation of
   * flow constraints at each node and flow capacities on each arc.
   */
-trait MaxFlow extends FunSpec with Matchers {
+trait MaxFlow extends AnyFunSpec with Matchers {
 
   def solver: SolverLib
 

@@ -16,14 +16,15 @@
 
 package optimus.optimization
 
+import org.scalatest.funspec.AnyFunSpec
+import org.scalatest.matchers.should.Matchers
 import optimus.optimization.enums.{ PreSolve, SolutionStatus, SolverLib }
 import optimus.optimization.model.{ MPBinaryVar, MPConstraint, MPFloatVar, MPIntVar }
-import org.scalatest.{ FunSpec, Matchers }
 
 /**
   * Specification for Gurobi solver.
   */
-final class GurobiSpecTest extends FunSpec with Matchers {
+final class GurobiSpecTest extends AnyFunSpec with Matchers {
 
   // Constant objective function tests
 

@@ -16,11 +16,12 @@
 
 package optimus.optimization
 
+import org.scalatest.funspec.AnyFunSpec
+import org.scalatest.matchers.should.Matchers
 import optimus.optimization.enums.{ PreSolve, SolutionStatus, SolverLib }
 import optimus.optimization.model.{ MPBinaryVar, MPConstraint, MPFloatVar, MPIntVar }
-import org.scalatest.{ FunSpec, Matchers }
 
-final class MosekSpecTest extends FunSpec with Matchers {
+final class MosekSpecTest extends AnyFunSpec with Matchers {
 
   // Constant objective function tests
 

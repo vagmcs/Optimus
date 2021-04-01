@@ -16,7 +16,8 @@
 
 package optimus.optimization
 
-import org.scalatest.{ FunSpec, Matchers }
+import org.scalatest.funspec.AnyFunSpec
+import org.scalatest.matchers.should.Matchers
 import optimus.algebra.AlgebraOps._
 import optimus.optimization.enums.{ SolutionStatus, SolverLib }
 import optimus.optimization.model.MPBinaryVar
@@ -30,7 +31,7 @@ import scala.util.Random
   * constrained by a fixed-size knapsack and must fill it with the most
   * valuable items.
   */
-trait Knapsack extends FunSpec with Matchers {
+trait Knapsack extends AnyFunSpec with Matchers {
 
   def solver: SolverLib
 

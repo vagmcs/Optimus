@@ -16,14 +16,15 @@
 
 package optimus.optimization
 
+import org.scalatest.funspec.AnyFunSpec
+import org.scalatest.matchers.should.Matchers
 import optimus.optimization.enums.{ SolutionStatus, SolverLib }
 import optimus.optimization.model.{ MPBinaryVar, MPConstraint, MPFloatVar, MPIntVar }
-import org.scalatest.{ FunSpec, Matchers }
 
 /**
   * Specification for LPSolve solver.
   */
-final class LPSolveSpecTest extends FunSpec with Matchers {
+final class LPSolveSpecTest extends AnyFunSpec with Matchers {
 
   describe("Constant Program (1)") {
 

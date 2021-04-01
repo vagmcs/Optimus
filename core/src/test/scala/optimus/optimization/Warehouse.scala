@@ -16,7 +16,8 @@
 
 package optimus.optimization
 
-import org.scalatest.{ FunSpec, Matchers }
+import org.scalatest.funspec.AnyFunSpec
+import org.scalatest.matchers.should.Matchers
 import optimus.algebra.AlgebraOps._
 import optimus.optimization.enums.{ SolutionStatus, SolverLib }
 import optimus.optimization.model.{ MPBinaryVar, MPFloatVar, MPIntVar }
@@ -34,7 +35,7 @@ import optimus.optimization.model.{ MPBinaryVar, MPFloatVar, MPIntVar }
   * The objective is to minimize the total cost while satisfying the demand
   * of the warehouses and the capacities of the plant.
   */
-trait Warehouse extends FunSpec with Matchers {
+trait Warehouse extends AnyFunSpec with Matchers {
 
   def solver: SolverLib
 
