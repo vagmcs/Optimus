@@ -1,7 +1,7 @@
 import sbt.Keys._
 
 addCommandAlias("check", ";headerCreate;dependencyUpdates;compile")
-addCommandAlias("build", ";headerCreate;compile;test;coverageAggregate;package")
+addCommandAlias("build", ";check;test;coverageAggregate;package")
 addCommandAlias("rebuild", ";clean;build")
 
 val logger = ConsoleLogger()

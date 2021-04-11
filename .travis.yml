@@ -4,7 +4,7 @@ branches:
     - release
     - develop
 sudo: required
-dist: trusty
+dist: bionic
 before_install:
   - sudo apt-get -qq update
   - sudo apt-get install -y lp-solve
@@ -20,7 +20,7 @@ scala:
   - 2.13.5
 env:
   - JDK=openjdk8
-  - JDK=oraclejdk8
+  - JDK=openjdk11
 before_script:
   - jdk_switcher use $JDK
 script:
