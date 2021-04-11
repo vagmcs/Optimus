@@ -18,11 +18,9 @@ language: scala
 scala:
   - 2.12.12
   - 2.13.5
-env:
-  - JDK=openjdk8
-  - JDK=openjdk11
-before_script:
-  - jdk_switcher use $JDK
+jdk:
+  - openjdk8
+  - openjdk11
 script:
   - sbt "++${TRAVIS_SCALA_VERSION}" "core/test" "solver-oj/testOnly optimus.optimization.OJ*" "solver-lp/testOnly optimus.optimization.LP*"
   - git diff --exit-code
