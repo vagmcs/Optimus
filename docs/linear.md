@@ -11,7 +11,7 @@ import optimus.optimization.model.MPFloatVar
 Create a model and select a solver for it:
 
 ```scala
-implicit val model = MPModel(SolverLib.oJSolver)
+implicit val model: MPModel = MPModel(SolverLib.oJSolver)
 ```
 
 Ok! Let's create a couple of variables:

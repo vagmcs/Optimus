@@ -11,10 +11,11 @@ import optimus.optimization.model.MPFloatVar
 Create a model problem and select a solver for it:
 
 ```scala
-implicit val model = MPModel(SolverLib.oJSolver)
+implicit val model: MPModel = MPModel(SolverLib.oJSolver)
 ```
 
 Ok! Let's create a couple of float and a couple of integer variables:
+
 ```scala
 val x = MPFloatVar("x", 0, 40)
 val y = MPIntVar("y", 0 to 1000)

@@ -11,10 +11,11 @@ import optimus.optimization.model.MPFloatVar
 Create a model and select a solver for it:
 
 ```scala
-implicit val model = MPModel(SolverLib.oJSolver)
+implicit val model: MPModel = MPModel(SolverLib.oJSolver)
 ```
 
 Ok! Let's create a couple of variables:
+
 ```scala
 // Both variables are positive, that is, bounds are in [0, +inf]
 val x = MPFloatVar.positive("x")

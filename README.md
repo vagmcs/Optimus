@@ -13,6 +13,7 @@ Optimus is a library for Linear and Quadratic mathematical optimization written 
 This program comes with ABSOLUTELY NO WARRANTY. This is free software, and you are welcome to redistribute it under certain conditions; See the [GNU Lesser General Public License v3 for more details](http://www.gnu.org/licenses/lgpl-3.0.en.html).
 
 ## Features
+
 1. High level mathematical modeling in Scala using algebraic expressions
   * Linear and quadratic objective and constraint expressions.
   * Higher order expressions cannot be defined or handled by the solvers yet.
@@ -31,11 +32,11 @@ This program comes with ABSOLUTELY NO WARRANTY. This is free software, and you a
 
 ## How to get Optimus
 
-Optimus is published to Maven Central for Scala 2.11, 2.12 and 2.13. 
+Optimus is published to Maven Central for Scala 2.12 and 2.13. 
 
 Add the following dependencies to your SBT build file in order to get started:
 
-```sbt
+```scala
 libraryDependencies ++= Seq(
     "com.github.vagmcs" %% "optimus" % "3.2.4",
     "com.github.vagmcs" %% "optimus-solver-oj" % "3.2.4",
@@ -45,14 +46,15 @@ libraryDependencies ++= Seq(
 
 Optionally, you can also add the following extra dependencies for proprietary solvers:
 
-```sbt
-"com.github.vagmcs" %% "optimus-solver-gurobi" % "3.2.4",
+```scala
+"com.github.vagmcs" %% "optimus-solver-gurobi" % "3.2.4"
 "com.github.vagmcs" %% "optimus-solver-mosek" % "3.2.4"
 ```
 
 For more information see [Building and Linking](docs/building_and_linking.md)
 
 ## Documentation
+
 - [Linear Programming](docs/linear.md)
 - [Quadratic Programming](docs/quadratic.md)
 - [Mixed Integer Programming](docs/mixed_integer.md)
@@ -63,6 +65,7 @@ For more information see [Building and Linking](docs/building_and_linking.md)
 Contributions are welcome, for details see [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## Reference for Scientific Publications
+
 Please use the following BibTeX entry to cite Optimus in your papers:
 
 ```
