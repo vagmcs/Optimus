@@ -135,7 +135,7 @@ package object algebra {
     * @return a vector holding the pair of numbers
     */
   def decode(z: UniqueId): DecodedIds = {
-    val q = math.floor(math.sqrt(z))
+    val q = math.floor(math.sqrt(z.toDouble))
     val l = z - q * q
     Vector(l.toInt - 1, q.toInt - 1).filter(_ > -1)
   }

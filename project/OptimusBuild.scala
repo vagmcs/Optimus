@@ -52,7 +52,7 @@ object OptimusBuild extends AutoPlugin {
   private val javaVersion: Double = sys.props("java.specification.version").toDouble
 
   private lazy val settings: Seq[Setting[_]] = {
-    logger.info(s"Loading settings for Java $javaVersion or higher.")
+    logger.info(s"Loading options for Java $javaVersion.")
     if (javaVersion < 1.8) sys.error("Java 8 or higher is required for building Optimus.")
     else commonSettings ++ JavaSettings ++ ScalaSettings ++ CodeStyle.formatSettings
   }
@@ -129,11 +129,14 @@ object OptimusBuild extends AutoPlugin {
 
   private lazy val JavaSettings: Seq[Setting[_]] = Seq(
 
+    // Java compiler options
+    // source is the source code version required to compile.
+    // target is the oldest JRE version Optimus supports.
     javacOptions ++= Seq("-source", "1.8", "-target", "1.8", "-Xlint:unchecked", "-Xlint:deprecation"),
 
+    // Java runtime options
     javaOptions ++= Seq(
       "-XX:+DoEscapeAnalysis",
-      "-XX:+UseFastAccessorMethods",
       "-XX:+OptimizeStringConcat",
       "-Dlogback.configurationFile=src/main/resources/logback.xml")
   )
@@ -142,23 +145,13 @@ object OptimusBuild extends AutoPlugin {
     scalacOptions := {
       scalaBinaryVersion.value match {
 
-        case "2.12" =>
-          // Scala compiler settings for Scala 2.12.x
+        case "2.12" | "2.13" =>
+          // Scala compiler settings for Scala 2.12.x and 2.13.x
           Seq(
             "-deprecation",       // Emit warning and location for usages of deprecated APIs.
             "-unchecked",         // Enable additional warnings where generated code depends on assumptions.
             "-feature",           // Emit warning and location for usages of features that should be imported explicitly.
-            "-target:jvm-1.8",    // Target JVM version 1.8
-            "-Ywarn-dead-code"    // Warn when dead code is identified.
-          )
-
-        case "2.13" =>
-          // Scala compiler settings for Scala 2.13.x
-          Seq(
-            "-deprecation",       // Emit warning and location for usages of deprecated APIs.
-            "-unchecked",         // Enable additional warnings where generated code depends on assumptions.
-            "-feature",           // Emit warning and location for usages of features that should be imported explicitly.
-            "-target:jvm-1.8",    // Target JVM version 1.8
+            "-target:jvm-1.8",    // Target JVM version 1.8.
             "-Ywarn-dead-code"    // Warn when dead code is identified.
           )
 
