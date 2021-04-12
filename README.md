@@ -1,7 +1,7 @@
 ## Optimus
 
 [![License: LGPL v3](https://img.shields.io/badge/License-LGPL%20v3-blue.svg)](https://www.gnu.org/licenses/lgpl-3.0)
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.vagmcs/optimus_2.11/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.github.vagmcs/optimus_2.11)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.vagmcs/optimus_2.13/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.github.vagmcs/optimus_2.13)
 [![Build Status](https://travis-ci.org/vagmcs/Optimus.svg?branch=develop)](https://travis-ci.org/vagmcs/Optimus)
 ![GitHub issues](https://img.shields.io/github/issues-raw/vagmcs/Optimus)
 [![javadoc](https://javadoc.io/badge2/com.github.vagmcs/optimus_2.13/javadoc.svg)](https://javadoc.io/doc/com.github.vagmcs/optimus_2.13)
