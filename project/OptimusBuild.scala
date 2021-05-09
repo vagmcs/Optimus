@@ -78,7 +78,7 @@ object OptimusBuild extends AutoPlugin {
     managedScalaInstance := true,
 
     coverageMinimum := 75,
-    coverageEnabled := true,
+    coverageEnabled := false,
     coverageHighlighting := true,
 
     publishMavenStyle := true,
