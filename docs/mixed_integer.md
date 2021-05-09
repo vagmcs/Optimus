@@ -5,7 +5,7 @@ Import the following optimization packages:
 ```scala
 import optimus.optimization._
 import optimus.optimization.enums.SolverLib
-import optimus.optimization.model.MPFloatVar
+import optimus.optimization.model.{MPIntVar, MPFloatVar}
 ```
 
 Create a model problem and select a solver for it:
