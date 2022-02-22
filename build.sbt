@@ -1,5 +1,3 @@
-import sbt.Keys._
-
 addCommandAlias("check", ";headerCreate;dependencyUpdates;compile")
 addCommandAlias("build", ";check;test;coverageAggregate;package")
 addCommandAlias("rebuild", ";clean;build")
@@ -10,12 +8,12 @@ sonatypeProfileName := "com.github.vagmcs"
 
 lazy val root = project.in(file("."))
   .aggregate(core, oj, lpsolve, gurobi, mosek)
-  .settings(skip in publish := true)
+  .settings(publish / skip := true)
 
 // Build settings for Optimus core
 lazy val core = project.in(file("core"))
   .enablePlugins(AutomateHeaderPlugin)
-  .settings(logLevel in Test := Level.Info)
+  .settings(Test / logLevel := Level.Info)
   .settings(name := "optimus")
   .settings(Seq(
     libraryDependencies ++= Dependencies.Logging,
@@ -43,7 +41,7 @@ lazy val gurobi = if (file("lib/gurobi.jar").exists)
     .dependsOn(core % "compile->compile ; test->test")
     .enablePlugins(AutomateHeaderPlugin)
     .settings(name := "optimus-solver-gurobi")
-    .settings(unmanagedJars in Compile += file("lib/gurobi.jar"))
+    .settings(Compile / unmanagedJars += file("lib/gurobi.jar"))
 else
   Project("solver-gurobi", file("solver-gurobi"))
     .settings({
@@ -58,7 +56,7 @@ lazy val mosek = if (file("lib/mosek.jar").exists)
       .dependsOn(core % "compile->compile ; test->test")
       .enablePlugins(AutomateHeaderPlugin)
       .settings(name := "optimus-solver-mosek")
-      .settings(unmanagedJars in Compile += file("lib/mosek.jar"))
+      .settings(Compile / unmanagedJars += file("lib/mosek.jar"))
 else
   Project("solver-mosek", file("solver-mosek"))
     .settings({

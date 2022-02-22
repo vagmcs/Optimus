@@ -20,6 +20,7 @@ import sbt.plugins.JvmPlugin
 import scoverage.ScoverageKeys._
 import de.heikoseeberger.sbtheader.HeaderPlugin
 import de.heikoseeberger.sbtheader.HeaderPlugin.autoImport._
+import ohnosequences.sbt.GithubRelease.keys._
 
 object OptimusBuild extends AutoPlugin {
 
@@ -81,8 +82,12 @@ object OptimusBuild extends AutoPlugin {
     coverageHighlighting := true,
     coverageMinimumStmtTotal := 75,
 
+    ghreleaseRepoOrg := "vagmcs",
+    ghreleaseRepoName := name.value,
+    ghreleaseTitle := { tagName => s"${name.value} $tagName" },
+
     publishMavenStyle := true,
-    publishArtifact in Test := false,
+    Test / publishArtifact := false,
     pomIncludeRepository := { _ => false },
 
     resolvers ++= Seq(
