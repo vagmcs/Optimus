@@ -23,8 +23,8 @@ object CodeStyle {
 
   lazy val formatSettings: Seq[Def.Setting[IFormattingPreferences]] = Seq(
     ScalariformKeys.preferences := setPreferences(ScalariformKeys.preferences.value),
-    ScalariformKeys.preferences in Compile := setPreferences(ScalariformKeys.preferences.value),
-    ScalariformKeys.preferences in Test := setPreferences(ScalariformKeys.preferences.value)
+    Compile / ScalariformKeys.preferences := setPreferences(ScalariformKeys.preferences.value),
+    Test / ScalariformKeys.preferences := setPreferences(ScalariformKeys.preferences.value)
   )
 
   def setPreferences(preferences: IFormattingPreferences): IFormattingPreferences = preferences
