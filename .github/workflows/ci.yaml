@@ -19,10 +19,6 @@ jobs:
       - name: Install LpSolve
         run: sudo apt-get install -y lp-solve
       - name: Install Java native libraries
-        run: sudo wget https://sourceforge.net/projects/lpsolve/files/lpsolve/5.5.2.5/lp_solve_5.5.2.5_java.zip \
-        && unzip lp_solve_5.5.2.5_java.zip && sudo cp lp_solve_5.5_java/lib/ux64/liblpsolve55j.so /usr/lib/lp_solve \
-        && sudo ldconfig
-      env:
-        - LD_LIBRARY_PATH: "/usr/lib/lp_solve"
+        run: sudo wget https://sourceforge.net/projects/lpsolve/files/lpsolve/5.5.2.5/lp_solve_5.5.2.5_java.zip && unzip lp_solve_5.5.2.5_java.zip && sudo cp lp_solve_5.5_java/lib/ux64/liblpsolve55j.so /usr/lib/lp_solve && sudo ldconfig
       - name: Run tests
         run: sbt "++${TRAVIS_SCALA_VERSION}" "core/test" "solver-oj/testOnly optimus.optimization.OJ*" "solver-lp/testOnly optimus.optimization.LP*"
