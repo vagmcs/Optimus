@@ -11,7 +11,7 @@
  *          \/////       \///             \/////    \///  \///   \///   \///  \/////////   \//////////
  *
  * The mathematical programming library for Scala.
- *     
+ *
  */
 
 package optimus.optimization
@@ -34,22 +34,22 @@ object SolverFactory extends StrictLogging {
 
   def instantiate(solver: SolverLib): MPSolver = solver match {
     case Gurobi => Try(Class.forName("optimus.optimization.Gurobi")) match {
-        case Success(c) => c.newInstance.asInstanceOf[MPSolver]
+        case Success(c) => c.getDeclaredConstructor().newInstance().asInstanceOf[MPSolver]
         case _ => sys.error("Gurobi dependency is missing.")
       }
 
     case Mosek => Try(Class.forName("optimus.optimization.Mosek")) match {
-        case Success(c) => c.newInstance.asInstanceOf[MPSolver]
+        case Success(c) => c.getDeclaredConstructor().newInstance().asInstanceOf[MPSolver]
         case _ => sys.error("Mosek dependency is missing.")
       }
 
     case LpSolve => Try(Class.forName("optimus.optimization.LPSolve")) match {
-        case Success(c) => c.newInstance.asInstanceOf[MPSolver]
+        case Success(c) => c.getDeclaredConstructor().newInstance().asInstanceOf[MPSolver]
         case _ => sys.error("LPSolve dependency is missing.")
       }
 
     case _ => Try(Class.forName("optimus.optimization.oJSolver")) match {
-        case Success(c) => c.newInstance.asInstanceOf[MPSolver]
+        case Success(c) => c.getDeclaredConstructor().newInstance().asInstanceOf[MPSolver]
         case _ => sys.error("ojSolver dependency is missing.")
       }
   }
