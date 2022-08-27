@@ -11,7 +11,7 @@
  *          \/////       \///             \/////    \///  \///   \///   \///  \/////////   \//////////
  *
  * The mathematical programming library for Scala.
- *
+ *     
  */
 
 package optimus.algebra
@@ -55,26 +55,29 @@ object AlgebraOps {
   def sum[A](indexes: Iterable[A])(f: A => Expression): Expression = sum(indexes map f)
 
   def sum[A, B](
-      indexesA: Iterable[A],
-      indexesB: Iterable[B])
-    (f: (A, B) => Expression): Expression = sum {
+    indexesA: Iterable[A],
+    indexesB: Iterable[B]
+  )(f: (A, B) => Expression
+  ): Expression = sum {
     for (a <- indexesA; b <- indexesB) yield f(a, b)
   }
 
   def sum[A, B, C](
-      indexesA: Iterable[A],
-      indexesB: Iterable[B],
-      indexesC: Iterable[C])
-    (f: (A, B, C) => Expression): Expression = sum {
+    indexesA: Iterable[A],
+    indexesB: Iterable[B],
+    indexesC: Iterable[C]
+  )(f: (A, B, C) => Expression
+  ): Expression = sum {
     for (a <- indexesA; b <- indexesB; c <- indexesC) yield f(a, b, c)
   }
 
   def sum[A, B, C, D](
-      indexesA: Iterable[A],
-      indexesB: Iterable[B],
-      indexesC: Iterable[C],
-      indexesD: Iterable[D])
-    (f: (A, B, C, D) => Expression): Expression = sum {
+    indexesA: Iterable[A],
+    indexesB: Iterable[B],
+    indexesC: Iterable[C],
+    indexesD: Iterable[D]
+  )(f: (A, B, C, D) => Expression
+  ): Expression = sum {
     for (a <- indexesA; b <- indexesB; c <- indexesC; d <- indexesD) yield f(a, b, c, d)
   }
 }

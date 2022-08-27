@@ -54,12 +54,10 @@ object OptimusBuild extends AutoPlugin {
   private lazy val settings: Seq[Setting[_]] = {
     logger.info(s"Loading options for Java $javaVersion.")
     if (javaVersion < 1.8) sys.error("Java 8 or higher is required for building Optimus.")
-    else commonSettings ++ JavaSettings ++ ScalaSettings ++ CodeStyle.formatSettings
+    else commonSettings ++ JavaSettings ++ ScalaSettings
   }
 
   private val commonSettings: Seq[Setting[_]] = Seq(
-
-    name := "Optimus",
 
     organization := "com.github.vagmcs",
 
@@ -71,7 +69,7 @@ object OptimusBuild extends AutoPlugin {
 
     scalaVersion := "2.13.8",
 
-    crossScalaVersions := Seq("2.13.8", "2.12.15"),
+    crossScalaVersions := Seq("2.13.8", "2.12.16"),
 
     autoScalaLibrary := true,
 

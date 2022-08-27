@@ -11,7 +11,7 @@
  *          \/////       \///             \/////    \///  \///   \///   \///  \/////////   \//////////
  *
  * The mathematical programming library for Scala.
- *
+ *     
  */
 
 package optimus.optimization
@@ -32,11 +32,11 @@ final class Mosek extends MPSolver {
   private var solutionType = soltype.itr
 
   /**
-    * Problem builder, should configure the solver and append
-    * mathematical model variables and constraints.
-    *
-    * @param numberOfVars number of variables in the model
-    */
+   * Problem builder, should configure the solver and append
+   * mathematical model variables and constraints.
+   *
+   * @param numberOfVars number of variables in the model
+   */
   def buildModel(numberOfVars: Int): Unit = {
 
     logger.info {
@@ -53,106 +53,91 @@ final class Mosek extends MPSolver {
   }
 
   /**
-    * Get value of the variable in the specified position. Solution
-    * should exist in order for a value to exist.
-    *
-    * @param colId position of the variable
-    * @return the value of the variable in the solution
-    */
+   * Get value of the variable in the specified position. Solution
+   * should exist in order for a value to exist.
+   *
+   * @param colId position of the variable
+   * @return the value of the variable in the solution
+   */
   def getVarValue(colId: Int): Double = solution(colId)
 
   /**
-    * Set bounds of variable in the specified position.
-    *
-    * @param colId position of the variable
-    * @param lower domain lower bound
-    * @param upper domain upper bound
-    */
-  def setBounds(colId: Int, lower: Double, upper: Double): Unit = {
-    if (upper == INFINITE)
-      underlyingSolver.putvarbound(colId, boundkey.lo, lower, Double.MaxValue)
-    else if (lower == INFINITE)
-      underlyingSolver.putvarbound(colId, boundkey.up, Double.MinValue, upper)
-    else
-      underlyingSolver.putvarbound(colId, boundkey.ra, lower, upper)
-  }
+   * Set bounds of variable in the specified position.
+   *
+   * @param colId position of the variable
+   * @param lower domain lower bound
+   * @param upper domain upper bound
+   */
+  def setBounds(colId: Int, lower: Double, upper: Double): Unit =
+    if (upper == INFINITE) underlyingSolver.putvarbound(colId, boundkey.lo, lower, Double.MaxValue)
+    else if (lower == INFINITE) underlyingSolver.putvarbound(colId, boundkey.up, Double.MinValue, upper)
+    else underlyingSolver.putvarbound(colId, boundkey.ra, lower, upper)
 
   /**
-    * Set bot upper and lower bounds to unbounded (infinite).
-    *
-    * @param colId position of the variable
-    */
+   * Set bot upper and lower bounds to unbounded (infinite).
+   *
+   * @param colId position of the variable
+   */
   override def setDoubleUnbounded(colId: Int): Unit =
     underlyingSolver.putvarbound(colId, boundkey.fr, Double.MinValue, Double.MaxValue)
 
   /**
-    * Set upper bound to unbounded (infinite)
-    *
-    * @param colId position of the variable
-    */
-  def setUnboundUpperBound(colId: Int): Unit = {
-    underlyingSolver.putvarbound(colId, boundkey.lo, 0, Double.MaxValue)
-  }
+   * Set upper bound to unbounded (infinite)
+   *
+   * @param colId position of the variable
+   */
+  def setUnboundUpperBound(colId: Int): Unit = underlyingSolver.putvarbound(colId, boundkey.lo, 0, Double.MaxValue)
 
   /**
-    * Set lower bound to unbounded (infinite)
-    *
-    * @param colId position of the variable
-    */
-  def setUnboundLowerBound(colId: Int): Unit =
-    underlyingSolver.putvarbound(colId, boundkey.up, Double.MinValue, 0)
+   * Set lower bound to unbounded (infinite)
+   *
+   * @param colId position of the variable
+   */
+  def setUnboundLowerBound(colId: Int): Unit = underlyingSolver.putvarbound(colId, boundkey.up, Double.MinValue, 0)
 
   /**
-    * Set the column/variable as an integer variable
-    *
-    * @param colId position of the variable
-    */
-  def setInteger(colId: Int): Unit = {
-    underlyingSolver.putvartype(colId, variabletype.type_int)
-  }
+   * Set the column/variable as an integer variable
+   *
+   * @param colId position of the variable
+   */
+  def setInteger(colId: Int): Unit = underlyingSolver.putvartype(colId, variabletype.type_int)
 
   /**
-    * Set the column / variable as an binary integer variable
-    *
-    * @param colId position of the variable
-    */
-  def setBinary(colId: Int): Unit = {
-    underlyingSolver.putvartype(colId, variabletype.type_int)
-  }
+   * Set the column / variable as an binary integer variable
+   *
+   * @param colId position of the variable
+   */
+  def setBinary(colId: Int): Unit = underlyingSolver.putvartype(colId, variabletype.type_int)
 
   /**
-    * Set the column/variable as a float variable
-    *
-    * @param colId position of the variable
-    */
-  def setFloat(colId: Int): Unit =
-    underlyingSolver.putvartype(colId, variabletype.type_cont)
+   * Set the column/variable as a float variable
+   *
+   * @param colId position of the variable
+   */
+  def setFloat(colId: Int): Unit = underlyingSolver.putvartype(colId, variabletype.type_cont)
 
   /**
-    * Add objective expression to be optimized by the solver.
-    *
-    * @param objective the expression to be optimized
-    * @param minimize  flag for minimization instead of maximization
-    */
+   * Add objective expression to be optimized by the solver.
+   *
+   * @param objective the expression to be optimized
+   * @param minimize  flag for minimization instead of maximization
+   */
   def setObjective(objective: Expression, minimize: Boolean): Unit = {
 
     objective.getOrder match {
-      case ExpressionType.GENERIC =>
-        throw new IllegalArgumentException("Higher than quadratic: " + objective)
+      case ExpressionType.GENERIC => throw new IllegalArgumentException("Higher than quadratic: " + objective)
 
       case ExpressionType.QUADRATIC =>
         val iterator = objective.terms.iterator
         while (iterator.hasNext) {
           iterator.advance()
           val indexes = decode(iterator.key)
-          if (indexes.length == 1)
-            underlyingSolver.putcj(indexes.head, iterator.value)
-          else if (indexes.head == indexes(1))
-            underlyingSolver.putqobjij(
-              indexes.head,
-              indexes.head,
-              2 * iterator.value
-            )
+          if (indexes.length == 1) underlyingSolver.putcj(indexes.head, iterator.value)
+          else if (indexes.head == indexes(1)) underlyingSolver.putqobjij(
+            indexes.head,
+            indexes.head,
+            2 * iterator.value
+          )
           else underlyingSolver.putqobjij(
             Math.max(indexes.head, indexes(1)),
             Math.min(indexes.head, indexes(1)),
@@ -171,10 +156,10 @@ final class Mosek extends MPSolver {
   }
 
   /**
-    * Add a mathematical programming constraint to the solver.
-    *
-    * @param mpConstraint the mathematical programming constraint
-    */
+   * Add a mathematical programming constraint to the solver.
+   *
+   * @param mpConstraint the mathematical programming constraint
+   */
   def addConstraint(mpConstraint: MPConstraint): Unit = {
 
     underlyingSolver.appendcons(1)
@@ -184,8 +169,7 @@ final class Mosek extends MPSolver {
     val operator = mpConstraint.constraint.operator
 
     lhs.getOrder match {
-      case ExpressionType.GENERIC =>
-        throw new IllegalArgumentException("Higher than quadratic: " + lhs)
+      case ExpressionType.GENERIC => throw new IllegalArgumentException("Higher than quadratic: " + lhs)
 
       case ExpressionType.QUADRATIC =>
         var linearIndexes = Array.emptyIntArray
@@ -201,7 +185,7 @@ final class Mosek extends MPSolver {
           if (indexes.length == 1) {
             linearIndexes :+= indexes.head
             linearValues :+= iterator.value
-          } else {
+          } else
             if (indexes.head == indexes(1)) {
               rowIndexes :+= indexes.head
               colsIndexes :+= indexes.head
@@ -211,7 +195,6 @@ final class Mosek extends MPSolver {
               colsIndexes :+= Math.min(indexes.head, indexes(1))
               quadraticValues :+= iterator.value
             }
-          }
         }
         underlyingSolver.putarow(numberOfCons, linearIndexes, linearValues)
         underlyingSolver.putqconk(numberOfCons, rowIndexes, colsIndexes, quadraticValues)
@@ -233,15 +216,14 @@ final class Mosek extends MPSolver {
   }
 
   /**
-    * Solve the problem.
-    *
-    * @param preSolve pre-solving mode
-    * @return status code indicating the nature of the solution
-    */
+   * Solve the problem.
+   *
+   * @param preSolve pre-solving mode
+   * @return status code indicating the nature of the solution
+   */
   def solve(preSolve: PreSolve): SolutionStatus = {
 
-    if (preSolve != PreSolve.DISABLED)
-      logger.warn("Mosek pre-solving is not currently supported!")
+    if (preSolve != PreSolve.DISABLED) logger.warn("Mosek pre-solving is not currently supported!")
 
     _solution = Array.ofDim(numberOfVars)
     val optimizationStatus = underlyingSolver.optimize()
@@ -267,11 +249,9 @@ final class Mosek extends MPSolver {
             _objectiveValue = Some(underlyingSolver.getprimalobj(solutionType))
             SolutionStatus.SUBOPTIMAL
 
-          case solsta.prim_infeas_cer | solsta.dual_infeas_cer =>
-            SolutionStatus.INFEASIBLE
+          case solsta.prim_infeas_cer | solsta.dual_infeas_cer => SolutionStatus.INFEASIBLE
 
-          case _ =>
-            SolutionStatus.NOT_SOLVED
+          case _ => SolutionStatus.NOT_SOLVED
         }
       case _ =>
         logger.error(s"Optimization failed with code = $optimizationStatus")
@@ -281,21 +261,17 @@ final class Mosek extends MPSolver {
     _solutionStatus
   }
 
-  /**
-    * Release the memory of this solver
-    */
+  /** Release the memory of this solver */
   def release(): Unit = {
     underlyingSolver.dispose()
     env.dispose()
   }
 
   /**
-    * Set a time limit for solver optimization. After the limit
-    * is reached the solver stops running.
-    *
-    * @param limit the time limit
-    */
-  def setTimeout(limit: Int): Unit = {
-    underlyingSolver.putdouparam(dparam.optimizer_max_time, limit)
-  }
+   * Set a time limit for solver optimization. After the limit
+   * is reached the solver stops running.
+   *
+   * @param limit the time limit
+   */
+  def setTimeout(limit: Int): Unit = underlyingSolver.putdouparam(dparam.optimizer_max_time, limit)
 }

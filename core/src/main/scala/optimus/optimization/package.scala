@@ -11,7 +11,7 @@
  *          \/////       \///             \/////    \///  \///   \///   \///  \/////////   \//////////
  *
  * The mathematical programming library for Scala.
- *
+ *     
  */
 
 package optimus
@@ -27,9 +27,11 @@ package object optimization {
   def subjectTo(constraints: Constraint*)(implicit model: MPModel): Unit = constraints.foreach(add)
 
   def start(
-      preSolve: PreSolve = PreSolve.DISABLED,
-      timeLimit: Int = Int.MaxValue)
-    (implicit model: MPModel): Boolean = model.start(timeLimit, preSolve)
+    preSolve: PreSolve = PreSolve.DISABLED,
+    timeLimit: Int = Int.MaxValue
+  )(implicit
+    model: MPModel
+  ): Boolean = model.start(timeLimit, preSolve)
 
   def minimize(expression: Expression)(implicit model: MPModel): MPModel = model.minimize(expression)
 

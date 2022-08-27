@@ -11,7 +11,7 @@
  *          \/////       \///             \/////    \///  \///   \///   \///  \/////////   \//////////
  *
  * The mathematical programming library for Scala.
- *
+ *     
  */
 
 package optimus.algebra
@@ -22,9 +22,9 @@ import optimus.algebra.ConstraintRelation._
 import optimus.algebra.AlgebraOps._
 
 /**
-  * Expression abstraction, should be extended by anything that is
-  * an expression type.
-  */
+ * Expression abstraction, should be extended by anything that is
+ * an expression type.
+ */
 abstract class Expression extends LazyLogging {
 
   /*
@@ -77,29 +77,26 @@ abstract class Expression extends LazyLogging {
   }
 
   override def toString: String = (terms.keys zip terms.values)
-    .map {
-      case (i, scalar) =>
-        s"$scalar*${decode(i).map(x => s"x@$x").mkString("*")}"
-    }.mkString(" + ") + (if (constant != 0) " + " + constant else "")
+    .map { case (i, scalar) => s"$scalar*${decode(i).map(x => s"x@$x").mkString("*")}" }
+    .mkString(" + ") + (if (constant != 0) " + " + constant else "")
 
   /**
-    * @param obj an object to compare
-    * @return true in case this object has identical constant
-    *         and terms as the obj argument; false otherwise.
-    */
+   * @param obj an object to compare
+   * @return true in case this object has identical constant
+   *         and terms as the obj argument; false otherwise.
+   */
   override def equals(obj: Any): Boolean = obj match {
-    case that: Expression =>
-      this.constant == that.constant && this.terms == that.terms
+    case that: Expression => this.constant == that.constant && this.terms == that.terms
     case _ => false
   }
 }
 
 /**
-  * Abstract variable, should be extended by any variable type in order
-  * to inherit the algebraic properties.
-  *
-  * @param symbol the symbol of the variable
-  */
+ * Abstract variable, should be extended by any variable type in order
+ * to inherit the algebraic properties.
+ *
+ * @param symbol the symbol of the variable
+ */
 abstract class Var(val symbol: String) extends Expression {
 
   val upperBound: Double
@@ -121,22 +118,17 @@ abstract class Var(val symbol: String) extends Expression {
 
   override def unary_-(): Expression = Term(Const(-1), Vector(this))
 
-  /**
-    * @return the symbol of the variable
-    */
-  override def toString: String =
-    if (symbol != ANONYMOUS) symbol else s"x@$index"
+  /** @return the symbol of the variable */
+  override def toString: String = if (symbol != ANONYMOUS) symbol else s"x@$index"
 
-  /**
-    * @return the index of the variable
-    */
+  /** @return the index of the variable */
   override def hashCode: Int = index
 
   /**
-    * @param obj an object to compare
-    * @return true only in case the object is a variable
-    *         and has identical index
-    */
+   * @param obj an object to compare
+   * @return true only in case the object is a variable
+   *         and has identical index
+   */
   override def equals(obj: Any): Boolean = obj match {
     case that: Var => this.index == that.index
     case _ => false
@@ -144,15 +136,14 @@ abstract class Var(val symbol: String) extends Expression {
 }
 
 /**
-  * Term is holding a coefficient and all variables which are involved
-  * in the product of the term.
-  *
-  * scalar * (var_1 * ... * var_n)
-  */
+ * Term is holding a coefficient and all variables which are involved
+ * in the product of the term.
+ *
+ * scalar * (var_1 * ... * var_n)
+ */
 case class Term(scalar: Const, vars: Vector[Var]) extends Expression {
 
-  require(vars.length < 3,
-    throw new UnsupportedOperationException("Only up to quadratic expressions are supported!"))
+  require(vars.length < 3, throw new UnsupportedOperationException("Only up to quadratic expressions are supported!"))
 
   override val terms: LongDoubleMap = LongDoubleMap(scalar, vars)
 
@@ -177,10 +168,10 @@ case class Term(scalar: Const, vars: Vector[Var]) extends Expression {
 }
 
 /**
-  * Constant expression holding a double value.
-  *
-  * @param value the value held by the constraint
-  */
+ * Constant expression holding a double value.
+ *
+ * @param value the value held by the constraint
+ */
 class Const(val value: Double) extends Expression {
 
   override val constant: Double = value
@@ -211,16 +202,14 @@ class Const(val value: Double) extends Expression {
 
   override def toString: String = value.toString
 
-  /**
-    * @return the hash code of the boxed double value
-    */
+  /** @return the hash code of the boxed double value */
   override def hashCode: Int = value.##
 
   /**
-    * @param obj an object to compare
-    * @return true only in case the object is a constant
-    *         and has identical value
-    */
+   * @param obj an object to compare
+   * @return true only in case the object is a constant
+   *         and has identical value
+   */
   override def equals(obj: Any): Boolean = obj match {
     case that: Const => this.value == that.value
     case _ => false
@@ -254,12 +243,12 @@ case object One extends Const(1) {
 }
 
 /**
-  * Const product represents an expression multiplied by a constant and has
-  * the form of (c * a).
-  *
-  * @param scalar the constant
-  * @param a the expression
-  */
+ * Const product represents an expression multiplied by a constant and has
+ * the form of (c * a).
+ *
+ * @param scalar the constant
+ * @param a the expression
+ */
 case class ConstProduct(scalar: Const, a: Expression) extends Expression {
 
   override val constant: Double = scalar.value * a.constant
@@ -275,12 +264,12 @@ case class ConstProduct(scalar: Const, a: Expression) extends Expression {
 // ------------------------------------- Operator Expressions -------------------------------------
 
 /**
-  * Binary operator expression (a operator b), that should be extended
-  * by any binary operator expression type.
-  *
-  * @param a left hand side expression
-  * @param b right hand side expression
-  */
+ * Binary operator expression (a operator b), that should be extended
+ * by any binary operator expression type.
+ *
+ * @param a left hand side expression
+ * @param b right hand side expression
+ */
 abstract class BinaryOp(val a: Expression, val b: Expression) extends Expression {
 
   override val constant: Double = op(a.constant, b.constant)
@@ -309,11 +298,11 @@ abstract class BinaryOp(val a: Expression, val b: Expression) extends Expression
 }
 
 /**
-  * Plus operator for addition (a + b).
-  *
-  * @param a left hand side expression
-  * @param b right hand side expression
-  */
+ * Plus operator for addition (a + b).
+ *
+ * @param a left hand side expression
+ * @param b right hand side expression
+ */
 case class Plus(override val a: Expression, override val b: Expression) extends BinaryOp(a, b) {
 
   protected def op(x: Double, y: Double): Double = x + y
@@ -322,11 +311,11 @@ case class Plus(override val a: Expression, override val b: Expression) extends 
 }
 
 /**
-  * Minus operator for subtraction (a - b).
-  *
-  * @param a left hand side expression
-  * @param b right hand side expression
-  */
+ * Minus operator for subtraction (a - b).
+ *
+ * @param a left hand side expression
+ * @param b right hand side expression
+ */
 case class Minus(override val a: Expression, override val b: Expression) extends BinaryOp(a, b) {
 
   protected def op(x: Double, y: Double): Double = x - y
@@ -335,11 +324,11 @@ case class Minus(override val a: Expression, override val b: Expression) extends
 }
 
 /**
-  * Product operator (a * b).
-  *
-  * @param a left hand side expression
-  * @param b right hand side expression
-  */
+ * Product operator (a * b).
+ *
+ * @param a left hand side expression
+ * @param b right hand side expression
+ */
 case class Product(override val a: Expression, override val b: Expression) extends BinaryOp(a, b) {
 
   protected def op(x: Double, y: Double): Double = x * y

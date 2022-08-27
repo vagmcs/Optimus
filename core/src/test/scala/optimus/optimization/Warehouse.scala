@@ -11,7 +11,7 @@
  *          \/////       \///             \/////    \///  \///   \///   \///  \/////////   \//////////
  *
  * The mathematical programming library for Scala.
- *
+ *     
  */
 
 package optimus.optimization
@@ -23,18 +23,18 @@ import optimus.optimization.enums.{ SolutionStatus, SolverLib }
 import optimus.optimization.model.{ MPBinaryVar, MPFloatVar, MPIntVar }
 
 /**
-  * Facility Location Problem
-  *
-  * There is a set of plants that can be open or not having
-  * a capacity and a set of warehouses.
-  *
-  * - Each warehouse has a demand that must be satisfied by one or more plant.
-  * - There is a cost specified for shipping one unit from a particular plant
-  *   to a particular warehouse and a cost for opening a plant.
-  *
-  * The objective is to minimize the total cost while satisfying the demand
-  * of the warehouses and the capacities of the plant.
-  */
+ * Facility Location Problem
+ *
+ * There is a set of plants that can be open or not having
+ * a capacity and a set of warehouses.
+ *
+ * - Each warehouse has a demand that must be satisfied by one or more plant.
+ * - There is a cost specified for shipping one unit from a particular plant
+ *   to a particular warehouse and a cost for opening a plant.
+ *
+ * The objective is to minimize the total cost while satisfying the demand
+ * of the warehouses and the capacities of the plant.
+ */
 trait Warehouse extends AnyFunSpec with Matchers {
 
   def solver: SolverLib
@@ -68,23 +68,20 @@ trait Warehouse extends AnyFunSpec with Matchers {
     val open = plants.map(p => MPBinaryVar(s"open$p"))
 
     // Transportation decision variables: how much to transport from a plant 'p' to a warehouse 'w'
-    val transport = Array.tabulate(warehouses.length, plants.length)(
-      (w, p) => MPFloatVar(s"trans($w, $p)", 0, Double.MaxValue)
-    )
+    val transport =
+      Array.tabulate(warehouses.length, plants.length)((w, p) => MPFloatVar(s"trans($w, $p)", 0, Double.MaxValue))
 
     // The objective is to minimize the total fixed and variable costs
     minimize(
-      sum(warehouses, plants) { (w, p) => transport(w)(p) * transCosts(w)(p).toDouble } // variable cost
-        + sum(plants) { p => open(p) * fixedCosts(p).toDouble } // fixed costs
+      sum(warehouses, plants)((w, p) => transport(w)(p) * transCosts(w)(p).toDouble) // variable cost
+        + sum(plants)(p => open(p) * fixedCosts(p).toDouble) // fixed costs
     )
 
     // Production Constraints
-    for (p <- plants)
-      add(sum(warehouses)(w => transport(w)(p)) <:= open(p) * capacity(p))
+    for (p <- plants) add(sum(warehouses)(w => transport(w)(p)) <:= open(p) * capacity(p))
 
     // Demand Constraints
-    for (w <- warehouses)
-      add(sum(plants)(p => transport(w)(p)) >:= demand(w))
+    for (w <- warehouses) add(sum(plants)(p => transport(w)(p)) >:= demand(w))
 
     start()
 
@@ -93,7 +90,7 @@ trait Warehouse extends AnyFunSpec with Matchers {
     }
 
     it(s"$solver objective value should be 210500") {
-      objectiveValue shouldBe 210500.0 +- 1e-8
+      objectiveValue shouldBe 210500.0 +- 1e-5
     }
 
     it("all variables should have a value") {
@@ -106,9 +103,7 @@ trait Warehouse extends AnyFunSpec with Matchers {
     }
 
     // Print solution
-    open.foreach { o =>
-      println(s"$o ${o.value.get > 0}")
-    }
+    open.foreach(o => println(s"$o ${o.value.get > 0}"))
 
     release()
   }

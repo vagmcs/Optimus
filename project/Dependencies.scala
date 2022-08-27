@@ -19,17 +19,17 @@ import sbt._
 object Dependencies {
 
   object v {
-    final val Logback = "1.2.10"
-    final val ScalaLogging = "3.9.4"
+    final val Logback = "1.2.11"
+    final val ScalaLogging = "3.9.5"
 
-    final val ScalaTest = "3.2.11"
-    final val ScalaCheck = "1.15.4"
+    final val ScalaTest = "3.2.12"
+    final val ScalaCheck = "1.16.0"
     final val ScalaTestPlus = "3.2.11.0"
 
     final val LpSolve = "5.5.2.0"
-    final val ojAlgorithms = "51.0.0"
+    final val ojAlgorithms = "51.4.0"
     final val Trove = "3.1.0"
-    final val ScalaXML = "2.0.1"
+    final val ScalaXML = "2.1.0"
     final val Enums = "1.7.0"
   }
 

@@ -11,7 +11,7 @@
  *          \/////       \///             \/////    \///  \///   \///   \///  \/////////   \//////////
  *
  * The mathematical programming library for Scala.
- *
+ *     
  */
 
 package optimus.optimization
@@ -25,9 +25,7 @@ import optimus.optimization.model.INFINITE
 import optimus.optimization.enums.{ PreSolve, SolutionStatus }
 import optimus.optimization.model.MPConstraint
 
-/**
-  * oj solver.
-  */
+/** oj solver. */
 final class oJSolver extends MPSolver {
 
   type Solver = ExpressionsBasedModel
@@ -39,11 +37,11 @@ final class oJSolver extends MPSolver {
   private var minimize = true
 
   /**
-    * Problem builder, should configure the solver and append
-    * mathematical model variables and constraints.
-    *
-    * @param numberOfVars number of variables in the model
-    */
+   * Problem builder, should configure the solver and append
+   * mathematical model variables and constraints.
+   *
+   * @param numberOfVars number of variables in the model
+   */
   def buildModel(numberOfVars: Int): Unit = {
 
     logger.info {
@@ -66,21 +64,21 @@ final class oJSolver extends MPSolver {
   }
 
   /**
-    * Get value of the variable in the specified position. Solution
-    * should exist in order for a value to exist.
-    *
-    * @param colId position of the variable
-    * @return the value of the variable in the solution
-    */
+   * Get value of the variable in the specified position. Solution
+   * should exist in order for a value to exist.
+   *
+   * @param colId position of the variable
+   * @return the value of the variable in the solution
+   */
   def getVarValue(colId: Int): Double = solution(colId)
 
   /**
-    * Set bounds of variable in the specified position.
-    *
-    * @param colId position of the variable
-    * @param lower domain lower bound
-    * @param upper domain upper bound
-    */
+   * Set bounds of variable in the specified position.
+   *
+   * @param colId position of the variable
+   * @param lower domain lower bound
+   * @param upper domain upper bound
+   */
   def setBounds(colId: Int, lower: Double, upper: Double): Unit = {
     if (upper == INFINITE) underlyingSolver.getVariable(colId).upper(null)
     else underlyingSolver.getVariable(colId).upper(upper)
@@ -90,56 +88,46 @@ final class oJSolver extends MPSolver {
   }
 
   /**
-    * Set lower bound to unbounded (infinite)
-    *
-    * @param colId position of the variable
-    */
-  def setUnboundUpperBound(colId: Int): Unit = {
-    underlyingSolver.getVariable(colId).upper(null)
-  }
+   * Set lower bound to unbounded (infinite)
+   *
+   * @param colId position of the variable
+   */
+  def setUnboundUpperBound(colId: Int): Unit = underlyingSolver.getVariable(colId).upper(null)
 
   /**
-    * Set upper bound to unbounded (infinite)
-    *
-    * @param colId position of the variable
-    */
-  def setUnboundLowerBound(colId: Int): Unit = {
-    underlyingSolver.getVariable(colId).lower(null)
-  }
+   * Set upper bound to unbounded (infinite)
+   *
+   * @param colId position of the variable
+   */
+  def setUnboundLowerBound(colId: Int): Unit = underlyingSolver.getVariable(colId).lower(null)
 
   /**
-    * Set the column/variable as an integer variable
-    *
-    * @param colId position of the variable
-    */
-  def setInteger(colId: Int): Unit = {
-    underlyingSolver.getVariable(colId).integer(true)
-  }
+   * Set the column/variable as an integer variable
+   *
+   * @param colId position of the variable
+   */
+  def setInteger(colId: Int): Unit = underlyingSolver.getVariable(colId).integer(true)
 
   /**
-    * Set the column / variable as an binary integer variable
-    *
-    * @param colId position of the variable
-    */
-  def setBinary(colId: Int): Unit = {
-    underlyingSolver.getVariable(colId).binary()
-  }
+   * Set the column / variable as an binary integer variable
+   *
+   * @param colId position of the variable
+   */
+  def setBinary(colId: Int): Unit = underlyingSolver.getVariable(colId).binary()
 
   /**
-    * Set the column/variable as a float variable
-    *
-    * @param colId position of the variable
-    */
-  def setFloat(colId: Int): Unit = {
-    underlyingSolver.getVariable(colId).integer(false)
-  }
+   * Set the column/variable as a float variable
+   *
+   * @param colId position of the variable
+   */
+  def setFloat(colId: Int): Unit = underlyingSolver.getVariable(colId).integer(false)
 
   /**
-    * Add objective expression to be optimized by the solver.
-    *
-    * @param objective the expression to be optimized
-    * @param minimize flag for minimization instead of maximization
-    */
+   * Add objective expression to be optimized by the solver.
+   *
+   * @param objective the expression to be optimized
+   * @param minimize flag for minimization instead of maximization
+   */
   def setObjective(objective: Expression, minimize: Boolean): Unit = {
 
     if (objective.getOrder == GENERIC)
@@ -163,10 +151,10 @@ final class oJSolver extends MPSolver {
   }
 
   /**
-    * Add a mathematical programming constraint to the solver.
-    *
-    * @param mpConstraint the mathematical programming constraint
-    */
+   * Add a mathematical programming constraint to the solver.
+   *
+   * @param mpConstraint the mathematical programming constraint
+   */
   def addConstraint(mpConstraint: MPConstraint): Unit = {
 
     numberOfCons += 1
@@ -194,14 +182,13 @@ final class oJSolver extends MPSolver {
   }
 
   /**
-    * Solve the problem.
-    *
-    * @return status code indicating the nature of the solution
-    */
+   * Solve the problem.
+   *
+   * @return status code indicating the nature of the solution
+   */
   def solve(preSolve: PreSolve = PreSolve.DISABLED): SolutionStatus = {
 
-    if (preSolve != PreSolve.DISABLED)
-      logger.warn("ojSolver does not support pre-solving!")
+    if (preSolve != PreSolve.DISABLED) logger.warn("ojSolver does not support pre-solving!")
 
     val result =
       if (this.minimize) underlyingSolver.minimise()
@@ -214,11 +201,9 @@ final class oJSolver extends MPSolver {
         _objectiveValue = Some(result.getValue + _objectiveConstant)
         SolutionStatus.OPTIMAL
 
-      case Optimisation.State.INFEASIBLE =>
-        SolutionStatus.INFEASIBLE
+      case Optimisation.State.INFEASIBLE => SolutionStatus.INFEASIBLE
 
-      case Optimisation.State.UNBOUNDED =>
-        SolutionStatus.UNBOUNDED
+      case Optimisation.State.UNBOUNDED => SolutionStatus.UNBOUNDED
 
       case _ =>
         _solution = Array.tabulate(numberOfVars)(col => result.get(col).doubleValue)
@@ -228,19 +213,15 @@ final class oJSolver extends MPSolver {
     _solutionStatus
   }
 
-  /**
-    * Release the memory of this solver
-    */
-  def release(): Unit = {
-    underlyingSolver.dispose()
-  }
+  /** Release the memory of this solver */
+  def release(): Unit = underlyingSolver.dispose()
 
   /**
-    * Set a time limit for solver optimization. After the limit
-    * is reached the solver stops running.
-    *
-    * @param limit the time limit
-    */
+   * Set a time limit for solver optimization. After the limit
+   * is reached the solver stops running.
+   *
+   * @param limit the time limit
+   */
   def setTimeout(limit: Int): Unit = {
     require(0 <= limit)
     underlyingSolver.options.time_abort = limit
