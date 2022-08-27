@@ -17,9 +17,7 @@
 package optimus.algebra
 
 import com.typesafe.scalalogging.LazyLogging
-import gnu.trove.procedure.TLongDoubleProcedure
 import optimus.algebra.ConstraintRelation._
-import optimus.algebra.AlgebraOps._
 
 /**
  * Expression abstraction, should be extended by anything that is
@@ -50,7 +48,7 @@ abstract class Expression extends LazyLogging {
     case _ => Product(this, that)
   }
 
-  def unary_-(): Expression = Minus(0, this)
+  def unary_- : Expression = Minus(0, this)
 
   def <:=(that: Expression): Constraint = Constraint(this, LE, that)
 
@@ -116,7 +114,7 @@ abstract class Var(val symbol: String) extends Expression {
     case _ => Product(this, other)
   }
 
-  override def unary_-(): Expression = Term(Const(-1), Vector(this))
+  override def unary_- : Expression = Term(Const(-1), Vector(this))
 
   /** @return the symbol of the variable */
   override def toString: String = if (symbol != ANONYMOUS) symbol else s"x@$index"
@@ -162,7 +160,7 @@ case class Term(scalar: Const, vars: Vector[Var]) extends Expression {
     case _ => Product(this, that)
   }
 
-  override def unary_-(): Expression = Term(Const(-scalar.value), vars)
+  override def unary_- : Expression = Term(Const(-scalar.value), vars)
 
   override def toString: String = s"$scalar${vars.mkString("*")}"
 }
@@ -198,7 +196,7 @@ class Const(val value: Double) extends Expression {
 
   override def *(other: Expression): Expression = ConstProduct(this, other)
 
-  override def unary_-(): Expression = Const(-value)
+  override def unary_- : Expression = Const(-value)
 
   override def toString: String = value.toString
 
@@ -232,14 +230,14 @@ case object Zero extends Const(0) {
 
   override def *(expression: Expression): Expression = this
 
-  override def unary_-(): Expression = this
+  override def unary_- : Expression = this
 }
 
 case object One extends Const(1) {
 
   override def *(expression: Expression): Expression = this
 
-  override def unary_-(): Const = Const(-1)
+  override def unary_- : Const = Const(-1)
 }
 
 /**
@@ -258,7 +256,7 @@ case class ConstProduct(scalar: Const, a: Expression) extends Expression {
     case _ => LongDoubleMap(a.terms.keys, a.terms.values.map(_ * scalar.value))
   }
 
-  override def unary_-(): Expression = ConstProduct(Const(-scalar.value), a)
+  override def unary_- : Expression = ConstProduct(Const(-scalar.value), a)
 }
 
 // ------------------------------------- Operator Expressions -------------------------------------
@@ -307,7 +305,7 @@ case class Plus(override val a: Expression, override val b: Expression) extends 
 
   protected def op(x: Double, y: Double): Double = x + y
 
-  override def unary_-(): Expression = Plus(-a, -b)
+  override def unary_- : Expression = Plus(-a, -b)
 }
 
 /**
@@ -320,7 +318,7 @@ case class Minus(override val a: Expression, override val b: Expression) extends
 
   protected def op(x: Double, y: Double): Double = x - y
 
-  override def unary_-(): Expression = Minus(b, a)
+  override def unary_- : Expression = Minus(b, a)
 }
 
 /**

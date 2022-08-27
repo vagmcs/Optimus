@@ -16,6 +16,7 @@
 
 package optimus.optimization
 
+import optimus.algebra._
 import org.scalatest.funspec.AnyFunSpec
 import org.scalatest.matchers.should.Matchers
 import optimus.algebra.AlgebraOps._
@@ -23,13 +24,13 @@ import optimus.optimization.enums.{ SolutionStatus, SolverLib }
 import optimus.optimization.model.MPFloatVar
 
 /**
-  * A number of 12 products can be produced. Each of them has a set of features,
-  * such as volume, weight, etc. There is a capacity constraint on the total amount
-  * that can be produced from each feature; for instance, an upper limit of the
-  * total weight of the produced products. Moreover, each product generates a profit
-  * per unit produced. The objective is to maximize the total profit, while
-  * satisfying these capacity constraints.
-  */
+ * A number of 12 products can be produced. Each of them has a set of features,
+ * such as volume, weight, etc. There is a capacity constraint on the total amount
+ * that can be produced from each feature; for instance, an upper limit of the
+ * total weight of the produced products. Moreover, each product generates a profit
+ * per unit produced. The objective is to maximize the total profit, while
+ * satisfying these capacity constraints.
+ */
 trait ProductionPlanning extends AnyFunSpec with Matchers {
 
   def solver: SolverLib
@@ -59,10 +60,9 @@ trait ProductionPlanning extends AnyFunSpec with Matchers {
 
     val x = products.map(p => MPFloatVar(s"x$p", 0, 10000))
 
-    maximize(sum(products) { p => x(p) * c(p) })
+    maximize(sum(products)(p => x(p) * c(p)))
 
-    for (d <- dimensions)
-      add(sum(products)(p => x(p) * w(d)(p)) <:= b(d))
+    for (d <- dimensions) add(sum(products)(p => x(p) * w(d)(p)) <:= b(d))
 
     start()
 

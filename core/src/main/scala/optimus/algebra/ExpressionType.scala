@@ -16,14 +16,9 @@
 
 package optimus.algebra
 
-import enumeratum._
-import scala.collection.immutable._
+sealed trait ExpressionType
 
-sealed trait ExpressionType extends EnumEntry
-
-object ExpressionType extends Enum[ExpressionType] {
-
-  val values: IndexedSeq[ExpressionType] = findValues
+object ExpressionType {
 
   case object CONSTANT extends ExpressionType
   case object LINEAR extends ExpressionType

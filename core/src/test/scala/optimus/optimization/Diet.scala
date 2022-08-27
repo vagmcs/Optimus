@@ -16,6 +16,7 @@
 
 package optimus.optimization
 
+import optimus.algebra._
 import org.scalatest.funspec.AnyFunSpec
 import org.scalatest.matchers.should.Matchers
 import optimus.algebra.AlgebraOps._
@@ -23,14 +24,14 @@ import optimus.optimization.enums.{ SolutionStatus, SolverLib }
 import optimus.optimization.model.MPFloatVar
 
 /**
-  * The goal of the diet problem is to find the cheapest combination of foods
-  * that satisfy all the daily nutritional requirements of a person. The problem
-  * is formulated as a linear program where the objective is to minimize the cost
-  * and meet constraints which require that nutritional needs be satisfied.
-  *
-  * We include constraints that regulate the number of calories and the amounts
-  * of vitamins, minerals, fats, sodium and cholesterol in the diet.
-  */
+ * The goal of the diet problem is to find the cheapest combination of foods
+ * that satisfy all the daily nutritional requirements of a person. The problem
+ * is formulated as a linear program where the objective is to minimize the cost
+ * and meet constraints which require that nutritional needs be satisfied.
+ *
+ * We include constraints that regulate the number of calories and the amounts
+ * of vitamins, minerals, fats, sodium and cholesterol in the diet.
+ */
 trait Diet extends AnyFunSpec with Matchers {
 
   def solver: SolverLib
@@ -40,12 +41,10 @@ trait Diet extends AnyFunSpec with Matchers {
   case class Nutriment(name: String)
   case class Food(x: MPFloatVar, price: Double, contents: Nutriment => Double)
 
-  private val nutriments: List[Nutriment] =
-    List("A", "C", "B1", "B2", "NA", "CAL").map(Nutriment)
+  private val nutriments: List[Nutriment] = List("A", "C", "B1", "B2", "NA", "CAL").map(Nutriment.apply)
 
   // Each food is limited between 2 and 10
-  private def createVar(name: String) =
-    MPFloatVar(name, 2, 10)
+  private def createVar(name: String) = MPFloatVar(name, 2, 10)
 
   val foods: List[Food] = List(
     (createVar("Beef"), 3.19, List(60, 20, 10, 15, 938, 295)),
@@ -61,11 +60,10 @@ trait Diet extends AnyFunSpec with Matchers {
   describe("Diet Problem") {
 
     // for each nutriment, at least 700 must be present in the Diet
-    for (n <- nutriments)
-      add(sum(foods) { f => f.x * f.contents(n) } >:= 700)
+    for (n <- nutriments) add(sum(foods)(f => f.x * f.contents(n)) >:= 700)
 
     // minimize the total cost
-    minimize(sum(foods) { f => f.x * f.price })
+    minimize(sum(foods)(f => f.x * f.price))
 
     start()
 

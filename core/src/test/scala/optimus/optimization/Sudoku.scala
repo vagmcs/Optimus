@@ -16,6 +16,7 @@
 
 package optimus.optimization
 
+import optimus.algebra._
 import org.scalatest.funspec.AnyFunSpec
 import org.scalatest.matchers.should.Matchers
 import optimus.algebra.AlgebraOps._
@@ -23,12 +24,12 @@ import optimus.optimization.enums.{ SolutionStatus, SolverLib }
 import optimus.optimization.model.MPBinaryVar
 
 /**
-  * Sudoku is a logic-based combinatorial number-placement puzzle. The objective
-  * is to fill a 9×9 grid with digits so that each column, each row, and each of
-  * the nine 3×3 sub-grids that compose the grid (also called blocks) contains all
-  * of the digits from 1 to 9. The puzzle setter provides a partially completed grid,
-  * which for a well-posed puzzle has a unique optimal solution.
-  */
+ * Sudoku is a logic-based combinatorial number-placement puzzle. The objective
+ * is to fill a 9×9 grid with digits so that each column, each row, and each of
+ * the nine 3×3 sub-grids that compose the grid (also called blocks) contains all
+ * of the digits from 1 to 9. The puzzle setter provides a partially completed grid,
+ * which for a well-posed puzzle has a unique optimal solution.
+ */
 trait Sudoku extends AnyFunSpec with Matchers {
 
   def solver: SolverLib
@@ -39,23 +40,18 @@ trait Sudoku extends AnyFunSpec with Matchers {
 
     val n = 9
     val N = 0 until n
-    val x = Array.tabulate(n, n, n)(
-      (l, c, n) => MPBinaryVar(s"x($l, $c, $n)")
-    )
+    val x = Array.tabulate(n, n, n)((l, c, n) => MPBinaryVar(s"x($l, $c, $n)"))
 
     maximize(0)
 
     // each cell must be assigned exactly one integer
-    for (l <- N; c <- N)
-      add(sum(N)(n => x(l)(c)(n)) := 1)
+    for (l <- N; c <- N) add(sum(N)(n => x(l)(c)(n)) := 1)
 
     // cells in the same row must be assigned distinct numbers
-    for (l <- N; n <- N)
-      add(sum(N)(c => x(l)(c)(n)) := 1)
+    for (l <- N; n <- N) add(sum(N)(c => x(l)(c)(n)) := 1)
 
     // cells in the same column must be assigned distinct numbers
-    for (c <- N; n <- N)
-      add(sum(N)(l => x(l)(c)(n)) := 1)
+    for (c <- N; n <- N) add(sum(N)(l => x(l)(c)(n)) := 1)
 
     // cells in the same region must be assigned distinct numbers
     for (l1 <- 0 until 3; c1 <- 0 until 3; n <- N)
@@ -107,8 +103,7 @@ trait Sudoku extends AnyFunSpec with Matchers {
     }
 
     it("all variables should have a value") {
-      for (l <- N; c <- N; n <- N)
-        x(l)(c)(n).value.isDefined shouldBe true
+      for (l <- N; c <- N; n <- N) x(l)(c)(n).value.isDefined shouldBe true
     }
 
     it(s"$solver constraints should be satisfied") {
@@ -117,11 +112,10 @@ trait Sudoku extends AnyFunSpec with Matchers {
 
     // Print solution
     for (l <- N) {
-      for (c <- N; n <- N; if x(l)(c)(n).value.get == 1) {
+      for (c <- N; n <- N; if x(l)(c)(n).value.get == 1)
         if ((c + 1) % 3 == 0) print(s"${n + 1} | ")
         else print(s"${n + 1} ")
-      }
-      println
+      println()
     }
 
     release()

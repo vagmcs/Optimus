@@ -11,19 +11,18 @@
  *          \/////       \///             \/////    \///  \///   \///   \///  \/////////   \//////////
  *
  * The mathematical programming library for Scala.
- *
+ *     
  */
 
 package optimus.optimization
 
+import optimus.algebra._
 import org.scalatest.funspec.AnyFunSpec
 import org.scalatest.matchers.should.Matchers
 import optimus.optimization.enums.{ SolutionStatus, SolverLib }
 import optimus.optimization.model.{ MPBinaryVar, MPConstraint, MPFloatVar, MPIntVar }
 
-/**
-  * Specification for LPSolve solver.
-  */
+/** Specification for LPSolve solver. */
 final class LPSolveSpecTest extends AnyFunSpec with Matchers {
 
   describe("Constant Program (1)") {
@@ -108,7 +107,7 @@ final class LPSolveSpecTest extends AnyFunSpec with Matchers {
     val y = MPFloatVar("y", 80, 170)
 
     maximize(-2 * x + 5 * y)
-    subjectTo (
+    subjectTo(
       y >:= -x + 200
     )
 
@@ -145,7 +144,7 @@ final class LPSolveSpecTest extends AnyFunSpec with Matchers {
     val y = MPFloatVar("y", 80, 170)
 
     minimize(-2 * x + 5 * y)
-    subjectTo (
+    subjectTo(
       y >:= -x + 200
     )
 
@@ -182,7 +181,7 @@ final class LPSolveSpecTest extends AnyFunSpec with Matchers {
     val y = MPFloatVar("y", 80, 170)
 
     minimize(-2 * x + 5 * y)
-    subjectTo (
+    subjectTo(
       y >:= -x + 200
     )
 
@@ -219,7 +218,7 @@ final class LPSolveSpecTest extends AnyFunSpec with Matchers {
 
     val z = MPFloatVar("z", 80, 170)
 
-    subjectTo (
+    subjectTo(
       z >:= 170,
       y >:= -x + 200
     )
@@ -261,7 +260,7 @@ final class LPSolveSpecTest extends AnyFunSpec with Matchers {
     val y = MPFloatVar("y", 0, 10)
 
     maximize(x + y)
-    subjectTo (
+    subjectTo(
       x + y >:= 5
     )
 
@@ -417,7 +416,9 @@ final class LPSolveSpecTest extends AnyFunSpec with Matchers {
 
     var cons: Vector[MPConstraint] = Vector()
 
-    maximize(3 * w - 8 * w + 10 * w + 0.001 * x - (-0.999 * x) - 0.3 * 10 * (-y) - 4 * 0.0006 * 0 * (w - x - z) + 2 * z - 2 * z + 4 * z)
+    maximize(
+      3 * w - 8 * w + 10 * w + 0.001 * x - (-0.999 * x) - 0.3 * 10 * (-y) - 4 * 0.0006 * 0 * (w - x - z) + 2 * z - 2 * z + 4 * z
+    )
 
     cons = cons :+ add(w + x + y + z <:= 40)
     cons = cons :+ add(2 * w + x - y - z >:= 10)
@@ -586,7 +587,7 @@ final class LPSolveSpecTest extends AnyFunSpec with Matchers {
     add(-5 * x(0) - 3 * x(1) + x(2) + 3 * x(3) - 2 * x(4) + x(5) >:= -2)
     add(5 * x(0) - x(1) + 4 * x(2) - 2 * x(3) + 2 * x(4) - x(5) >:= 3)
 
-    it ("all variables should be binary") {
+    it("all variables should be binary") {
       x.foreach(_.isBinary shouldBe true)
     }
 

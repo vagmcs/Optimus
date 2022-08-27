@@ -16,14 +16,9 @@
 
 package optimus.optimization.enums
 
-import enumeratum._
-import scala.collection.immutable._
+sealed abstract class SolutionStatus(val entryName: String)
 
-sealed abstract class SolutionStatus(override val entryName: String) extends EnumEntry
-
-object SolutionStatus extends Enum[SolutionStatus] {
-
-  val values: IndexedSeq[SolutionStatus] = findValues
+object SolutionStatus {
 
   case object NOT_SOLVED extends SolutionStatus("Not solved")
   case object OPTIMAL extends SolutionStatus("Optimal")

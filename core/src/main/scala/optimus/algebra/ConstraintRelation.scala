@@ -16,14 +16,9 @@
 
 package optimus.algebra
 
-import enumeratum._
-import scala.collection.immutable._
+sealed abstract class ConstraintRelation(val entryName: String)
 
-sealed abstract class ConstraintRelation(override val entryName: String) extends EnumEntry
-
-object ConstraintRelation extends Enum[ConstraintRelation] {
-
-  val values: IndexedSeq[ConstraintRelation] = findValues
+object ConstraintRelation {
 
   case object GE extends ConstraintRelation(">=")
   case object LE extends ConstraintRelation("<=")

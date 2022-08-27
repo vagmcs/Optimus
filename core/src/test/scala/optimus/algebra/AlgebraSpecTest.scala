@@ -22,9 +22,7 @@ import optimus.optimization.MPModel
 import optimus.algebra.AlgebraOps._
 import optimus.optimization.model.{ INFINITE, MPFloatVar, MPIntVar }
 
-/**
-  * Specification test for algebra.
-  */
+/** Specification test for algebra. */
 final class AlgebraSpecTest extends AnyFunSpec with Matchers {
 
   implicit val model: MPModel = MPModel()
@@ -116,7 +114,7 @@ final class AlgebraSpecTest extends AnyFunSpec with Matchers {
     }
 
     it("x * (-1) should be equal to -x") {
-      x * (-1.0) shouldEqual -x
+      x * -1.0 shouldEqual -x
     }
 
     it("0 - x should be equal to -x") {
@@ -179,7 +177,9 @@ final class AlgebraSpecTest extends AnyFunSpec with Matchers {
     /*
      * Produces 3.0(x * t) + 2.0(x * y) + 2.0(x * z) + 1.0(y * z) + 2.0(z * t) + 2.0z + 4.0t + 9.0
      */
-    it("(2*x*y + 2*z*t) + (2*x*z + 4*t + 5) + (3*x*t + z + y*z) + 4 + z should be equal to 3*x*t + 2*x*y + 2*x*z + 1*y*z + 2*z*t + 2*z + 4*t + 9") {
+    it(
+      "(2*x*y + 2*z*t) + (2*x*z + 4*t + 5) + (3*x*t + z + y*z) + 4 + z should be equal to 3*x*t + 2*x*y + 2*x*z + 1*y*z + 2*z*t + 2*z + 4*t + 9"
+    ) {
       expression1 + expression2 + expression3 + expression4 shouldEqual sum(expressions)
     }
   }
@@ -223,7 +223,7 @@ final class AlgebraSpecTest extends AnyFunSpec with Matchers {
     }
 
     it("-x + 4*y + x should equal to 4*y") {
-      -x + 4 * y + x should equal (4 * y)
+      -x + 4 * y + x should equal(4 * y)
     }
 
     it("(x + y) + (2*x + y) should equal to 3*x + 2*y") {
@@ -286,7 +286,10 @@ final class AlgebraSpecTest extends AnyFunSpec with Matchers {
 
     val startSum = System.currentTimeMillis()
     sum(variables1)
-    info("Summation of " + variables1.length + " variables took " + (System.currentTimeMillis() - startSum) + "ms to calculate")
+    info(
+      "Summation of " + variables1.length + " variables took " + (System
+        .currentTimeMillis() - startSum) + "ms to calculate"
+    )
 
     val startProd = System.currentTimeMillis()
     val expr = (x + y + x + y + t + z + t + z + 4.1 * y + x + 5) * (x + y + x + y + t + z + t + z + y + x + 2)

@@ -16,6 +16,7 @@
 
 package optimus.optimization
 
+import optimus.algebra._
 import org.scalatest.funspec.AnyFunSpec
 import org.scalatest.matchers.should.Matchers
 import optimus.algebra.AlgebraOps._
@@ -23,10 +24,10 @@ import optimus.optimization.enums.{ SolutionStatus, SolverLib }
 import optimus.optimization.model.MPBinaryVar
 
 /**
-  * N-Queens puzzle: Place n chess queens on an n×n chessboard so that no two
-  * queens threaten each other. Thus, a solution requires that no two queens
-  * share the same row, column, or diagonal.
-  */
+ * N-Queens puzzle: Place n chess queens on an n×n chessboard so that no two
+ * queens threaten each other. Thus, a solution requires that no two queens
+ * share the same row, column, or diagonal.
+ */
 trait Queens extends AnyFunSpec with Matchers {
 
   def solver: SolverLib
@@ -41,7 +42,7 @@ trait Queens extends AnyFunSpec with Matchers {
 
     val x = Array.tabulate(n, n)((l, c) => MPBinaryVar(s"x($l,$c)"))
 
-    maximize(sum(lines, columns) { (l, c) => x(l)(c) })
+    maximize(sum(lines, columns)((l, c) => x(l)(c)))
 
     // At most one queen can be placed in each row
     for (l <- lines) add(sum(columns)(c => x(l)(c)) <:= 1)
@@ -77,9 +78,8 @@ trait Queens extends AnyFunSpec with Matchers {
 
     // Print solution as a board
     for (i <- 0 until n) {
-      for (j <- 0 until n)
-        if (x(i)(j).value.get >= .9) print(" Q ") else print(" . ")
-      println
+      for (j <- 0 until n) if (x(i)(j).value.get >= .9) print(" Q ") else print(" . ")
+      println()
     }
 
     release()
@@ -95,7 +95,7 @@ trait Queens extends AnyFunSpec with Matchers {
 
     val x = Array.tabulate(n, n)((l, c) => MPBinaryVar(s"x($l,$c)"))
 
-    maximize(sum(lines, columns) { (l, c) => x(l)(c) })
+    maximize(sum(lines, columns)((l, c) => x(l)(c)))
 
     // At most one queen can be placed in each row
     for (l <- lines) add(sum(columns)(c => x(l)(c)) <:= 1)
@@ -131,9 +131,8 @@ trait Queens extends AnyFunSpec with Matchers {
 
     // Print solution as a board
     for (i <- 0 until n) {
-      for (j <- 0 until n)
-        if (x(i)(j).value.get >= .9) print(" Q ") else print(" . ")
-      println
+      for (j <- 0 until n) if (x(i)(j).value.get >= .9) print(" Q ") else print(" . ")
+      println()
     }
 
     release()

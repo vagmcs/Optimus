@@ -30,7 +30,6 @@ object Dependencies {
     final val ojAlgorithms = "51.4.0"
     final val Trove = "3.1.0"
     final val ScalaXML = "2.1.0"
-    final val Enums = "1.7.0"
   }
 
   // Logging using slf4j and logback
@@ -49,8 +48,7 @@ object Dependencies {
   // GNU Trove collections and other tools
   lazy val Tools: Seq[ModuleID] = Seq(
     "org.scala-lang.modules" %% "scala-xml" % v.ScalaXML,
-    "net.sf.trove4j" % "core" % v.Trove,
-    "com.beachape" %% "enumeratum" % v.Enums
+    "net.sf.trove4j" % "core" % v.Trove
   )
 
   // LpSolve library for linear programming

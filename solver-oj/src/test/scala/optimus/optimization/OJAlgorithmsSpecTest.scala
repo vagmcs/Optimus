@@ -16,6 +16,7 @@
 
 package optimus.optimization
 
+import optimus.algebra._
 import org.scalatest.funspec.AnyFunSpec
 import org.scalatest.matchers.should.Matchers
 import optimus.optimization.enums.{ PreSolve, SolutionStatus, SolverLib }

@@ -25,8 +25,7 @@ object OptimusBuild extends AutoPlugin {
 
   private val logger = ConsoleLogger()
 
-  final val logo =
-    """
+  final val logo = """
       |  /\\\\\
       | /\\\///\\\
       |/\\\/  \///\\\    /\\\\\\\\\     /\\\       /\\\
@@ -58,46 +57,31 @@ object OptimusBuild extends AutoPlugin {
   }
 
   private val commonSettings: Seq[Setting[_]] = Seq(
-
     organization := "com.github.vagmcs",
-
     description := "Optimus is a mathematical programming library for Scala",
-
     headerLicense := Some(HeaderLicense.Custom(logo)),
-
     headerMappings := headerMappings.value + (HeaderFileType.scala -> HeaderCommentStyle.cStyleBlockComment),
-
-    scalaVersion := "2.13.8",
-
-    crossScalaVersions := Seq("2.13.8", "2.12.16"),
-
+    scalaVersion := "3.1.3",
+    crossScalaVersions := Seq("3.1.3", "2.13.8", "2.12.16"),
     autoScalaLibrary := true,
-
     managedScalaInstance := true,
-
     coverageEnabled := false,
     coverageHighlighting := true,
     coverageMinimumStmtTotal := 75,
-
     publishMavenStyle := true,
     Test / publishArtifact := false,
     pomIncludeRepository := { _ => false },
-
     resolvers ++= Seq(
       Resolver.mavenLocal,
       Resolver.typesafeRepo("releases"),
       Resolver.sonatypeRepo("releases"),
       Resolver.sonatypeRepo("snapshots")
     ),
-
     publishTo := {
       val nexus = "https://oss.sonatype.org/"
-      if (isSnapshot.value)
-        Some("snapshots" at nexus + "content/repositories/snapshots")
-      else
-        Some("releases" at nexus + "service/local/staging/deploy/maven2")
+      if (isSnapshot.value) Some("snapshots" at nexus + "content/repositories/snapshots")
+      else Some("releases" at nexus + "service/local/staging/deploy/maven2")
     },
-
     scmInfo := Some(
       ScmInfo(url("https://github.com/vagmcs/Optimus"), "scm:git:git@github.com:vagmcs/Optimus.git")
     ),
@@ -126,7 +110,6 @@ object OptimusBuild extends AutoPlugin {
   )
 
   private lazy val JavaSettings: Seq[Setting[_]] = Seq(
-
     // Java compiler options
     // source is the source code version required to compile.
     // target is the oldest JRE version Optimus supports.
@@ -136,7 +119,8 @@ object OptimusBuild extends AutoPlugin {
     javaOptions ++= Seq(
       "-XX:+DoEscapeAnalysis",
       "-XX:+OptimizeStringConcat",
-      "-Dlogback.configurationFile=src/main/resources/logback.xml")
+      "-Dlogback.configurationFile=src/main/resources/logback.xml"
+    )
   )
 
   private lazy val ScalaSettings: Seq[Setting[_]] = Seq(
@@ -146,13 +130,19 @@ object OptimusBuild extends AutoPlugin {
         case "2.12" | "2.13" =>
           // Scala compiler settings for Scala 2.12.x and 2.13.x
           Seq(
-            "-deprecation",       // Emit warning and location for usages of deprecated APIs.
-            "-unchecked",         // Enable additional warnings where generated code depends on assumptions.
-            "-feature",           // Emit warning and location for usages of features that should be imported explicitly.
-            "-target:jvm-1.8",    // Target JVM version 1.8.
-            "-Ywarn-dead-code"    // Warn when dead code is identified.
+            "-deprecation", // Emit warning and location for usages of deprecated APIs.
+            "-unchecked", // Enable additional warnings where generated code depends on assumptions.
+            "-feature", // Emit warning and location for usages of features that should be imported explicitly.
+            "-target:jvm-1.8", // Target JVM version 1.8.
+            "-Ywarn-dead-code" // Warn when dead code is identified.
           )
-
+        case "3" =>
+          // Scala compiler settings for Scala 3.x
+          Seq(
+            "-deprecation", // Emit warning and location for usages of deprecated APIs.
+            "-unchecked", // Enable additional warnings where generated code depends on assumptions.
+            "-feature" // Emit warning and location for usages of features that should be imported explicitly.
+          )
         case _ => sys.error(s"Unsupported version of Scala '${scalaBinaryVersion.value}'")
       }
     }

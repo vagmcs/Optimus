@@ -16,11 +16,12 @@
 
 package optimus.optimization
 
+import optimus.algebra._
 import org.scalatest.funspec.AnyFunSpec
 import org.scalatest.matchers.should.Matchers
 import optimus.algebra.AlgebraOps._
 import optimus.optimization.enums.{ SolutionStatus, SolverLib }
-import optimus.optimization.model.{ MPBinaryVar, MPFloatVar, MPIntVar }
+import optimus.optimization.model.{ MPBinaryVar, MPFloatVar }
 
 /**
  * Facility Location Problem

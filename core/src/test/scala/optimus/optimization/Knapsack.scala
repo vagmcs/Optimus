@@ -16,6 +16,7 @@
 
 package optimus.optimization
 
+import optimus.algebra._
 import org.scalatest.funspec.AnyFunSpec
 import org.scalatest.matchers.should.Matchers
 import optimus.algebra.AlgebraOps._
@@ -24,13 +25,13 @@ import optimus.optimization.model.MPBinaryVar
 import scala.util.Random
 
 /**
-  * Knapsack problem: Given a set of items, each with a weight and a value,
-  * determine the number of each item to include in a collection so that the
-  * total weight is less than or equal to a given limit and the total value is
-  * as large as possible. It origins from the problem faced by someone who is
-  * constrained by a fixed-size knapsack and must fill it with the most
-  * valuable items.
-  */
+ * Knapsack problem: Given a set of items, each with a weight and a value,
+ * determine the number of each item to include in a collection so that the
+ * total weight is less than or equal to a given limit and the total value is
+ * as large as possible. It origins from the problem faced by someone who is
+ * constrained by a fixed-size knapsack and must fill it with the most
+ * valuable items.
+ */
 trait Knapsack extends AnyFunSpec with Matchers {
 
   def solver: SolverLib
@@ -45,9 +46,7 @@ trait Knapsack extends AnyFunSpec with Matchers {
 
     implicit val knapsackProblem: MPModel = MPModel(solver)
 
-    val items = Array.tabulate(weights.length) { i =>
-      Item(weights(i), utility(i), MPBinaryVar(s"x$i"))
-    }
+    val items = Array.tabulate(weights.length)(i => Item(weights(i), utility(i), MPBinaryVar(s"x$i")))
 
     // Maximize the total utility
     maximize(sum(items)(item => item.x * item.utility))
@@ -90,9 +89,7 @@ trait Knapsack extends AnyFunSpec with Matchers {
 
     implicit val knapsackProblem: MPModel = MPModel(solver)
 
-    val items = Array.tabulate(weights.length) { i =>
-      Item(weights(i), utility(i), MPBinaryVar(s"x$i"))
-    }
+    val items = Array.tabulate(weights.length)(i => Item(weights(i), utility(i), MPBinaryVar(s"x$i")))
 
     // Maximize the total utility
     maximize(sum(items)(item => item.x * item.utility))

@@ -185,16 +185,15 @@ final class Mosek extends MPSolver {
           if (indexes.length == 1) {
             linearIndexes :+= indexes.head
             linearValues :+= iterator.value
-          } else
-            if (indexes.head == indexes(1)) {
-              rowIndexes :+= indexes.head
-              colsIndexes :+= indexes.head
-              quadraticValues :+= 2 * iterator.value
-            } else {
-              rowIndexes :+= Math.max(indexes.head, indexes(1))
-              colsIndexes :+= Math.min(indexes.head, indexes(1))
-              quadraticValues :+= iterator.value
-            }
+          } else if (indexes.head == indexes(1)) {
+            rowIndexes :+= indexes.head
+            colsIndexes :+= indexes.head
+            quadraticValues :+= 2 * iterator.value
+          } else {
+            rowIndexes :+= Math.max(indexes.head, indexes(1))
+            colsIndexes :+= Math.min(indexes.head, indexes(1))
+            quadraticValues :+= iterator.value
+          }
         }
         underlyingSolver.putarow(numberOfCons, linearIndexes, linearValues)
         underlyingSolver.putqconk(numberOfCons, rowIndexes, colsIndexes, quadraticValues)

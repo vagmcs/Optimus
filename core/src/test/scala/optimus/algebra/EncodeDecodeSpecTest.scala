@@ -50,9 +50,9 @@ final class EncodeDecodeSpecTest extends AnyFunSpec with Matchers with ScalaChec
       } yield (x, y)
 
       forAll(generator) {
-        case (x: Int, y: Int) => whenever (x != y) {
-          encode(x) shouldNot be (encode(y))
-        }
+        case (x: Int, y: Int) => whenever(x != y) {
+            encode(x) shouldNot be(encode(y))
+          }
       }
     }
   }
@@ -76,10 +76,7 @@ final class EncodeDecodeSpecTest extends AnyFunSpec with Matchers with ScalaChec
         y <- Gen.choose(0, Int.MaxValue)
       } yield (x, y)
 
-      forAll(generator) {
-        case (x: Int, y: Int) =>
-          encode(x, y) shouldEqual encode(y, x)
-      }
+      forAll(generator) { case (x: Int, y: Int) => encode(x, y) shouldEqual encode(y, x) }
     }
 
     it("An encoding should never be identical to another") {
@@ -92,9 +89,9 @@ final class EncodeDecodeSpecTest extends AnyFunSpec with Matchers with ScalaChec
       } yield (x, y, z, q)
 
       forAll(generator) {
-        case (x: Int, y: Int, z: Int, q: Int) => whenever (x != z && y != q) {
-          encode(x, y) shouldNot be (encode(z, q))
-        }
+        case (x: Int, y: Int, z: Int, q: Int) => whenever(x != z && y != q) {
+            encode(x, y) shouldNot be(encode(z, q))
+          }
       }
     }
   }

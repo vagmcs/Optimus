@@ -16,14 +16,9 @@
 
 package optimus.optimization.enums
 
-import enumeratum._
-import scala.collection.immutable._
+sealed trait SolverLib
 
-sealed trait SolverLib extends EnumEntry
-
-object SolverLib extends Enum[SolverLib] {
-
-  val values: IndexedSeq[SolverLib] = findValues
+object SolverLib {
 
   case object oJSolver extends SolverLib
   case object LpSolve extends SolverLib

@@ -16,6 +16,7 @@
 
 package optimus.optimization
 
+import optimus.algebra._
 import org.scalatest.funspec.AnyFunSpec
 import org.scalatest.matchers.should.Matchers
 import optimus.optimization.enums.{ PreSolve, SolutionStatus, SolverLib }
@@ -109,7 +110,7 @@ final class MosekSpecTest extends AnyFunSpec with Matchers {
     val y = MPFloatVar("y", 80, 170)
 
     maximize(-2 * x + 5 * y)
-    subjectTo (
+    subjectTo(
       y >:= -x + 200
     )
 
@@ -151,7 +152,7 @@ final class MosekSpecTest extends AnyFunSpec with Matchers {
     val y = MPFloatVar("y", 80, 170)
 
     minimize(-2 * x + 5 * y)
-    subjectTo (
+    subjectTo(
       y >:= -x + 200
     )
 
@@ -193,7 +194,7 @@ final class MosekSpecTest extends AnyFunSpec with Matchers {
     val y = MPFloatVar("y", 80, 170)
 
     minimize(-2 * x + 5 * y)
-    subjectTo (
+    subjectTo(
       y >:= -x + 200
     )
 
@@ -230,7 +231,7 @@ final class MosekSpecTest extends AnyFunSpec with Matchers {
 
     val z = MPFloatVar("z", 80, 170)
 
-    subjectTo (
+    subjectTo(
       z >:= 170,
       y >:= -x + 200
     )
@@ -277,7 +278,7 @@ final class MosekSpecTest extends AnyFunSpec with Matchers {
     val y = MPFloatVar("y", 0, 10)
 
     maximize(x + y)
-    subjectTo (
+    subjectTo(
       x + y >:= 5
     )
 
@@ -433,7 +434,9 @@ final class MosekSpecTest extends AnyFunSpec with Matchers {
 
     var cons: Vector[MPConstraint] = Vector()
 
-    maximize(3 * w - 8 * w + 10 * w + 0.001 * x - (-0.999 * x) - 0.3 * 10 * (-y) - 4 * 0.0006 * 0 * (w - x - z) + 2 * z - 2 * z + 4 * z)
+    maximize(
+      3 * w - 8 * w + 10 * w + 0.001 * x - (-0.999 * x) - 0.3 * 10 * (-y) - 4 * 0.0006 * 0 * (w - x - z) + 2 * z - 2 * z + 4 * z
+    )
 
     cons = cons :+ add(w + x + y + z <:= 40)
     cons = cons :+ add(2 * w + x - y - z >:= 10)
@@ -515,7 +518,7 @@ final class MosekSpecTest extends AnyFunSpec with Matchers {
     val x = MPFloatVar("x", 0, 10)
 
     maximize(x + 1)
-    subjectTo (
+    subjectTo(
       x <:= 1
     )
 
@@ -630,7 +633,7 @@ final class MosekSpecTest extends AnyFunSpec with Matchers {
     add(-5 * x(0) - 3 * x(1) + x(2) + 3 * x(3) - 2 * x(4) + x(5) >:= -2)
     add(5 * x(0) - x(1) + 4 * x(2) - 2 * x(3) + 2 * x(4) - x(5) >:= 3)
 
-    it ("all variables should be binary") {
+    it("all variables should be binary") {
       x.foreach(_.isBinary shouldBe true)
     }
 
@@ -751,7 +754,9 @@ final class MosekSpecTest extends AnyFunSpec with Matchers {
     val x = MPFloatVar.positive("x")
     val y = MPFloatVar.positive("y")
 
-    minimize(x * x + x * x + y * y - y * y + y * y + 7 * x * y - 6 * y * x + x * x - x * x + x - 99.9e-9 * y + 1.0000000999 * y)
+    minimize(
+      x * x + x * x + y * y - y * y + y * y + 7 * x * y - 6 * y * x + x * x - x * x + x - 99.9e-9 * y + 1.0000000999 * y
+    )
 
     cons = cons :+ add(x + y := 1)
     cons = cons :+ add(x >:= -3)
@@ -798,7 +803,7 @@ final class MosekSpecTest extends AnyFunSpec with Matchers {
     val y = MPFloatVar.positive("y")
 
     minimize(-8 * x - 16 * y + x * x + 4 * y * y)
-    subjectTo (
+    subjectTo(
       x + y <:= 5,
       x <:= 3,
       x >:= 0,
