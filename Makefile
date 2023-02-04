@@ -16,7 +16,7 @@ help:
 format:
 	@sbt scalafmt
 
-###  test                 : Test project
+###  compile              : Compile project
 .PHONY: compile
 compile:
 	@sbt clean +compile
@@ -24,22 +24,26 @@ compile:
 ###  test                 : Test project
 .PHONY: test
 test:
-	@sbt +core/test +solver-oj/test
+	@sbt +core/test +solver-oj/test +solver-lp/test
 
 ###  build                : Clean, build and test project
 .PHONY: build
 build: compile test
 
+###  changelog            : Create changelogs
+.PHONY: changelog
+	@cz changelog --file-name "docs/release_notes/${PROJECT_VERSION}.md" v${PROJECT_VERSION}
+	@cat "docs/release_notes/${PROJECT_VERSION}.md" | tail -n +3 > "docs/release_notes/${PROJECT_VERSION}.md"
+
 ###  release              : Creates a release
 .PHONY: release
 release: build
 	@echo "Releasing version '${PROJECT_VERSION}'"
-	@git tag -a v"${PROJECT_VERSION}" -m "version ${PROJECT_VERSION}"
 	@sbt +package
 	@sbt +publishSigned
 	@sbt sonatypeReleaseAll
-	@cz changelog --file-name "docs/release_notes/${PROJECT_VERSION}.md" v${PROJECT_VERSION}
-	@cat "docs/release_notes/${PROJECT_VERSION}.md" | tail -n +3 > "docs/release_notes/${PROJECT_VERSION}.md"
+	@git tag -a v"${PROJECT_VERSION}" -m "version ${PROJECT_VERSION}"
+	@git push origin v"${PROJECT_VERSION}"
 	@gh release create v"${PROJECT_VERSION}" -F "docs/release_notes/${PROJECT_VERSION}.md" \
 		./core/target/scala-2.12/optimus_2.12-${PROJECT_VERSION}.jar \
 		./core/target/scala-2.13/optimus_2.13-${PROJECT_VERSION}.jar \

@@ -22,8 +22,8 @@ object Dependencies {
     final val Logback = "1.2.11"
     final val ScalaLogging = "3.9.5"
 
-    final val ScalaTest = "3.2.12"
-    final val ScalaCheck = "1.16.0"
+    final val ScalaTest = "3.2.15"
+    final val ScalaCheck = "1.17.0"
     final val ScalaTestPlus = "3.2.11.0"
 
     final val LpSolve = "5.5.2.0"

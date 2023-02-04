@@ -61,8 +61,8 @@ object OptimusBuild extends AutoPlugin {
     description := "Optimus is a mathematical programming library for Scala",
     headerLicense := Some(HeaderLicense.Custom(logo)),
     headerMappings := headerMappings.value + (HeaderFileType.scala -> HeaderCommentStyle.cStyleBlockComment),
-    scalaVersion := "3.1.3",
-    crossScalaVersions := Seq("3.1.3", "2.13.8", "2.12.16"),
+    scalaVersion := "3.2.2",
+    crossScalaVersions := Seq(scalaVersion.value, "2.13.10", "2.12.17"),
     autoScalaLibrary := true,
     managedScalaInstance := true,
     coverageEnabled := false,
@@ -72,11 +72,13 @@ object OptimusBuild extends AutoPlugin {
     Test / publishArtifact := false,
     pomIncludeRepository := { _ => false },
     resolvers ++= Seq(
-      Resolver.mavenLocal,
-      Resolver.typesafeRepo("releases"),
-      Resolver.sonatypeRepo("releases"),
-      Resolver.sonatypeRepo("snapshots")
-    ),
+      Seq(
+        Resolver.mavenLocal,
+        Resolver.typesafeRepo("releases")
+      ),
+      Resolver.sonatypeOssRepos("releases"),
+      Resolver.sonatypeOssRepos("snapshots")
+    ).flatten,
     publishTo := {
       val nexus = "https://oss.sonatype.org/"
       if (isSnapshot.value) Some("snapshots" at nexus + "content/repositories/snapshots")
