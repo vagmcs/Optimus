@@ -11,7 +11,7 @@
  *          \/////       \///             \/////    \///  \///   \///   \///  \/////////   \//////////
  *
  * The mathematical programming library for Scala.
- *     
+ *
  */
 
 package optimus.algebra
@@ -235,7 +235,7 @@ case object Zero extends Const(0) {
 
 case object One extends Const(1) {
 
-  override def *(expression: Expression): Expression = this
+  override def *(expression: Expression): Expression = expression
 
   override def unary_- : Const = Const(-1)
 }

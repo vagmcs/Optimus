@@ -11,7 +11,7 @@
  *          \/////       \///             \/////    \///  \///   \///   \///  \/////////   \//////////
  *
  * The mathematical programming library for Scala.
- *     
+ *
  */
 
 package optimus.algebra
@@ -324,6 +324,14 @@ final class AlgebraSpecTest extends AnyFunSpec with Matchers {
 
     it("constraint_1 should NOT be equal to constraint_2") {
       constraint_1.equals(constraint_2) shouldEqual false
+    }
+  }
+
+  describe("Limit cases") {
+    def multiply(ex: Expression, d: Double): Expression = ex * d
+
+    it("1 * c should be equal to c (and not to 1)") {
+      multiply(One, 10.0) shouldBe Const(10.0)
     }
   }
 }
