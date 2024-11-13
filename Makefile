@@ -47,16 +47,16 @@ release: build
 	@gh release create v"${PROJECT_VERSION}" -F "docs/release_notes/${PROJECT_VERSION}.md" \
 		./core/target/scala-2.12/optimus_2.12-${PROJECT_VERSION}.jar \
 		./core/target/scala-2.13/optimus_2.13-${PROJECT_VERSION}.jar \
-		./core/target/scala-3.1.3/optimus_3-${PROJECT_VERSION}.jar \
+		./core/target/scala-3.3.4/optimus_3-${PROJECT_VERSION}.jar \
 		./solver-oj/target/scala-2.12/optimus-solver-oj_2.12-${PROJECT_VERSION}.jar \
 		./solver-oj/target/scala-2.13/optimus-solver-oj_2.13-${PROJECT_VERSION}.jar \
-		./solver-oj/target/scala-3.1.3/optimus-solver-oj_3-${PROJECT_VERSION}.jar \
+		./solver-oj/target/scala-3.3.4/optimus-solver-oj_3-${PROJECT_VERSION}.jar \
 		./solver-lp/target/scala-2.12/optimus-solver-lp_2.12-${PROJECT_VERSION}.jar \
 		./solver-lp/target/scala-2.13/optimus-solver-lp_2.13-${PROJECT_VERSION}.jar \
-		./solver-lp/target/scala-3.1.3/optimus-solver-lp_3-${PROJECT_VERSION}.jar \
+		./solver-lp/target/scala-3.3.4/optimus-solver-lp_3-${PROJECT_VERSION}.jar \
 		./solver-gurobi/target/scala-2.12/optimus-solver-gurobi_2.12-${PROJECT_VERSION}.jar \
 		./solver-gurobi/target/scala-2.13/optimus-solver-gurobi_2.13-${PROJECT_VERSION}.jar \
-		./solver-gurobi/target/scala-3.1.3/optimus-solver-gurobi_3-${PROJECT_VERSION}.jar \
+		./solver-gurobi/target/scala-3.3.4/optimus-solver-gurobi_3-${PROJECT_VERSION}.jar \
 		./solver-mosek/target/scala-2.12/optimus-solver-mosek_2.12-${PROJECT_VERSION}.jar \
 		./solver-mosek/target/scala-2.13/optimus-solver-mosek_2.13-${PROJECT_VERSION}.jar \
-		./solver-mosek/target/scala-3.1.3/optimus-solver-mosek_3-${PROJECT_VERSION}.jar
+		./solver-mosek/target/scala-3.3.4/optimus-solver-mosek_3-${PROJECT_VERSION}.jar

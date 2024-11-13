@@ -33,23 +33,23 @@ This program comes with ABSOLUTELY NO WARRANTY. This is free software, and you a
 
 ## How to get Optimus
 
-Optimus is published to Maven Central for Scala 2.12, 2.13 and 3.1.3! 
+Optimus is published to Maven Central for Scala 2.12, 2.13 and 3.3.4! 
 
 Add the following dependencies to your SBT build file in order to get started:
 
 ```scala
 libraryDependencies ++= Seq(
-    "com.github.vagmcs" %% "optimus" % "3.4.3",
-    "com.github.vagmcs" %% "optimus-solver-oj" % "3.4.3",
-    "com.github.vagmcs" %% "optimus-solver-lp" % "3.4.3"
+    "com.github.vagmcs" %% "optimus" % "3.4.4",
+    "com.github.vagmcs" %% "optimus-solver-oj" % "3.4.4",
+    "com.github.vagmcs" %% "optimus-solver-lp" % "3.4.4"
 )
 ```
 
 Optionally, you can also add the following extra dependencies for proprietary solvers:
 
 ```scala
-"com.github.vagmcs" %% "optimus-solver-gurobi" % "3.4.3"
-"com.github.vagmcs" %% "optimus-solver-mosek" % "3.4.3"
+"com.github.vagmcs" %% "optimus-solver-gurobi" % "3.4.4"
+"com.github.vagmcs" %% "optimus-solver-mosek" % "3.4.4"
 ```
 
 For more information see [Building and Linking](docs/building_and_linking.md)
