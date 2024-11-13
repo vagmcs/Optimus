@@ -19,6 +19,12 @@ project/boot/
 lib/
 project/project/
 /.bsp/
+.bloop
+
+### VsCode
+.vscode
+.metals
+metals.sbt
 
 ### Mac OSX
 Icon

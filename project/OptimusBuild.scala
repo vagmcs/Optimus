@@ -52,7 +52,7 @@ object OptimusBuild extends AutoPlugin {
 
   private lazy val settings: Seq[Setting[_]] = {
     logger.info(s"Loading options for Java $javaVersion.")
-    if (javaVersion < 1.8) sys.error("Java 8 or higher is required for building Optimus.")
+    if (javaVersion < 11) sys.error("Java 11 or higher is required for running Optimus.")
     else commonSettings ++ JavaSettings ++ ScalaSettings
   }
 
@@ -61,8 +61,8 @@ object OptimusBuild extends AutoPlugin {
     description := "Optimus is a mathematical programming library for Scala",
     headerLicense := Some(HeaderLicense.Custom(logo)),
     headerMappings := headerMappings.value + (HeaderFileType.scala -> HeaderCommentStyle.cStyleBlockComment),
-    scalaVersion := "3.2.2",
-    crossScalaVersions := Seq(scalaVersion.value, "2.13.10", "2.12.17"),
+    scalaVersion := "3.3.4",
+    crossScalaVersions := Seq(scalaVersion.value, "2.13.15", "2.12.20"),
     autoScalaLibrary := true,
     managedScalaInstance := true,
     coverageEnabled := false,
@@ -112,11 +112,6 @@ object OptimusBuild extends AutoPlugin {
   )
 
   private lazy val JavaSettings: Seq[Setting[_]] = Seq(
-    // Java compiler options
-    // source is the source code version required to compile.
-    // target is the oldest JRE version Optimus supports.
-    javacOptions ++= Seq("-source", "1.8", "-target", "1.8", "-Xlint:unchecked", "-Xlint:deprecation"),
-
     // Java runtime options
     javaOptions ++= Seq(
       "-XX:+DoEscapeAnalysis",
@@ -135,7 +130,6 @@ object OptimusBuild extends AutoPlugin {
             "-deprecation", // Emit warning and location for usages of deprecated APIs.
             "-unchecked", // Enable additional warnings where generated code depends on assumptions.
             "-feature", // Emit warning and location for usages of features that should be imported explicitly.
-            "-target:jvm-1.8", // Target JVM version 1.8.
             "-Ywarn-dead-code" // Warn when dead code is identified.
           )
         case "3" =>
