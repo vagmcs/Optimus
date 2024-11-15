@@ -16,7 +16,7 @@
 
 package optimus.optimization
 
-import gurobi._
+import com.gurobi.gurobi._
 import optimus.algebra._
 import optimus.optimization.enums.PreSolve._
 import optimus.optimization.enums.{ PreSolve, SolutionStatus }

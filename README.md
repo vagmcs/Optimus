@@ -28,7 +28,7 @@ This program comes with ABSOLUTELY NO WARRANTY. This is free software, and you a
 3. Available solvers:
   * Open source [LpSolve](http://sourceforge.net/projects/lpsolve/) can be used for LP and MIP.
   * Open source [oJSolver](http://ojalgo.org/) can be used for LP, QP and MIP.
-  * Proprietary solver [Gurobi 9](http://www.gurobi.com/) can be used for efficiently solving LP, QP, QCQP and MIP.
+  * Proprietary solver [Gurobi 12](http://www.gurobi.com/) can be used for efficiently solving LP, QP, QCQP and MIP.
   * Proprietary solver [Mosek 9](https://www.mosek.com/) can be used for efficiently solving LP, QP, QCQP and MIP.
 
 ## How to get Optimus

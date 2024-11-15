@@ -27,6 +27,7 @@ object Dependencies {
     final val ScalaTestPlus = "3.2.11.0"
 
     final val LpSolve = "5.5.2.0"
+    final val Gurobi = "12.0.0"
     final val ojAlgorithms = "51.4.0"
     final val Trove = "3.1.0"
     final val ScalaXML = "2.3.0"
@@ -56,4 +57,7 @@ object Dependencies {
 
   // oj! Algorithms library for linear and quadratic programming
   lazy val ojAlgorithms: ModuleID = "org.ojalgo" % "ojalgo" % v.ojAlgorithms
+
+  // Gurobi library for mathematical programming
+  lazy val Gurobi: ModuleID = "com.gurobi" % "gurobi" % v.Gurobi
 }

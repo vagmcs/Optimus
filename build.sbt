@@ -40,19 +40,11 @@ lazy val lpsolve = Project("solver-lp", file("solver-lp"))
   .settings(libraryDependencies += Dependencies.LpSolve)
 
 // Build settings for Optimus gurobi solver
-lazy val gurobi =
-  if (file("lib/gurobi.jar").exists) Project("solver-gurobi", file("solver-gurobi"))
-    .dependsOn(core % "compile->compile ; test->test")
-    .enablePlugins(AutomateHeaderPlugin)
-    .settings(name := "optimus-solver-gurobi")
-    .settings(Compile / unmanagedJars += file("lib/gurobi.jar"))
-  else Project("solver-gurobi", file("solver-gurobi"))
-    .settings {
-      logger.warn {
-        "Building in the absence of support for the Gurobi solver [ 'gurobi.jar' not found in 'lib' directory ]."
-      }
-      Seq(name := "optimus-solver-gurobi", publish := {}, publishLocal := {})
-    }
+lazy val gurobi = Project("solver-gurobi", file("solver-gurobi"))
+  .dependsOn(core % "compile->compile ; test->test")
+  .enablePlugins(AutomateHeaderPlugin)
+  .settings(name := "optimus-solver-gurobi")
+  .settings(libraryDependencies += Dependencies.Gurobi)
 
 // Build settings for Optimus mosek solver
 lazy val mosek =
