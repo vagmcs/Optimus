@@ -58,7 +58,7 @@ final class oJSolver extends MPSolver {
 
     var i = 0
     while (i < numberOfVariables) {
-      underlyingSolver.addVariable(Variable.make(i.toString))
+      underlyingSolver.newVariable(i.toString)
       i += 1
     }
   }

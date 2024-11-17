@@ -461,14 +461,14 @@ final class OJAlgorithmsSpecTest extends AnyFunSpec with Matchers {
       start()
 
       // w and y are different here than in lp solve and gurobi
-      w.value.get should equal(6.67 +- 1e-2)
+      w.value.get should equal(12.5 +- 1e-2)
       x.value.get should equal(15.0 +- 1e-2)
-      y.value.get should equal(6.67 +- 1e-2)
-      z.value.get should equal(11.67 +- 1e-2)
+      y.value.get should equal(12.5 +- 1e-2)
+      z.value.get should equal(0.0 +- 1e-2)
       objectiveValue shouldBe (115.0 +- 1e-2)
 
       cons(0).isTight() shouldBe true
-      cons(1).isTight() shouldBe true
+      cons(1).isTight() shouldBe false
       cons(2).isTight() shouldBe true
       cons(3).isTight() shouldBe true
 

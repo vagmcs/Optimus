@@ -28,7 +28,7 @@ object Dependencies {
 
     final val LpSolve = "5.5.2.0"
     final val Gurobi = "12.0.0"
-    final val ojAlgorithms = "53.3.0"
+    final val ojAlgorithms = "55.0.1"
     final val Trove = "3.1.0"
     final val ScalaXML = "2.3.0"
   }
