@@ -4,6 +4,7 @@ addCommandAlias("rebuild", ";clean;build")
 
 val logger = ConsoleLogger()
 
+useGpgPinentry := true
 sonatypeProfileName := "com.github.vagmcs"
 
 lazy val root = project
