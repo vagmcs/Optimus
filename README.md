@@ -39,17 +39,17 @@ Add the following dependencies to your SBT build file in order to get started:
 
 ```scala
 libraryDependencies ++= Seq(
-    "com.github.vagmcs" %% "optimus" % "3.4.4",
-    "com.github.vagmcs" %% "optimus-solver-oj" % "3.4.4",
-    "com.github.vagmcs" %% "optimus-solver-lp" % "3.4.4"
+    "com.github.vagmcs" %% "optimus" % "3.4.5",
+    "com.github.vagmcs" %% "optimus-solver-oj" % "3.4.5",
+    "com.github.vagmcs" %% "optimus-solver-lp" % "3.4.5"
 )
 ```
 
 Optionally, you can also add the following extra dependencies for proprietary solvers:
 
 ```scala
-"com.github.vagmcs" %% "optimus-solver-gurobi" % "3.4.4"
-"com.github.vagmcs" %% "optimus-solver-mosek" % "3.4.4"
+"com.github.vagmcs" %% "optimus-solver-gurobi" % "3.4.5"
+"com.github.vagmcs" %% "optimus-solver-mosek" % "3.4.5"
 ```
 
 For more information see [Building and Linking](docs/building_and_linking.md)
