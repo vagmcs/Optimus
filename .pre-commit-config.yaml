@@ -1,0 +1,33 @@
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v6.0.0
+    hooks:
+      - id: check-added-large-files
+      - id: check-json
+      - id: pretty-format-json
+        args: [--autofix]
+      - id: check-toml
+      - id: check-yaml
+        args: [--unsafe]
+      - id: end-of-file-fixer
+      - id: trailing-whitespace
+
+  - repo: https://github.com/softwaremill/scala-pre-commit-hooks
+    rev: v0.5.0
+    default_phase: commit
+    hooks:
+      - id: sbt-fatal-warnings
+        args: ["--scope=test:compile"]
+      - id: sbt-unused-imports
+        args: ["--scope=test:compile"]
+      - id: sbt-scalafmt
+      - id: sbt-scalafmt-apply
+        args: [--no-clean]
+
+  - repo: https://github.com/gitleaks/gitleaks
+    rev: v8.28.0
+    hooks:
+      - id: gitleaks
+ci:
+  autofix_commit_msg: "ci: Auto fixes from pre-commit.com hooks"
+  autoupdate_commit_msg: "ci: Autoupdate pre-commit"

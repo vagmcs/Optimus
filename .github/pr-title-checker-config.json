@@ -1,0 +1,17 @@
+{
+  "CHECKS": {
+    "ignoreLabels": [
+      "skip changelog"
+    ],
+    "regexp": "^(build|chore|ci|docs|feat|fix|perf|refactor|release|test|security)\\!?: [A-Z].*[A-Za-z]$"
+  },
+  "LABEL": {
+    "color": "EEEEEE",
+    "name": "invalid"
+  },
+  "MESSAGES": {
+    "failure": "Invalid PR title! Please update according to the contributing guidelines: https://github.com/vagmcs/Optimus/blob/main/CONTRIBUTING.md",
+    "notice": "",
+    "success": "PR title OK"
+  }
+}

@@ -1,0 +1,3 @@
+# These owners are the default owners for everything in the repo,
+# and will be requested for review when someone opens a pull request.
+* @vagmcs

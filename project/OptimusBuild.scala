@@ -1,47 +1,13 @@
-/*
- *
- *   /\\\\\
- *  /\\\///\\\
- * /\\\/  \///\\\    /\\\\\\\\\     /\\\       /\\\
- * /\\\      \//\\\  /\\\/////\\\ /\\\\\\\\\\\ \///    /\\\\\  /\\\\\     /\\\    /\\\  /\\\\\\\\\\
- * \/\\\       \/\\\ \/\\\\\\\\\\ \////\\\////   /\\\  /\\\///\\\\\///\\\ \/\\\   \/\\\ \/\\\//////
- *  \//\\\      /\\\  \/\\\//////     \/\\\      \/\\\ \/\\\ \//\\\  \/\\\ \/\\\   \/\\\ \/\\\\\\\\\\
- *    \///\\\  /\\\    \/\\\           \/\\\_/\\  \/\\\ \/\\\  \/\\\  \/\\\ \/\\\   \/\\\ \////////\\\
- *       \///\\\\\/     \/\\\           \//\\\\\   \/\\\ \/\\\  \/\\\  \/\\\ \//\\\\\\\\\  /\\\\\\\\\\
- *          \/////       \///             \/////    \///  \///   \///   \///  \/////////   \//////////
- *
- * The mathematical programming library for Scala.
- *
- */
-
 import sbt._
 import sbt.Keys._
 import sbt.plugins.JvmPlugin
 import scoverage.ScoverageKeys._
-import de.heikoseeberger.sbtheader.HeaderPlugin
-import de.heikoseeberger.sbtheader.HeaderPlugin.autoImport._
 
 object OptimusBuild extends AutoPlugin {
 
   private val logger = ConsoleLogger()
 
-  final val logo = """
-      |  /\\\\\
-      | /\\\///\\\
-      |/\\\/  \///\\\    /\\\\\\\\\     /\\\       /\\\
-      |/\\\      \//\\\  /\\\/////\\\ /\\\\\\\\\\\ \///    /\\\\\  /\\\\\     /\\\    /\\\  /\\\\\\\\\\
-      |\/\\\       \/\\\ \/\\\\\\\\\\ \////\\\////   /\\\  /\\\///\\\\\///\\\ \/\\\   \/\\\ \/\\\//////
-      | \//\\\      /\\\  \/\\\//////     \/\\\      \/\\\ \/\\\ \//\\\  \/\\\ \/\\\   \/\\\ \/\\\\\\\\\\
-      |   \///\\\  /\\\    \/\\\           \/\\\_/\\  \/\\\ \/\\\  \/\\\  \/\\\ \/\\\   \/\\\ \////////\\\
-      |      \///\\\\\/     \/\\\           \//\\\\\   \/\\\ \/\\\  \/\\\  \/\\\ \//\\\\\\\\\  /\\\\\\\\\\
-      |         \/////       \///             \/////    \///  \///   \///   \///  \/////////   \//////////
-      |
-      |The mathematical programming library for Scala.
-    """.stripMargin
-
-  logger.info(logo)
-
-  override def requires: Plugins = JvmPlugin && HeaderPlugin
+  override def requires: Plugins = JvmPlugin
 
   // Allow the plug-in to be included automatically
   override def trigger: PluginTrigger = allRequirements
@@ -59,8 +25,6 @@ object OptimusBuild extends AutoPlugin {
   private val commonSettings: Seq[Setting[_]] = Seq(
     organization := "com.github.vagmcs",
     description := "Optimus is a mathematical programming library for Scala",
-    headerLicense := Some(HeaderLicense.Custom(logo)),
-    headerMappings := headerMappings.value + (HeaderFileType.scala -> HeaderCommentStyle.cStyleBlockComment),
     scalaVersion := "3.3.4",
     crossScalaVersions := Seq(scalaVersion.value, "2.13.15", "2.12.20"),
     autoScalaLibrary := true,

@@ -9,7 +9,7 @@
 
 Optimus is a library for Linear and Quadratic mathematical optimization written in [Scala programming language](http://scala-lang.org).
 
-## License 
+## License
 
 This program comes with ABSOLUTELY NO WARRANTY. This is free software, and you are welcome to redistribute it under certain conditions; See the [GNU Lesser General Public License v3 for more details](http://www.gnu.org/licenses/lgpl-3.0.en.html).
 
@@ -33,7 +33,7 @@ This program comes with ABSOLUTELY NO WARRANTY. This is free software, and you a
 
 ## How to get Optimus
 
-Optimus is published to Maven Central for Scala 2.12, 2.13 and 3.3.4! 
+Optimus is published to Maven Central for Scala 2.12, 2.13 and 3.3.4!
 
 Add the following dependencies to your SBT build file in order to get started:
 

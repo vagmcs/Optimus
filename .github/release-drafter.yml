@@ -1,0 +1,90 @@
+name-template: "Optimus $RESOLVED_VERSION"
+tag-template: "$RESOLVED_VERSION"
+
+change-template: "- $TITLE (#$NUMBER) by @$AUTHOR"
+change-title-escapes: '\<*_&'
+
+# Currenly the project is on alpha so everything is a patch unless there is a breaking change
+version-resolver:
+  minor:
+    labels:
+      - breaking
+  default: patch
+
+replacers:
+  # Remove conventional commits from PR titles
+  - search: '/- (build|chore|ci|docs|feat|fix|perf|refactor|release|test|security)(\(.*\))?(\!)?\: /g'
+    replace: "- "
+
+autolabeler:
+  - label: breaking
+    title:
+      - '/^(build|chore|ci|docs|feat|fix|perf|refactor|release|test|security)(\(.*\))?\!\: /'
+  - label: build
+    title:
+      - "/^build/"
+  - label: documentation
+    title:
+      - "/^docs/"
+  - label: enhancement
+    title:
+      - "/^feat/"
+  - label: fix
+    title:
+      - "/^fix/"
+  - label: performance
+    title:
+      - "/^perf/"
+  - label: release
+    title:
+      - "/^release/"
+  - label: security
+    title:
+      - "/^security/"
+  - label: test
+    title:
+      - "/^test/"
+  - label: ci
+    title:
+      - "/^ci/"
+  - label: refactor
+    title:
+      - "/^refactor/"
+  - label: internal
+    title:
+      - "/^chore/"
+
+categories:
+  - title: 🏆 Highlights
+    label: highlight
+  - title: 💥 Breaking changes
+    label: breaking
+  - title: 🐍 Features
+    label: enhancement
+  - title: 🐛 Fixes
+    labels:
+      - fix
+      - bug
+  - title: 🚀 Performance improvements
+    label: performance
+  - title: 📖 Documentation
+    label: documentation
+  - title: 📦 Build system and CI
+    labels:
+      - build
+      - ci
+  - title: 🔒️ Security
+    label: security
+  - title: 🛠️ Other improvements
+    labels:
+      - refactor
+      - internal
+      - test
+
+# exclude skip changelog and release labels
+exclude-labels:
+  - skip changelog
+  - release
+
+template: |
+  $CHANGES

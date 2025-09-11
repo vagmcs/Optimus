@@ -1,21 +1,10 @@
 commitizen:
-  name: cz_customize
+  name: cz_conventional_commits
   tag_format: "v$version"
   version: 0.1.0
-  customize:
-    change_type_order: ["BREAKING CHANGE", "feat", "build", "fix", "perf", "refactor", "style"]
-    commit_parser: "^(?P<change_type>feature|feat|bug fix|bug|fix|perf|build|ci|docs|refactor):\\s(?P<message>.*)?"
-    changelog_pattern: "^(feature|feat|bugfix|bug|fix|perf|build|ci|docs|refactor|perf)?(!)?"
-    change_type_map:
-      feat: Features
-      feature: Features
-      bug fix: Fixes
-      bugfix: Fixes
-      bug: Fixes
-      fix: Fixes
-      ci: CI
-      build: Build
-      docs: Documentation
-      refactor: Refactor
-      perf: Performance
-      style: Code style
+  version_scheme: "pep440"
+  version_provider: "poetry"
+  update_changelog_on_bump: true
+  template: "docs/templates/changelog.j2"
+  changelog_file: "docs/docs/changelog.md"
+  release_notes_file: "docs/docs/release_notes.md"

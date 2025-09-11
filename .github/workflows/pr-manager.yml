@@ -1,0 +1,45 @@
+name: Pull Request Manager
+
+on:
+  pull_request_target:
+    types:
+      - opened
+      - synchronize
+      - reopened
+      - edited
+
+permissions:
+  contents: read
+  issues: write
+  pull-requests: write
+
+jobs:
+  assign-author:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: toshimaru/auto-author-assign@v2.1.1
+  assign-labels:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: release-drafter/release-drafter@v6
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  validate-title:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: thehanimo/pr-title-checker@v1.4.3
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  check:
+    if: always()
+    needs:
+    - assign-author
+    - assign-labels
+    - validate-title
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Check whether the needed jobs succeeded or failed
+      uses: re-actors/alls-green@release/v1
+      with:
+        jobs: ${{ toJSON(needs) }}
