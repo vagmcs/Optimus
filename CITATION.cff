@@ -1,0 +1,21 @@
+# This CITATION.cff file was generated with cffinit.
+# Visit https://bit.ly/cffinit to generate yours today!
+
+cff-version: 1.2.0
+title: Optimus
+message: >-
+  If you use this software, please cite it using the
+  metadata from this file.
+type: software
+authors:
+  - given-names: Evangelos
+    family-names: Michelioudakis
+  - given-names: Anastasios
+    family-names: Skarlatidis
+repository-code: "https://github.com/vagmcs/Optimus"
+abstract: >-
+  Optimus is a mathematical programming library for Scala.
+keywords:
+  - mathematical programming
+  - scala programming language
+license: LGPL-3.0
