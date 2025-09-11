@@ -1,10 +1,10 @@
 ## Optimus
 
 <a href="https://github.com/vagmcs/Optimus/actions/workflows/tester.yml" target="_blank">
-    <img src="https://github.com/vagmcs/Optimus/actions/workflows/tester.yaml/badge.svg?event=push&branch=master" alt="Test">
+    <img src="https://github.com/vagmcs/Optimus/actions/workflows/tester.yaml/badge.svg?event=push&branch=main" alt="Test">
 </a>
 <a href="https://results.pre-commit.ci/latest/github/vagmcs/Optimus/main" target="_blank">
-    <img src="https://results.pre-commit.ci/badge/github/vagmcs/Optimus/master.svg" alt="pre-commit.ci status">
+    <img src="https://results.pre-commit.ci/badge/github/vagmcs/Optimus/main.svg" alt="pre-commit.ci status">
 </a>
 <a href="https://central.sonatype.com/artifact/com.github.vagmcs/optimus_3" target="_black">
     <img src="https://maven-badges.herokuapp.com/maven-central/com.github.vagmcs/optimus_2.13/badge.svg" alt="Maven Central">

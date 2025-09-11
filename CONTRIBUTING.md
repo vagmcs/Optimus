@@ -14,8 +14,8 @@ features around optimization that are mature enough in terms of usability and st
 of a feature, in order to have implementations that are clean in terms of user experience and development friendliness,
 well-documented (documentation and examples) and well-tested (unit tests, example code).
 
-There are two main branches, master and develop. The former, contains the stable versions of Optimus, thus it is not related
-to active development version, pull requests and hot-fixes. The code in master branch is considered as frozen. Even in
+There are two main branches, main and develop. The former, contains the stable versions of Optimus, thus it is not related
+to active development version, pull requests and hot-fixes. The code in main branch is considered as frozen. Even in
 situations of hot-fixes or minor improvements we prefer to fix them in the development version first. The latter,
 develop branch, contains the latest development snapshot of Optimus. We strongly suggest to work your contributions over
 the develop branch.
@@ -31,7 +31,7 @@ for Optimus. Generally always have a related issue with discussions for whatever
 Please also provide a test plan, i.e., specify how you verified that your addition works, add unit tests or provide
 examples.
 
-Finally, since master branch is only for stable releases tagged with a version, **a pull request should be always target
+Finally, since main branch is only for stable releases tagged with a version, **a pull request should be always target
 to the develop branch.**
 
 Thank you again for considering to contribute to Optimus and happy hacking :)
