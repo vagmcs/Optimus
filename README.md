@@ -1,17 +1,19 @@
 ## Optimus
 
-[![License: LGPL v3](https://img.shields.io/badge/License-LGPL%20v3-blue.svg)](https://www.gnu.org/licenses/lgpl-3.0)
-![Optimus workflow](https://github.com/vagmcs/Optimus/actions/workflows/ci.yaml/badge.svg)
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.vagmcs/optimus_2.13/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.github.vagmcs/optimus_2.13)
-[![javadoc](https://javadoc.io/badge2/com.github.vagmcs/optimus_2.13/javadoc.svg)](https://javadoc.io/doc/com.github.vagmcs/optimus_2.13)
-![GitHub issues](https://img.shields.io/github/issues-raw/vagmcs/Optimus)
-[![Conventional Commits](https://img.shields.io/badge/Conventional%20Commits-1.0.0-yellow.svg)](https://conventionalcommits.org)
+<a href="https://github.com/vagmcs/Optimus/actions/workflows/tester.yml" target="_blank">
+    <img src="https://github.com/vagmcs/Optimus/actions/workflows/tester.yaml/badge.svg?event=push&branch=master" alt="Test">
+</a>
+<a href="https://results.pre-commit.ci/latest/github/vagmcs/Optimus/main" target="_blank">
+    <img src="https://results.pre-commit.ci/badge/github/vagmcs/Optimus/master.svg" alt="pre-commit.ci status">
+</a>
+<a href="https://central.sonatype.com/artifact/com.github.vagmcs/optimus_3" target="_black">
+    <img src="https://maven-badges.herokuapp.com/maven-central/com.github.vagmcs/optimus_2.13/badge.svg" alt="Maven Central">
+</a>
+<!-- <a href="https://scala-steward.org" target="_black">
+    <img src="https://img.shields.io/badge/Scala_Steward-helping-blue.svg?style=flat&logo=data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA4AAAAQCAMAAAARSr4IAAAAVFBMVEUAAACHjojlOy5NWlrKzcYRKjGFjIbp293YycuLa3pYY2LSqql4f3pCUFTgSjNodYRmcXUsPD/NTTbjRS+2jomhgnzNc223cGvZS0HaSD0XLjbaSjElhIr+AAAAAXRSTlMAQObYZgAAAHlJREFUCNdNyosOwyAIhWHAQS1Vt7a77/3fcxxdmv0xwmckutAR1nkm4ggbyEcg/wWmlGLDAA3oL50xi6fk5ffZ3E2E3QfZDCcCN2YtbEWZt+Drc6u6rlqv7Uk0LdKqqr5rk2UCRXOk0vmQKGfc94nOJyQjouF9H/wCc9gECEYfONoAAAAASUVORK5CYII=" alt="Scala Steward">
+</a> -->
 
 Optimus is a library for Linear and Quadratic mathematical optimization written in [Scala programming language](http://scala-lang.org).
-
-## License
-
-This program comes with ABSOLUTELY NO WARRANTY. This is free software, and you are welcome to redistribute it under certain conditions; See the [GNU Lesser General Public License v3 for more details](http://www.gnu.org/licenses/lgpl-3.0.en.html).
 
 ## Features
 
@@ -65,14 +67,6 @@ For more information see [Building and Linking](docs/building_and_linking.md)
 
 Contributions are welcome, for details see [CONTRIBUTING.md](CONTRIBUTING.md).
 
-## Reference for Scientific Publications
+## License
 
-Please use the following BibTeX entry to cite Optimus in your papers:
-
-```
-@misc{Optimus,
-      author = {Evangelos Michelioudakis and Anastasios Skarlatidis},
-      title = {Optimus: an open-source mathematical optimization library},
-      url = {https://github.com/vagmcs/Optimus}
-}
-```
+This program comes with ABSOLUTELY NO WARRANTY. This is free software, and you are welcome to redistribute it under certain conditions; See the [GNU Lesser General Public License v3 for more details](http://www.gnu.org/licenses/lgpl-3.0.en.html).
