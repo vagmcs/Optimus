@@ -31,3 +31,5 @@ repos:
 ci:
   autofix_commit_msg: "ci: Auto fixes from pre-commit.com hooks"
   autoupdate_commit_msg: "ci: Autoupdate pre-commit"
+  skip:
+    [sbt-fatal-warnings, sbt-unused-imports, sbt-scalafmt, sbt-scalafmt-apply]
