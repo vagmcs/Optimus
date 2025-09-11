@@ -1,0 +1,59 @@
+name: Tester
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    types:
+      - opened
+      - synchronize
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        scala:
+          - 2.12.20
+          - 2.13.15
+          - 3.3.4
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Set up JDK
+        uses: actions/setup-java@v5
+        with:
+          java-version: "11"
+          distribution: "temurin"
+      
+      - name: Install SBT
+        uses: sbt/setup-sbt@v1
+
+      - name: Install lp-solve
+        run: |
+          sudo apt-get -qq update
+          sudo apt-get install -y lp-solve
+          sudo wget https://sourceforge.net/projects/lpsolve/files/lpsolve/5.5.2.5/lp_solve_5.5.2.5_java.zip
+          unzip lp_solve_5.5.2.5_java.zip
+          sudo cp lp_solve_5.5_java/lib/ux64/liblpsolve55j.so /usr/lib/lp_solve && sudo ldconfig 
+      
+      - name: Run tests
+        run: sbt "++${{ matrix.scala }}" "core/test" "solver-oj/testOnly optimus.optimization.OJ*" "solver-lp/testOnly optimus.optimization.LP*"
+        env:
+          LD_LIBRARY_PATH: "/usr/lib/lp_solve"
+
+  check:
+    if: always()
+    needs:
+    - test
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Check whether the needed jobs succeeded or failed
+      uses: re-actors/alls-green@release/v1
+      with:
+        jobs: ${{ toJSON(needs) }}

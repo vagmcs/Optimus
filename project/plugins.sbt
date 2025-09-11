@@ -6,8 +6,6 @@ addSbtPlugin("com.scalapenos" % "sbt-prompt" % "1.0.2")
 
 addSbtPlugin("com.github.sbt" % "sbt-release" % "1.4.0")
 
-addSbtPlugin("de.heikoseeberger" % "sbt-header" % "5.6.0")
-
 addSbtPlugin("com.typesafe.sbt" % "sbt-git" % "1.0.0")
 
 addSbtPlugin("org.scalameta" % "sbt-scalafmt" % "2.5.2")
