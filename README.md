@@ -30,6 +30,8 @@ Optimus is a library for Linear and Quadratic mathematical optimization written 
 3. Available solvers:
   * Open source [LpSolve](http://sourceforge.net/projects/lpsolve/) can be used for LP and MIP.
   * Open source [oJSolver](http://ojalgo.org/) can be used for LP, QP and MIP.
+  * Open source CBC, SCIP, GLOP and CP-SAT, accessed through [Google OR-Tools](https://developers.google.com/optimization),
+    can be used for LP and MIP (GLOP is LP only, CP-SAT requires finite variable bounds).
   * Proprietary solver [Gurobi 12](http://www.gurobi.com/) can be used for efficiently solving LP, QP, QCQP and MIP.
   * Proprietary solver [Mosek 9](https://www.mosek.com/) can be used for efficiently solving LP, QP, QCQP and MIP.
 
@@ -45,6 +47,13 @@ libraryDependencies ++= Seq(
     "com.github.vagmcs" %% "optimus-solver-oj" % "3.4.5",
     "com.github.vagmcs" %% "optimus-solver-lp" % "3.4.5"
 )
+```
+
+Optionally, you can also add the open source CBC, SCIP, GLOP and CP-SAT solvers (no separate installation required,
+the native libraries are pulled in transitively):
+
+```scala
+"com.github.vagmcs" %% "optimus-solver-ortools" % "3.4.5"
 ```
 
 Optionally, you can also add the following extra dependencies for proprietary solvers:

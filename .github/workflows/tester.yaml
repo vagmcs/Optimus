@@ -42,7 +42,7 @@ jobs:
           sudo cp lp_solve_5.5_java/lib/ux64/liblpsolve55j.so /usr/lib/lp_solve && sudo ldconfig
 
       - name: Run tests
-        run: sbt "++${{ matrix.scala }}" "core/test" "solver-oj/testOnly optimus.optimization.OJ*" "solver-lp/testOnly optimus.optimization.LP*"
+        run: sbt "++${{ matrix.scala }}" "core/test" "solver-oj/testOnly optimus.optimization.OJ*" "solver-lp/testOnly optimus.optimization.LP*" "solver-ortools/test"
         env:
           LD_LIBRARY_PATH: "/usr/lib/lp_solve"
 

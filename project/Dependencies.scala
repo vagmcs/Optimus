@@ -13,6 +13,7 @@ object Dependencies {
     final val LpSolve = "5.5.2.0"
     final val Gurobi = "12.0.0"
     final val ojAlgorithms = "55.0.1"
+    final val OrTools = "9.15.6755"
     final val Trove = "3.1.0"
     final val ScalaXML = "2.3.0"
   }
@@ -44,4 +45,9 @@ object Dependencies {
 
   // Gurobi library for mathematical programming
   lazy val Gurobi: ModuleID = "com.gurobi" % "gurobi" % v.Gurobi
+
+  // Google OR-Tools, bundling the open source CBC, SCIP, GLOP and CP-SAT solvers, for
+  // mathematical programming. Pulls in the native libraries for all supported platforms
+  // transitively.
+  lazy val OrTools: ModuleID = "com.google.ortools" % "ortools-java" % v.OrTools
 }

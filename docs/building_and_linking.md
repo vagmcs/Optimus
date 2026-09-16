@@ -1,6 +1,6 @@
 # Building and Linking Optimus
 
-Optimus is builds for Scala 2.12, 2.13 and 3. In order to build Optimus modules (`core`, `solver-oj`, `solver-lp`, `solver-gurobi`, `solver-mosek`) from source you need to have Java 8 or higher and [SBT](http://www.scala-sbt.org/) installed in your system. Optimus build optionally depends on [Gurobi](http://www.gurobi.com/) and [Mosek](https://www.mosek.com/) solvers. In case the dependencies for Gurobi or Mosek are not included, Optimus would build a minimal version having only lp solve and oj solver.
+Optimus is builds for Scala 2.12, 2.13 and 3. In order to build Optimus modules (`core`, `solver-oj`, `solver-lp`, `solver-ortools`, `solver-gurobi`, `solver-mosek`) from source you need to have Java 8 or higher and [SBT](http://www.scala-sbt.org/) installed in your system. Optimus build optionally depends on [Gurobi](http://www.gurobi.com/) and [Mosek](https://www.mosek.com/) solvers. In case the dependencies for Gurobi or Mosek are not included, Optimus would build a minimal version having only lp solve and oj solver. The `solver-ortools` module (CBC, SCIP, GLOP and CP-SAT, via [Google OR-Tools](https://developers.google.com/optimization)) needs no separate installation, its native libraries are pulled in transitively for all supported platforms.
 
 ## Instructions to build Optimus from source
 
