@@ -23,7 +23,8 @@ import scala.util.{ Success, Try }
 
 object SolverFactory extends StrictLogging {
 
-  lazy val solvers: List[SolverLib] = List(LpSolve, oJSolver, Gurobi, Mosek).filter(canInstantiateSolver(_).isSuccess)
+  lazy val solvers: List[SolverLib] =
+    List(LpSolve, oJSolver, Cbc, Scip, Glop, Sat, Gurobi, Mosek).filter(canInstantiateSolver(_).isSuccess)
 
   lazy val quadraticSolvers: List[SolverLib] = List(oJSolver, Gurobi, Mosek).filter(canInstantiateSolver(_).isSuccess)
 
@@ -46,6 +47,26 @@ object SolverFactory extends StrictLogging {
     case LpSolve => Try(Class.forName("optimus.optimization.LPSolve")) match {
         case Success(c) => c.getDeclaredConstructor().newInstance().asInstanceOf[MPSolver]
         case _ => sys.error("LPSolve dependency is missing.")
+      }
+
+    case Cbc => Try(Class.forName("optimus.optimization.Cbc")) match {
+        case Success(c) => c.getDeclaredConstructor().newInstance().asInstanceOf[MPSolver]
+        case _ => sys.error("CBC (Google OR-Tools) dependency is missing.")
+      }
+
+    case Scip => Try(Class.forName("optimus.optimization.Scip")) match {
+        case Success(c) => c.getDeclaredConstructor().newInstance().asInstanceOf[MPSolver]
+        case _ => sys.error("SCIP (Google OR-Tools) dependency is missing.")
+      }
+
+    case Glop => Try(Class.forName("optimus.optimization.Glop")) match {
+        case Success(c) => c.getDeclaredConstructor().newInstance().asInstanceOf[MPSolver]
+        case _ => sys.error("GLOP (Google OR-Tools) dependency is missing.")
+      }
+
+    case Sat => Try(Class.forName("optimus.optimization.Sat")) match {
+        case Success(c) => c.getDeclaredConstructor().newInstance().asInstanceOf[MPSolver]
+        case _ => sys.error("CP-SAT (Google OR-Tools) dependency is missing.")
       }
 
     case _ => Try(Class.forName("optimus.optimization.oJSolver")) match {

@@ -9,7 +9,7 @@ sonatypeProfileName := "com.github.vagmcs"
 
 lazy val root = project
   .in(file("."))
-  .aggregate(core, oj, lpsolve, gurobi, mosek)
+  .aggregate(core, oj, lpsolve, ortools, gurobi, mosek)
   .settings(publish / skip := true)
 
 // Build settings for Optimus core
@@ -36,6 +36,12 @@ lazy val lpsolve = Project("solver-lp", file("solver-lp"))
   .dependsOn(core % "compile->compile ; test->test")
   .settings(name := "optimus-solver-lp")
   .settings(libraryDependencies += Dependencies.LpSolve)
+
+// Build settings for Optimus solvers backed by Google OR-Tools (CBC, SCIP, GLOP, CP-SAT)
+lazy val ortools = Project("solver-ortools", file("solver-ortools"))
+  .dependsOn(core % "compile->compile ; test->test")
+  .settings(name := "optimus-solver-ortools")
+  .settings(libraryDependencies += Dependencies.OrTools)
 
 // Build settings for Optimus gurobi solver
 lazy val gurobi = Project("solver-gurobi", file("solver-gurobi"))
